@@ -35,7 +35,7 @@ add_to <-function(x, ...){
 #' my_seting<- list( a =list(alpha= 1, col= "2"),
 #' b =list(alpha= 1, col= "2"),
 #' c =list(alpha= 1, col= "2"))
-#' my_seting<- add_to<-my_seting, c=list(fill="gray80"), b=list(alpha=2, beta=3))
+#' my_seting<- add_to(my_seting, c=list(fill="gray80"), b=list(alpha=2, beta=3))
 #' my_seting
 #'
 add_to.list <- function(x, ...) {
