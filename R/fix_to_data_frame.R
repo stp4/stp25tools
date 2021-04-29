@@ -12,8 +12,7 @@
 #'
 #' @examples
 #'
-#' #'
-#'    x <- list(
+#' x <- list(
 #' M1 = data.frame(
 #'   Source = c("Intercept", "A", "B" , "C", "Residual"),
 #'   b = c(0, 1, 2, 3, 0),
@@ -45,16 +44,7 @@
 #' )
 #'
 #'
-#' fix_to_df.list <- function(x, ...) {
-#'   if (length(unique(lengths(x))) != 1)
-#'     stop("Ungleiche Listen")
-#'   if (all(sapply(x, function(z)
-#'     is.vector(z) | is.factor(z))))
-#'     as.data.frame(x)
-#'   else
-#'     list_to_df(x, ...)
-#' }
-#'
+#' # liste mit data.frames
 #' fix_to_df(x)
 #'
 #' fix_to_df(dat)
@@ -97,20 +87,35 @@ fix_to_tibble <- function(x, ...) {
 #' @rdname fix_to_df
 #' @export
 fix_to_df.list <- function(x, ...) {
-  if (length(unique(lengths(x))) != 1)
-    stop("Ungleiche Listen")
+  lng <- lengths(x)
+  
   if (all(sapply(x, function(z)
-    is.vector(z) | is.factor(z))))
+    is.vector(z) | is.factor(z)))) {
+    if (length(unique(lng)) != 1) {
+      warning("Ungleiche Listen ", paste(lng, collapse = "/"))
+      for (i in seq_along(x)) 
+        if (length(x[[i]]) !=  max(lng))
+          x[[i]] <- append(x[[i]],
+                           rep(NA, max(lng) - lng[i]))
+    }
     as.data.frame(x)
+  }
   else
     list_to_df(x, ...)
 }
 
 
 
+
 #' @rdname fix_to_df
 #' @export
-fix_to_df.data.frame <- function(x, ...) {
+fix_to_df.data.frame <- function(x, include.colnames = FALSE, ...) {
+  if (include.colnames )
+    cbind(
+      Source = rownames(x),
+      x, stringsAsFactors = FALSE
+    )
+  else
   x
 }
 
