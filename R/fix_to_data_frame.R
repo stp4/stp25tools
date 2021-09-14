@@ -83,6 +83,13 @@ fix_to_tibble <- function(x, ...) {
 
 }
 
+#' @rdname fix_to_df
+#' @export
+fix_to_df.efflist <-
+  fix_to_df.eff <-
+  function(...) {
+    stp25stat:::tbll_extract_eff(..., include.format = FALSE)
+  }
 
 #' @rdname fix_to_df
 #' @export

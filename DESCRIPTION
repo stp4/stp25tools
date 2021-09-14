@@ -13,4 +13,10 @@ Suggests:
  stringr,
  tibble,
  plyr,
- stats
+ stats,
+ units,
+ sjlabelled,
+ e1071,
+ broom,
+ dplyr,
+ utils

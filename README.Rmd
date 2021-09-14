@@ -25,6 +25,14 @@ require(effects)
 ```
 
 
+
+<!-- Attaching package: ‘stp25tools’ -->
+
+<!-- The following objects are masked from ‘package:stp25aggregate’: -->
+
+<!--     get_label, Label, set_label, wrap_label, XLS -->
+
+
 ## add_to
 
 
@@ -60,6 +68,72 @@ add_to(df, list("G", 5), pos = -1)
 add_to(df, data.frame(  Source = c("G", "H"),
                         x = 5:6
 ), pos = -1)
+```
+
+
+
+## cbind() und rbind()
+
+```{r}
+df1 = data.frame(CustomerId = c(1:6), Product = c(rep("Oven", 3), rep("Television", 3)))
+df2 = data.frame(CustomerId = c(4:7), Product = c(rep("Television", 2), rep("Air conditioner", 2)))
+df3 = data.frame(
+   CustomerId = c(4:7),
+   Product = c(rep("Television", 2), rep("Air conditioner", 2)),
+   State = c(rep("California", 2), rep("New Jersey", 2))
+ )
+
+ Rbind2(df1, df3)
+ #dplyr::bind_rows(df1, df2)
+```
+
+
+## merge()
+
+```{r}
+n<-10
+df1 <- 
+  data.frame(
+  origin = sample(c("A", "B", "C", "D", "E"), n, replace = T),
+  N = sample(seq(9, 27, 0.5), n, replace = T),
+  P = sample(seq(0.3, 4, 0.1), n, replace = T),
+  C = sample(seq(400, 500, 1), n, replace = T))
+df2 <-
+  data.frame(
+    origin = sample(c("A", "B", "C", "D", "E"), n, replace = T),
+    foo1 = sample(c(T, F), n, replace = T),
+    X = sample(seq(145600, 148300, 100), n, replace = T),
+    Y = sample(seq(349800, 398600, 100), n, replace = T))
+df3 <-
+  data.frame(origin = sample(c("A", "B", "C", "D", "E"), n, replace = T))
+df4 <-
+  data.frame(origin = sample(c("A", "B", "C", "D", "E"), n, replace = T))
+
+df1$id <- df2$id <- df3$id <- df4$id <- paste("P", sprintf("%02d", c(1:n)), sep = "")  
+ 
+Merge2(df1, df2, df3, df4, by = "id")
+ 
+```
+ 
+ 
+ 
+##  cbind data.frame aber listenweise
+
+```{r}
+m <- data.frame(
+  Item = 1:3,
+  a = (1:3),
+  b = (1:3) * 2,
+  c = (1:3) * 3
+)
+sd <- data.frame(
+  Item = (1:3),
+  a = (1:3) * 4,
+  b = (1:3) * 5,
+  c = (1:3) * 6
+)
+combine_data_frame(m, sd)
+combine_data_frame(m, sd, by = NULL)
 ```
 
 

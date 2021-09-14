@@ -25,6 +25,7 @@ expm1_percent <- function(x)
 #' transformation
 #'
 #' @param x Vector
+#' @param treshhold grundlienie
 #'
 #' @return Vector mit attr link, inverse und name
 #' @export

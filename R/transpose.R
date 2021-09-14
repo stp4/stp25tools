@@ -22,6 +22,77 @@ dapply1 <-
   }
 
 
+
+
+
+#' Transpose
+#'
+#' @param x Objekt (Data.Frame oder Tibble)
+#' @param ...   key="Item"
+#'
+#' @return gleiches Objekt
+#' @export
+#'
+#' @examples
+#' 
+#' 
+#' transpose2(data.frame(pos = c("A", "B"), x = 1:2))
+#' 
+#' transpose2(data.frame(
+#'   pos = c("A", "B" , "C"),
+#'   x = 1:3,
+#'   y = 3:5
+#' ))
+
+transpose2 <- function(x, ...) {
+  UseMethod("transpose2")
+}
+
+
+
+
+#' @export
+transpose2.default <- function(x, ...) {
+  do_transpose(x, ...)
+}
+
+
+
+#' @export
+transpose2.tbl_df <- function(x, ...) {
+  tibble::as_tibble(do_transpose(x, ...))
+  
+}
+
+#' @export
+transpose2.data.frame <- function(x, ...) {
+  as.data.frame(do_transpose(x, ...))
+  
+}
+
+#' @param x data.frame
+#'
+#' @param key Item
+#' @param value value
+#'
+#' @keywords internal
+do_transpose <- function(x, key = "Item", value) {
+  rslt <-  t(x)
+  colnames(rslt) <- unlist(rslt[1, ])
+  rslt <- rslt[-1, ]
+  if (!is.null(row.names(rslt))) {
+    rslt <-  cbind(my.row.names = row.names(rslt), rslt)
+    colnames(rslt)[1] <- key
+  }
+  rslt
+}
+
+
+
+
+
+
+
 #' Rangreihe transortieren
 #'
 #' @param x data.frame

@@ -23,14 +23,7 @@
 #'                         x = 5:6
 #' ), pos = -1)
 #'
-add_to <-function(x, ...){
-  UseMethod("add_to")
-}
-
-
-#' @rdname add_to
-#' @export
-#' @examples
+#'
 #'
 #' my_seting<- list( a =list(alpha= 1, col= "2"),
 #' b =list(alpha= 1, col= "2"),
@@ -38,19 +31,26 @@ add_to <-function(x, ...){
 #' my_seting<- add_to(my_seting, c=list(fill="gray80"), b=list(alpha=2, beta=3))
 #' my_seting
 #'
+add_to <-function(x, ...){
+  UseMethod("add_to")
+}
+
+
+
+#' @export
 add_to.list <- function(x, ...) {
   what <- list(...)
   if( length(what)==1 & is.list(what[[1]]))# what <- what[[1]] # geändert aber noch nicht getestet
     what <- what[1]
-  modifyList(x, what)
+  utils::modifyList(x, what)
 }
 
 
-#' @rdname add_to
+
 #' @export
 add_to.data.frame <- function(x, ...) {
   what <- list(...)
-  print(is.list(what[[1]]))
+ # print(is.list(what[[1]]))
 
   if (is.list(what[[1]])) {
     new <- fix_to_df(what[[1]])

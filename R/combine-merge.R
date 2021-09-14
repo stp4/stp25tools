@@ -67,37 +67,38 @@ combine_data_frame <- function(..., by = 1, prefix = NULL) {
 #' Merge more then two Data Frames
 #'
 #' @param ... data.frames
-#' @param by,by.x,by.y specifications of the columns used for merging
-#' @param all,all.x,all.y logical
 #' @param sort 		logical. Should the result be sorted on the by columns?
 #' @param suffixes 	a character vector of length n
+#' @param by,by.x,by.y id an merge
+#' @param all,all.x,all.y  all an merge
+#' @param include.label labels
 #'
 #' @return data.frame
 #' @export
 #'
 #' @examples
-#'
+#' 
 #' #' set.seed(1)
 #' n <- 10
 #' df1 <- data.frame(
-#'   origin = sample(c("A", "B", "C", "D", "E"), n, replace = T),
-#'   N = sample(seq(9, 27, 0.5), n, replace = T),
-#'   P = sample(seq(0.3, 4, 0.1), n, replace = T),
-#'   C = sample(seq(400, 500, 1), n, replace = T)
+#'   origin = sample(c("A", "B", "C", "D", "E"), n, replace = TRUE),
+#'   N = sample(seq(9, 27, 0.5), n, replace = TRUE),
+#'   P = sample(seq(0.3, 4, 0.1), n, replace = TRUE),
+#'   C = sample(seq(400, 500, 1), n, replace = TRUE)
 #' )
 #' df2 <-
 #'   data.frame(
-#'     origin = sample(c("A", "B", "C", "D", "E"), n, replace = T),
-#'     foo1 = sample(c(T, F), n, replace = T),
-#'     X = sample(seq(145600, 148300, 100), n, replace = T),
-#'     Y = sample(seq(349800, 398600, 100), n, replace = T)
+#'     origin = sample(c("A", "B", "C", "D", "E"), n, replace = TRUE),
+#'     foo1 = sample(c(TRUE, FALSE), n, replace = TRUE),
+#'     X = sample(seq(145600, 148300, 100), n, replace = TRUE),
+#'     Y = sample(seq(349800, 398600, 100), n, replace = TRUE)
 #'   )
 #'
 #'
 #' df3 <-
-#'   data.frame(origin = sample(c("A", "B", "C", "D", "E"), n, replace = T))
+#'   data.frame(origin = sample(c("A", "B", "C", "D", "E"), n, replace = TRUE))
 #' df4 <-
-#'   data.frame(origin = sample(c("A", "B", "C", "D", "E"), n, replace = T))
+#'   data.frame(origin = sample(c("A", "B", "C", "D", "E"), n, replace = TRUE))
 #'
 #' rownames(df1) <- paste("P", sprintf("%02d", c(1:n)), sep = "")
 #' rownames(df2) <- rownames(df1)
@@ -108,8 +109,8 @@ combine_data_frame <- function(..., by = 1, prefix = NULL) {
 #' merge(df1,
 #'       df2,
 #'       by = "id",
-#'       all.x = F,
-#'       all.y = F)
+#'       all.x = FALSE,
+#'       all.y = FALSE)
 #'
 #' Merge2(df1, df2, df3, df4, by = "id")
 #'
@@ -123,7 +124,9 @@ Merge2 <-
             all.x = all,
             all.y = all,
             sort = TRUE,
-            suffixes = NULL)
+            suffixes = NULL,
+            #include.units=FALSE,
+            include.label=TRUE)
   {
     # stolen from
     # https://stackoverflow.com/questions/16666643/merging-more-than-2-dataframes-in-r-by-rownames
@@ -132,6 +135,9 @@ Merge2 <-
     if (is.null(by))
       stop(" by ... Fehlt! \n")
     data_list <-  list(...)
+    
+
+    
     i_suffixes <- 0:1
     
     if (is.null(suffixes))
@@ -155,7 +161,30 @@ Merge2 <-
       
     }
     
-    Reduce(MyMerge, data_list)
+    
+    if (include.label) {
+      lvl <- NULL
+      
+      for (i in  seq_len(length(data_list))) {
+        lv <- get_label(data_list[[i]],
+                                        include.units = FALSE)
+        
+        lvl <- c(lvl,
+                 lv[setdiff(names(lv), names(lvl))])
+      }
+      # x<- c(a="A", b="B")
+      # z<- c(a="A", c="C", d="D")
+      # c(x, z[setdiff(names(z),  names(x))])
+      set_label(
+        Reduce(MyMerge, data_list),
+        lvl
+        )
+      
+    }
+    else {
+     Reduce(MyMerge, data_list) 
+    }
+    
   }
 
 
@@ -167,8 +196,6 @@ Merge2 <-
 #' @param .names alternative zur vergabe der labels in which
 #' @param .id Data frame identifier.  dplyr::bind_rows(..., .id = NULL)
 #' @param .use.label set_label TRUE/FALSE
-#'
-#' @return
 #' @export
 #'
 #' @examples
@@ -224,25 +251,4 @@ Rbind2 <- function (...,
 }
 
 
-set_label2 <- function(data, labels = NULL) {
-    nms <- names(data)
-    nl <- nms %in% names(labels)
-    if (sum(nl) > 0) {
-      for (n in nms[nl])
-        attr(data[[n]], "label") <- labels[[n]]
-    }
-  data
-}
 
-get_label2 <- function(data) {
-    lbl <- lapply(data, attr, "label")
-    if (length(lbl) == 0)
-      return(NULL)
-    
-    unlabl <- which(sapply(lbl, is.null))
-    
-    lbl[unlabl] <- names(lbl[unlabl])
-    unlist(lbl)
-    
-    
-  }
