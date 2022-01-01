@@ -1,0 +1,458 @@
+#' get_data
+#' 
+#' 
+#' Daten Einlesen
+#'
+#' @param file Demo.xla,
+#' Demo.sav,
+#' Demo.csv  - ist ein Pfad zu einem csv, xls, sav oder Rdata Datensatz
+#' oder ein String in Textformat dierekt im R-File.
+#' @param na.strings c(NA,9999,"") - Fehlende Werte
+#' @param tabel_expand logical FALSE - Tabellen mit haufigkeiten werden als Dataframe im long-Format ausgegeben
+#' @param id.vars nur mit tabel_expand  - Nummer und Name der ID-Variablen bei tabel_expand default ist 1.
+#' @param value nur mit tabel_expand  - Name der output-variable bei tabel_expand.
+#' @param Data_info  Data_info = date(),
+#' @param sep,quote,dec Lesen der csv- Files = ";", = "\"", ".",
+#' @param sheet,skip,range an readxl::read_excel
+#' @param cleanup.encoding  UTF-8 = FALSE,
+#' @param user_na	If TRUE variables with user defined missing will be read into labelled_spss objects. If FALSE, the default, user-defined missings will be converted to NA.
+#' @param output Text Info zu File
+#' @param ...  Argumente fuer spss und csv. Bei SPSS-Files  kann die Zeichencodierung mit  \code{cleanup.encoding ="UTF-8"} geaendert werden.
+#' @export
+#' @examples
+#' # require(stp25tools)
+#' 
+#' dat <- get_data("
+#' sex treatment control
+#' m  2 3
+#' f  3 4
+#' ",
+#'                 tabel_expand = TRUE,
+#'                 id.vars = 1)
+#' 
+#' xtabs(~ sex + value, dat)
+#' 
+#' 
+#' dat <- get_data(
+#'   "
+#' sex treatment  neg  pos
+#' f   KG          3   3
+#' f   UG          4   5
+#' m   KG          5   4
+#' m   UG          4   2
+#' ",
+#'   tabel_expand = TRUE,
+#'   id.vars = 1:2,
+#'   value = "befund"
+#' )
+#' 
+#' ftable(xtabs(~ sex + treatment + befund, dat))
+#' 
+#' file.exists("R/dummy.csv")
+#' get_data("R/dummy.csv", dec = ",", na.strings = "-")
+#' get_data("R/dummy.xlsx", na.strings = "-")
+#' get_data("R/dummy.xlsx")
+#' 
+#' x <- get_data("R/dummy.sav")
+#' get_label(x)[1:4]
+get_data <- function (file = NA,
+                      na.strings = NULL,
+                      dec = ".",
+                      sep = ";",
+                      sheet = 1,
+                      range = NULL,
+                      skip = 0,
+                      as_tibble = TRUE,
+                      cleanup.names = TRUE,
+                      cleanup.encoding = FALSE,
+                      cleanup.factor = TRUE,
+                      tabel_expand = FALSE,
+                      id.vars = 1,
+                      value = "value",
+                      user_na = FALSE,
+                      from = "UTF8" ,
+                      to = "latin1",
+                      encoding = NULL,
+                      # sav
+                      header = TRUE,
+                      # csv
+                      fill = TRUE,
+                      comment.char = "",
+                      quote = "\"",
+                      ...)
+{
+  read_xlsx <- function() {
+    if (is.null(na.strings)) {
+      readxl::read_excel(file,
+                         sheet = sheet,
+                         skip = skip,
+                         range = range)
+    }
+    else{
+      readxl::read_excel(
+        file,
+        sheet = sheet,
+        skip = skip,
+        range = range,
+        na = na.strings
+      )
+    }
+  }
+  
+  read_csv <- function() {
+    read.table(
+      file = file,
+      header = header,
+      sep = sep,
+      quote = quote,
+      dec = dec,
+      na.strings = na.strings,
+      skip =skip,
+      fill = fill,
+      comment.char = comment.char
+    )
+  }
+  
+  read_sav <- function() {
+    dat <-
+      haven::read_sav(file, encoding = encoding,  user_na = user_na)
+    haven::as_factor(dat)
+  }
+  
+  data <- data.frame(NULL)
+  if (length(grep("\n", file)) > 0) {
+    # cat("\n\nread-text\n")
+    data <- read.text2(file, dec = dec)
+  }
+  else {
+    if (file.exists(file)) {
+      # cat("\n\nread-file\n")
+      file_info <- file.info(file)[c(1, 4, 5)]
+      ext <- tolower(tools::file_ext(file))
+      
+      data <-
+        switch(ext,
+               sav = read_sav(),
+               xlsx = read_xlsx(),
+               csv =  read_csv(),
+               stop("Unknown extension '.", ext, "'", call. = FALSE))
+      
+      if (cleanup.encoding) {
+        data <- names_label_encoding(data)
+        data <- character_encoding(data)
+        data <- factor_levels_encoding(data)
+      }
+      if (cleanup.names) {
+        data <-
+          clean_names(data, label = FALSE)
+      }
+    }
+    else {
+      stop(note, "Kein file: ", file, "vorhanden!")
+    }
+  }
+  
+  
+  if (tabel_expand) {
+    data <-
+      expand_table(data, id.vars = id.vars, value = value, ...)
+  }
+  
+  if (as_tibble & !tibble::is_tibble(data)) {
+    data <- tibble::tibble(data)
+  } else if (!as_tibble & tibble::is_tibble(data))
+  {
+    data <- data.frame(data)
+  }
+  else {
+    NULL
+  }
+  
+  data
+}
+
+
+#' cleanup_NA
+#'
+#'
+#'
+#' @param obj data.frame
+#' @param na.strings na als character
+#' @param force.numeric alles zu Nummern
+#'
+#' @return data.frame
+#' @noRd
+cleanup_NA <-
+  function(obj,
+           na.strings = NULL,
+           force.numeric = FALSE) {
+    dimobj <- dim(obj)
+    for (i in 1:dimobj[2]) {
+      x <- obj[[i]]
+      if (!is.null(na.strings)) {
+        x[x %in% na.strings] <- NA
+        modif <- TRUE
+      }
+      if (force.numeric && length(lev <- levels(x))) {
+        x <- factor(x)
+        if (all.is.numeric(levels(x))) {
+          x <- as.numeric(as.character(x))
+          modif <- TRUE
+        }
+      }
+      if (modif)
+        obj[[i]] <- x
+      NULL
+    }
+    obj
+  }
+
+#' Read Text Lines
+#'
+#' @param string  character string
+#' @param na.strings 	  a character vector of strings which are to be interpreted as NA values.
+#' @param sep 	  the field separator character.
+#' @param dec  the character used in the file for decimal points.
+#' @param stringsAsFactors TRUE
+#'
+#' @return data.frame
+#' @noRd
+read.text2 <-
+  function (string,
+            na.strings = c("NA", "na"),
+            sep = "\t",
+            dec = ".",
+            stringsAsFactors = TRUE) {
+    data <- read.table(
+      zz <- textConnection(gsub(sep, " ", string)),
+      header = TRUE,
+      dec = dec,
+      na.strings = na.strings,
+      stringsAsFactors = stringsAsFactors
+    )
+    close(zz)
+    data
+  }
+
+
+
+
+
+#' Helper for expand_table
+#'  
+#'   http://wiki.stdout.org/rcookbook/Manipulating%20data/Converting%20between%20data%20frames%20and%20contingency%20tables/
+#' @noRd
+#'
+expand.dft <-
+  function(x,
+           na.strings = "NA",
+           as.is = FALSE,
+           dec = ".") {
+   # Take each row in the source data frame table and replicate it using the Freq value
+    data <- sapply(1:nrow(x),
+                   function(i)
+                     x[rep(i, each = x$Freq[i]),],
+                   simplify = FALSE)
+    
+    # Take the above list and rbind it to create a single data
+    # Also subset the result to eliminate the Freq column
+    data <-
+      subset(do.call("rbind", data), select = -Freq)
+    
+    # Now apply type.convert to the character coerced factor columns
+    # to facilitate data type selection for each column
+    for (i in 1:ncol(data)) {
+      data[[i]] <-
+        type.convert(
+          as.character(data[[i]]),
+          na.strings = na.strings,
+          as.is = as.is,
+          dec = dec
+        )
+    }
+    data
+  }
+
+
+#' Tabel To Expand Data Frame
+#'
+#' @noRd
+#' @param data data.frame
+#' @param id.vars idetifier
+#' @param value name of value
+#' @param as.is,dec,na.strings  an  type.convert(...)
+#'
+#' @return data.frame
+#'
+#' @examples
+#'
+#' dat <- expand_table("
+#' sex treatment  neg  pos
+#' f   KG          3   3
+#' f   UG          4   5
+#' m   KG          5   4
+#' m   UG          4   2
+#' ",
+#' id.vars = 1:2,
+#' value = "befund")
+#'
+#' xdat <- xtabs( ~ befund + sex + treatment, dat)
+#' Wide(as.data.frame(xdat),
+#'      befund ,
+#'      Freq)
+expand_table <-
+  function(data,
+           id.vars,
+           value = "value",
+           na.strings = "NA",
+           as.is = FALSE,
+           dec = ".") {
+    if (is.character(data))
+      data <-
+        read.text2(data)  # nur wenn die Funktion dierekt aufgerufen wird moeglich
+    
+    
+    if (!is.numeric(id.vars))
+      id.vars <- which(names(data) %in% id.vars)
+    
+    dataMatrix <- as.matrix(data[, -id.vars])
+    
+    if (length(id.vars) == 1) {
+      dimnames(dataMatrix)[[1]] <- data[, 1]
+      data2 <-
+        expand.dft(as.data.frame(as.table(dataMatrix),
+                                 stringsAsFactors = TRUE),
+                   na.strings,
+                   as.is,
+                   dec)
+      colnames(data2)[2] <- value
+    }
+    else {
+      dimnames(dataMatrix)[[1]] <- apply(data[, id.vars], 1, paste,
+                                         collapse = "+")
+      data2 <-
+        expand.dft(as.data.frame(as.table(dataMatrix),
+                                 stringsAsFactors = TRUE),
+                   na.strings,
+                   as.is,
+                   dec)
+      colnames(data2)[2] <- value
+      
+      data2 <-
+        cbind(reshape2::colsplit(data2[, 1], "\\+", names(data)[id.vars]),  data2)
+    }
+    
+    data2 <-
+      as.data.frame(lapply(data2, function(x)
+        if (is.character(x))
+          factor(x)
+        else
+          x))
+    if (length(id.vars) == 1)  {
+      names(data2)[1] <- names(data)[id.vars]
+    }
+    
+    data2
+  }
+
+
+
+
+
+# cleanup_haven_factor <- function(data,
+#                                  ...) {
+#   y <- sapply(data, function(x) {
+#     if (inherits(x, "haven_labelled"))
+#       TRUE
+#     else if (inherits(x, "labelled"))
+#       TRUE
+#     else
+#       FALSE
+#   })
+#   
+#   if (sum(y) > 0)
+#     data[which(y)] <-
+#       lapply(data[which(y)], haven::as_factor)
+#   
+#   if (tibble::is_tibble(data))
+#     data
+#   else
+#     tibble::as_tibble(data)
+# }
+
+
+#' @noRd
+#'
+character_encoding <- function(data,
+                               from = "UTF8",
+                               to = "latin1") {
+  myFact <-
+    which(sapply(data, function(x)
+      inherits(x, "character")) == TRUE)
+  if (length(myFact) > 0) {
+    for (i in myFact)
+      data[, i] <-  iconv(data[, i], from , to)
+  }
+  data
+}
+
+#' @noRd
+#'
+factor_levels_encoding <- function(data,
+                                   from = "UTF8",
+                                   to = "latin1") {
+  myFact <-
+    which(sapply(data, function(x)
+      inherits(x, "factor")) == TRUE)
+  if (length(myFact) > 0) {
+    for (i in myFact)
+      levels(data[, i]) <-  iconv(levels(data[, i]), from , to)
+  }
+  data
+}
+
+#' @noRd
+#'
+names_label_encoding <- function(data,
+                                 from = "UTF8",
+                                 to = "latin1") {
+  nms <-   iconv(names(data), from , to)
+  lbl <- get_label(data)
+  lbl <-   iconv(lbl, from , to)
+  names(lbl) <- nms
+  names(data) <- nms
+  lbl <- set_label(data, lbl)
+  data
+}
+
+
+# Convert_To_Factor
+# 
+# interne funktion fuer factor und cleanup
+# labels lassen sich nicht direkt auslesen
+# 
+# SPSS erlaubt leere Labels daher diese auffuellen
+# 
+# x <- haven::as_factor(x) Labels werden Falsch geordnet wenn zB
+# 
+#  1=ja, 8=nein dabei wird 8 verworfen
+ 
+# Convert_To_Factor <- function(x) {
+#   lbl <-
+#     if (any(names(attributes(x)) == "label"))
+#       attr(x, "label")
+#   else
+#     names(x)
+#   
+#   lbls <- attr(x, "labels")
+#   
+#   if (any(names(lbls) == "") | any(names(lbls) == "&nbsp;")) {
+#     spss_names <- gsub("&nbsp;", "", names(lbls))
+#     empty <- which(spss_names == "")
+#     names(lbls)[empty] <- empty
+#   }
+#   x <- factor(x, lbls, names(lbls))
+#   attr(x, "label") <- lbl
+#   x
+# }
+

@@ -170,11 +170,15 @@ as_logical <- function(x) {
 #' @export
 #'
 as_factor <- function(x, ...) {
-  lbl <- attr(x, "label")
-  x <- factor(x, ...)
-  
-  attr(x, "label") <- lbl
-  x
+  if (inherits(x, "haven_labelled"))
+    haven::as_factor(x)
+  else {
+    lbl <- attr(x, "label")
+    x <- factor(x, ...)
+    
+    attr(x, "label") <- lbl
+    x
+  }
   
 }
  
@@ -202,7 +206,7 @@ as_cut <- function(x, ...) {
 #'
 #' @return factor
 #' @export
-#rev_factor<- 
+ 
 rev.factor<- function(x){
   lbl <- attr(x, "label")
   x <- factor(x, rev(levels(x)))

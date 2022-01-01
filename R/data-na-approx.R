@@ -61,7 +61,7 @@ as.data.frame(na_approx.matrix(x))
 #' @export
 na_approx.matrix <- function(x, ...) {
  rslt <-
-   t(apply(x, 1, na_approx.vector))
+   t(apply(x, 1, na_approx.default))
  colnames(rslt) <-colnames(x)
  row.names(rslt) <- row.names(x)
  rslt

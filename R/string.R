@@ -121,9 +121,17 @@ clean_names.data.frame <-
   function(data,
            label = TRUE,
            labels = NULL,
+           cleanup.encoding = FALSE,
+           from = "UTF8" , 
+           to = "latin1",
+           
            ...) {
     nams_df <- names(data)
+    if (cleanup.encoding)
+      nams_df <- iconv(nams_df, from, to)
+    
     nams_clean <- clean_names.default(nams_df, ...)
+    
     
     if (label) {
       if (is.null(labels)) {
@@ -133,6 +141,9 @@ clean_names.data.frame <-
         stop(" Laenge der labels muss gleich der laenge des DF sein!")
       }
       names(data) <- nams_clean
+      
+      if (cleanup.encoding)
+        labels <- iconv(labels, from, to)
       names(labels) <- nams_clean
       label_data_frame(data, labels)
     }

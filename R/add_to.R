@@ -48,6 +48,8 @@ add_to.list <- function(x, ...) {
 
 
 #' @export
+#' @examples 
+#'  # tibble::add_column(.data )
 add_to.data.frame <- function(x, ...) {
   what <- list(...)
  # print(is.list(what[[1]]))

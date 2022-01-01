@@ -1,5 +1,3 @@
-#stp25output
-
 #' Transformiere zu data.frame
 #'
 #'
@@ -86,9 +84,12 @@ fix_to_tibble <- function(x, ...) {
 #' @rdname fix_to_df
 #' @export
 fix_to_df.efflist <-
-  fix_to_df.eff <-
-  function(...) {
-    stp25stat:::tbll_extract_eff(..., include.format = FALSE)
+   fix_to_df.eff <-
+   function(...) {
+     
+     stop("Benutze bitte die Funftion \n stp25stat:::tbll_extract_eff(..., include.format = FALSE)")
+     
+  #   stp25stat:::tbll_extract_eff(..., include.format = FALSE)
   }
 
 #' @rdname fix_to_df
@@ -142,6 +143,45 @@ fix_to_df.matrix <-
       as.data.frame(x, stringsAsFactors = FALSE)
   }
 
+
+# 
+# # Add columns into data frame
+# # If specified before or after columns does not exist, columns are appended at the end
+# add_columns <- function(.data, ..., .before = NULL, .after = NULL){
+#   if(is.character(.before)){
+#     if(!(.before %in% colnames(.data))){
+#       .before <- NULL
+#     }
+#   }
+#   if(is.character(.after)){
+#     if(!(.after %in% colnames(.data))){
+#       .after <- NULL
+#     }
+#   }
+#   tibble::add_column(.data, ..., .before = .before, .after = .after)
+# }
+# 
+# 
+# # Convert a tbl to matrix
+# tibble_to_matrix <- function(x){
+#   x <-  as.data.frame(x)
+#   rownames(x) <- x[, 1]
+#   x <- x[, -1]
+#   as.matrix(x)
+# }
+# 
+# # Convert a matrix to standard data frame
+# matrix_to_dataframe <- function(x){
+#   x <- as.data.frame(x, stringsAsFactors = FALSE) %>%
+#     add_column(rowname = rownames(x), .before = 1)
+#   rownames(x) <- NULL
+#   x
+# }
+# 
+# # Convert a matrix to tibble
+# matrix_to_tibble <- function(x){
+#   as_tibble(x, rownames = "rowname")
+# }
 
 
 #' @rdname fix_to_df
@@ -233,7 +273,7 @@ fix_to_df.ftable <-
 #' tab_3x2x3
 #' # ftable(tab_3x2x3)
 #' # as.data.frame(ftable(tab_3x2x3)) %>%
-#' #   stp25aggregate::Wide(induced  +  case ~education )
+#' #   Wide(induced  +  case ~education )
 #' fix_to_df(tab_3x2x3)
 #'
 fix_to_df.table <- function(x, dim_x = dimension(x), ...) {

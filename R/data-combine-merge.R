@@ -27,7 +27,7 @@
 #'
 #'
 combine_data_frame <- function(..., by = 1, prefix = NULL) {
-  # bis jetzt nur einmal in stp25stat verwendet
+  # bis jetzt nur einmal verwendet
   
   tmp <- list(...)
   lng <-  lengths(tmp)

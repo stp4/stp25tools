@@ -98,6 +98,7 @@ delet_label <- function(data) {
 }
 
 
+
 #' @rdname Label
 #' @param include.units einheiten
 #' @param label named character string

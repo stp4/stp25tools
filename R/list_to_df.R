@@ -1,6 +1,3 @@
-#stp25aggregate
-
-
 #' list_to_df
 #'
 #' @param x liste mit data.frames

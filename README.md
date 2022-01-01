@@ -1,7 +1,11 @@
 stp25tools
 ================
 
-## add\_to
+<!-- Attaching package: ‘stp25tools’ -->
+<!-- The following objects are masked from ‘package:stp25aggregate’: -->
+<!--     get_label, Label, set_label, wrap_label, XLS -->
+
+## add_to
 
 Element zu Liste hinzufügen.
 
@@ -35,8 +39,6 @@ stringsAsFactors = FALSE
  add_to(df, c("Erste Zeile" = 1, "Dritte" = 3))
 ```
 
-    ## [1] FALSE
-
     ##        Source  x  y
     ## 5 Erste Zeile NA NA
     ## 1           A  1  1
@@ -49,8 +51,6 @@ stringsAsFactors = FALSE
 add_to(df, "Erste Zeile")
 ```
 
-    ## [1] FALSE
-
     ##        Source  x  y
     ## 5 Erste Zeile NA NA
     ## 1           A  1  1
@@ -61,8 +61,6 @@ add_to(df, "Erste Zeile")
 ``` r
 add_to(df, c("Erste Zeile", "Zweite"))
 ```
-
-    ## [1] FALSE
 
     ##        Source  x  y
     ## 5 Erste Zeile NA NA
@@ -76,8 +74,6 @@ add_to(df, c("Erste Zeile", "Zweite"))
 add_to(df, c("Erste Zeile" = 1, "letzte" = 5))
 ```
 
-    ## [1] FALSE
-
     ##        Source  x  y
     ## 5 Erste Zeile NA NA
     ## 1           A  1  1
@@ -89,8 +85,6 @@ add_to(df, c("Erste Zeile" = 1, "letzte" = 5))
 ``` r
 add_to(df, list("G", 5), pos = -1)
 ```
-
-    ## [1] TRUE
 
     ##   Source x  y
     ## 1      A 1  1
@@ -104,8 +98,6 @@ add_to(df, data.frame(  Source = c("G", "H"),
                         x = 5:6
 ), pos = -1)
 ```
-
-    ## [1] TRUE
 
     ##   Source x  y
     ## 1      A 1  1
@@ -172,16 +164,16 @@ Merge2(df1, df2, df3, df4, by = "id")
 ```
 
     ##     id origin.x    N   P   C origin.y  foo1      X      Y origin.z origin.u
-    ## 1  P01        E 19.5 1.0 435        D FALSE 146500 378000        D        E
-    ## 2  P02        E 22.5 3.0 421        E FALSE 147600 349800        B        E
-    ## 3  P03        B 12.5 0.7 404        A  TRUE 145800 370500        C        A
-    ## 4  P04        E 25.5 3.6 493        C  TRUE 147000 381600        E        B
-    ## 5  P05        A 17.5 0.6 450        E FALSE 146300 372100        A        A
-    ## 6  P06        A 20.0 2.9 475        C FALSE 146500 360900        D        B
-    ## 7  P07        C 16.0 1.3 480        A FALSE 146900 392800        A        D
-    ## 8  P08        B 24.5 1.6 468        A FALSE 147200 369500        A        B
-    ## 9  P09        E 14.5 2.3 420        A  TRUE 147200 376000        C        B
-    ## 10 P10        A 23.5 2.1 493        B FALSE 147800 357400        C        A
+    ## 1  P01        E 13.5 2.8 416        B FALSE 147300 398200        A        D
+    ## 2  P02        C 24.5 1.7 449        D FALSE 146100 357600        E        C
+    ## 3  P03        A 18.5 1.8 459        B  TRUE 147500 367200        B        C
+    ## 4  P04        B 18.5 2.7 493        E FALSE 146800 390700        D        D
+    ## 5  P05        A 21.5 3.7 485        A  TRUE 146800 354200        E        C
+    ## 6  P06        D 17.5 2.6 428        B FALSE 146100 374300        D        C
+    ## 7  P07        C 18.5 3.0 418        B FALSE 147600 371300        C        B
+    ## 8  P08        E 15.0 3.8 420        D FALSE 145800 350000        C        D
+    ## 9  P09        A 14.5 4.0 500        B  TRUE 147300 388800        E        B
+    ## 10 P10        B 18.0 0.4 497        D  TRUE 147600 383900        E        D
 
 ## cbind data.frame aber listenweise
 
@@ -215,7 +207,7 @@ combine_data_frame(m, sd, by = NULL)
     ## 2      2       2   2    8   4   10   6   12
     ## 3      3       3   3   12   6   15   9   18
 
-## list\_to\_df
+## list_to_df
 
 ``` r
 x <- list(
@@ -301,7 +293,7 @@ fix_to_df(tab_3x2)
     ## 2       1        23           45
     ## 3       2        13           24
 
-# auto\_trans
+# auto_trans
 
 Automatische Taranformation von numerischen Variablen entsprechend ihere
 Verteilungseigenschaft
@@ -327,12 +319,12 @@ auto_trans(x)
     ## attr(,"link")
     ## function(x)
     ##   log(101 - x)
-    ## <bytecode: 0x0000000027bf6440>
+    ## <bytecode: 0x000000001dec6010>
     ## <environment: namespace:stp25tools>
     ## attr(,"inverse")
     ## function(x)
     ##   101 - (exp(x))
-    ## <bytecode: 0x0000000027bf5170>
+    ## <bytecode: 0x000000001dec4d08>
     ## <environment: namespace:stp25tools>
     ## attr(,"name")
     ## [1] "negative skew (max-Log)"
