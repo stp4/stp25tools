@@ -14,9 +14,9 @@ Suggests:
  tibble,
  plyr,
  stats,
- units,
- sjlabelled,
  e1071,
  broom,
  dplyr,
- utils
+ utils,
+Imports:
+  stp25settings 
