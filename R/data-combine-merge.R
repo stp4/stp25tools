@@ -1,74 +1,14 @@
-#' combine_data_frame
-#'
-#' @param ... data.frame
-#' @param by default = 1 kann auch NULL sein
-#' @param prefix names
-#'
-#' @return data.frame
-#' @export
-#'
-#' @examples
-#'
-#'
-#' m <- data.frame(
-#'   Item = 1:3,
-#'   a = (1:3),
-#'   b = (1:3) * 2,
-#'   c = (1:3) * 3
-#' )
-#' sd <- data.frame(
-#'   Item = (1:3),
-#'   a = (1:3) * 4,
-#'   b = (1:3) * 5,
-#'   c = (1:3) * 6
-#' )
-#' combine_data_frame(m, sd)
-#' combine_data_frame(m, sd, by = NULL)
-#'
-#'
-combine_data_frame <- function(..., by = 1, prefix = NULL) {
-  # bis jetzt nur einmal verwendet
-  
-  tmp <- list(...)
-  lng <-  lengths(tmp)
-  if (length(unique(lng)) != 1L)
-    stop("unequal input")
-  if (!is.null(by)) {
-    if (length(unique(sapply(tmp, "[", by))) != 1L)
-      stop("unequal bys")
-    measure <- seq_len(lng[1])[-by]
-    rslt <- tmp[[1]][by]
-  } else{
-    measure <- seq_len(lng[1])
-    rslt <- data.frame(row.names = seq_len(nrow(tmp[[1]])))
-  }
-  if (is.null(prefix))
-    prefix <- as.character(substitute(list(...)))[-1]
-  
-  for (i in measure) {
-    rslt <- cbind(
-      rslt,
-      as.data.frame(
-        sapply(tmp, "[", i),
-        col.names = paste(names(tmp[[1]])[i], prefix, sep = "_"),
-        fix.empty.names = FALSE,
-        stringsAsFactors = FALSE
-      )
-    )
-  }
-  rslt
-}
+# combine_data_frame, Merge2, Rbind2
 
 
-
-
-
-
-#' Merge more then two Data Frames
+#' Merge/Combine 
+#' 
+#' Combine more then two Data Frames  Objects by Columns
+#' 
 #'
 #' @param ... data.frames
 #' @param sort 		logical. Should the result be sorted on the by columns?
-#' @param suffixes 	a character vector of length n
+#' @param suffixes 	a character vector of length n 
 #' @param by,by.x,by.y id an merge
 #' @param all,all.x,all.y  all an merge
 #' @param include.label labels
@@ -126,8 +66,7 @@ Merge2 <-
             sort = TRUE,
             suffixes = NULL,
             #include.units=FALSE,
-            include.label=TRUE)
-  {
+            include.label=TRUE)  {
     # stolen from
     # https://stackoverflow.com/questions/16666643/merging-more-than-2-dataframes-in-r-by-rownames
     #
@@ -136,7 +75,7 @@ Merge2 <-
       stop(" by ... Fehlt! \n")
     data_list <-  list(...)
     
-
+    
     
     i_suffixes <- 0:1
     
@@ -167,7 +106,7 @@ Merge2 <-
       
       for (i in  seq_len(length(data_list))) {
         lv <- get_label(data_list[[i]],
-                                        include.units = FALSE)
+                        include.units = FALSE)
         
         lvl <- c(lvl,
                  lv[setdiff(names(lv), names(lvl))])
@@ -178,21 +117,77 @@ Merge2 <-
       set_label(
         Reduce(MyMerge, data_list),
         lvl
-        )
+      )
       
     }
     else {
-     Reduce(MyMerge, data_list) 
+      Reduce(MyMerge, data_list) 
     }
     
   }
 
 
-#' rbind multiple data frames
+#' @rdname Merge2
+#' @param prefix names
 #'
-#' Combines two or more data.frames rbind().
-#' 
-#' @param ... data.frames 
+#' @export
+#'
+#' @examples
+#'
+#' m <- data.frame(
+#'   Item = 1:3,
+#'   a = (1:3),
+#'   b = (1:3) * 2,
+#'   c = (1:3) * 3
+#' )
+#' sd <- data.frame(
+#'   Item = (1:3),
+#'   a = (1:3) * 4,
+#'   b = (1:3) * 5,
+#'   c = (1:3) * 6
+#' )
+#' combine_data_frame(m, sd)
+#' combine_data_frame(m, sd, by = NULL)
+#'
+combine_data_frame <- function(..., 
+                               by = 1, 
+                               prefix = NULL) {
+  # bis jetzt nur einmal verwendet
+  
+  tmp <- list(...)
+  lng <-  lengths(tmp)
+  if (length(unique(lng)) != 1L)
+    stop("unequal input")
+  if (!is.null(by)) {
+    if (length(unique(sapply(tmp, "[", by))) != 1L)
+      stop("unequal bys")
+    measure <- seq_len(lng[1])[-by]
+    rslt <- tmp[[1]][by]
+  } else{
+    measure <- seq_len(lng[1])
+    rslt <- data.frame(row.names = seq_len(nrow(tmp[[1]])))
+  }
+  if (is.null(prefix))
+    prefix <- as.character(substitute(list(...)))[-1]
+  
+  for (i in measure) {
+    rslt <- cbind(
+      rslt,
+      as.data.frame(
+        sapply(tmp, "[", i),
+        col.names = paste(names(tmp[[1]])[i], prefix, sep = "_"),
+        fix.empty.names = FALSE,
+        stringsAsFactors = FALSE
+      )
+    )
+  }
+  rslt
+}
+
+
+
+#' @rdname Merge2
+#' @description Rbind2: dplyr::bind_rows()
 #' @param .names alternative zur vergabe der labels in which
 #' @param .id Data frame identifier.  dplyr::bind_rows(..., .id = NULL)
 #' @param .use.label set_label TRUE/FALSE
@@ -201,9 +196,12 @@ Merge2 <-
 #' @examples
 #'
 #'
-#' df1 = data.frame(CustomerId = c(1:6), Product = c(rep("Oven", 3), rep("Television", 3)))
+#' df1 = data.frame(CustomerId = c(1:6), 
+#' Product = c(rep("Oven", 3), rep("Television", 3)))
 #'
-#' df2 = data.frame(CustomerId = c(4:7), Product = c(rep("Television", 2), rep("Air conditioner", 2)))
+#' df2 = data.frame(CustomerId = c(4:7), 
+#' Product = c(rep("Television", 2), rep("Air conditioner", 2)))
+#' 
 #' df3 = data.frame(
 #'   CustomerId = c(4:7),
 #'   Product = c(rep("Television", 2), rep("Air conditioner", 2)),
@@ -211,13 +209,13 @@ Merge2 <-
 #' )
 #'
 #' Rbind2(df1, df3)
+#' 
 #' dplyr::bind_rows(df1, df2)
 #'
 Rbind2 <- function (...,
                     .id = "which",
                     .names = NULL,
-                    .use.label = TRUE)
-{
+                    .use.label = TRUE) {
   data <- dplyr::bind_rows(..., .id = .id)
   
   if (all(!grepl("[^0-9]", data[[1]]))) {

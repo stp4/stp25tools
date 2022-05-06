@@ -1,40 +1,8 @@
-#' set_label2
-#' 
-#' internal use
-#' 
-#' @param data data.frame
-#' @param label attribut label
-#' @noRd
-set_label2 <- function(data, label = NULL) {
-  nms <- names(data)
-  nl <- nms %in% names(label)
-  if (sum(nl) > 0) {
-    for (n in nms[nl])
-      attr(data[[n]], "label") <- label[[n]]
-  }
-  data
-}
+# Label, delet_label, get_label, set_label, 
 
 
-#' get_label2 
-#' 
-#' internal use
-#'
-#' @noRd
-#'
-#' @param data data.frame
-#' 
-get_label2 <- function(data) {
-  lbl <- lapply(data, attr, "label")
-  if (length(lbl) == 0)
-    return(NULL)
-  
-  unlabl <- which(sapply(lbl, is.null))
-  
-  lbl[unlabl] <- names(lbl[unlabl])
-  unlist(lbl)
-  
-}
+
+
 
 
 
@@ -60,7 +28,7 @@ get_label2 <- function(data) {
 #'         WHtR_1 ="Waist-Height-Ratio"
 #'   )
 #'
-#' DF$BMI<- units::set_units(DF$BMI, kg/m2)
+#' # DF$BMI<- units::set_units(DF$BMI, kg/m2)
 #'
 #' get_label(DF)
 #' get_label(DF, include.units=TRUE)
@@ -123,8 +91,106 @@ set_label <- function(data,
 #' @description get_label und GetLabelOrName:  Abrufen  der Attributs label
 #' @export
 #'
-get_label <- function(data,
-                      include.units = FALSE) {
+get_label <-
+  function(data, ...,
+           include.units = FALSE) {
+    measure.vars <-
+      sapply(lazyeval::lazy_dots(...),
+             function(x) {as.character(x[1])})
+    
+    if (length(measure.vars) > 0) data <- data[measure.vars]
+    
+    lbl <- lapply(data, attr, "label") 
+    if (length(lbl) == 0)
+      return(NULL)
+    
+    unlabl <- which(sapply(lbl, is.null))
+    
+    lbl[unlabl] <- names(lbl[unlabl])
+    lbl <- unlist(lbl)
+    #  }
+    
+    if (include.units) {
+      is_units <- sapply(data, function(z)
+        inherits(z, "units"))
+      if (any(is_units)) {
+        lbl_nams <- names(lbl)
+        
+        lbl_units <-
+          sapply(data, function(z)
+            if (inherits(z, "units"))
+              paste0(" [", as.character(attr(z, "units")), "]")
+            else
+              "")
+        lbl <-  paste0(lbl, lbl_units)
+        names(lbl) <- lbl_nams
+      }
+    }
+    lbl
+  }
+
+
+# get_label <- function(data,
+#                       include.units = FALSE) {
+#   lbl <- lapply(data, attr, "label")
+#   if (length(lbl) == 0)
+#     return(NULL)
+#   
+#   unlabl <- which(sapply(lbl, is.null))
+#   
+#   lbl[unlabl] <- names(lbl[unlabl])
+#   lbl <- unlist(lbl)
+#   #  }
+#   
+#   if (include.units) {
+#     is_units <- sapply(data, function(z)
+#       inherits(z, "units"))
+#     if (any(is_units)) {
+#       lbl_nams <- names(lbl)
+#       
+#       lbl_units <-
+#         sapply(data, function(z)
+#           if (inherits(z, "units"))
+#             paste0(" [", as.character(attr(z, "units")), "]")
+#           else
+#             "")
+#       lbl <-  paste0(lbl, lbl_units)
+#       names(lbl) <- lbl_nams
+#     }
+#   }
+#   lbl
+# }
+
+
+
+
+#' set_label2
+#' 
+#' internal use
+#' 
+#' @param data data.frame
+#' @param label attribut label
+#' @noRd
+set_label2 <- function(data, label = NULL) {
+  nms <- names(data)
+  nl <- nms %in% names(label)
+  if (sum(nl) > 0) {
+    for (n in nms[nl])
+      attr(data[[n]], "label") <- label[[n]]
+  }
+  data
+}
+
+
+#' get_label2 
+#' 
+#' internal use
+#'
+#' @noRd
+#'
+#' @param data data.frame
+#' 
+get_label2 <- function(data) {
   lbl <- lapply(data, attr, "label")
   if (length(lbl) == 0)
     return(NULL)
@@ -132,30 +198,9 @@ get_label <- function(data,
   unlabl <- which(sapply(lbl, is.null))
   
   lbl[unlabl] <- names(lbl[unlabl])
-  lbl <- unlist(lbl)
-  #  }
+  unlist(lbl)
   
-  if (include.units) {
-    is_units <- sapply(data, function(z)
-      inherits(z, "units"))
-    if (any(is_units)) {
-      lbl_nams <- names(lbl)
-      
-      lbl_units <-
-        sapply(data, function(z)
-          if (inherits(z, "units"))
-            paste0(" [", as.character(attr(z, "units")), "]")
-          else
-            "")
-      lbl <-  paste0(lbl, lbl_units)
-      names(lbl) <- lbl_nams
-    }
-  }
-  lbl
 }
-
-
-
 
 
 

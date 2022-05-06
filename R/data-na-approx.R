@@ -1,3 +1,6 @@
+# na_approx
+
+
 #' Replace NA by Interpolation
 #'
 #' @param x an object.

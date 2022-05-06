@@ -1,54 +1,90 @@
-#' Nummernindex aus Excel - Spaltenbezeichnung
+#  as_logical, rev.factor, as_numeric, as_factor, as_rev, cat_bmi
+
+
+
+
+
+
+
+#' as_irgenwas
+#' 
+#' @name as_irgenwas
 #'
-#' Extrahiert aus Buchstaben die Spaltennummer
-#' @param ... liste mit den Spaltennamen A:BB
+#' @param x vector
+#' @param ... weitere methoden
+#' @return vector
+#'
+NULL
+
+
+
+#' @rdname as_irgenwas
+#' @description cat_bmi
+#' 
+#'  BMI: WHO   (kg/m2)
+#'
+#'      Very severely underweight 15
+#'      Severely underweight 15-16
+#'      Underweight 16-18.5
+#'      Normal (healthy weight) 18.5-25
+#'      Overweight 25-30
+#'      Obese Class I (Moderately obese) 30-35
+#'      Obese Class II (Severely obese) 35-40
+#'      Obese Class III (Very severely obese) 40
+#' 
+#'
+#' @param x vector
+#' @param breaks,labels an cut 
+#' @param n anzahl der BMI-Kategorien default = 4 Underweight,        Normal,    Overweight, Obese Class I 
+#' 
 #' @export
-#' @examples
-#' as.roman(1968)
-#' #strsplit("A:V", "\\:")
-#' XLS(a, B)
-#' XLS(a, B, c:f, g:h,i, r:z)
-#' XLS(A:Z)
-#'
-XLS <- function(...) {
-  letter_num <- function(ltr) {
-    which(myLetters %in% ltr)
-  }
+#' @examples 
+#' 
+#' table(cat_bmi(c(10, 15, 16, 18.5, 25, 30, 35, 40, 45)))
+#' table(cat_bmi(c(10, 15, 16, 18.5, 25, 30, 35, 40, 45), n=4))
+#' table(cat_bmi(c(10, 15, 16, 18.5, 25, 30, 35, 40, 45), n=5))
+#' table(cat_bmi(c(10, 15, 16, 18.5, 25, 30, 35, 40, 45), n=6))
+#' 
+cat_bmi <- function(x,
+                    breaks = c(-Inf, 15, 16, 18.5, 25, 30, 35, 40, Inf),
+                    labels = c(
+                      "Very severely underweight",
+                      "Severely underweight",
+                      "Underweight",
+                      "Normal",
+                      "Overweight",
+                      "Obese Class I",
+                      "Obese Class II",
+                      "Obese Class III"
+                    ),
+                    n = 4) {
+  if (n == 3)
+    cut(x, breaks[c(1, 4:5,  9)], labels[c(3:5)])
+  else if (n == 4)
+    cut(x,  breaks[c(1, 4:6,  9)],  labels[c(3:6)])
+  else if (n == 5)
+    cut(x, breaks[c(1, 3:6,  9)], labels[c(2:6)])
+  else if (n == 6)
+    cut(x, breaks[c(1, 3:7,  9)], labels[c(2:7)])
+  else if (n == 7)
+    cut(x, breaks[c(1, 2:7,  9)], labels[c(1:7)])
+  else
+    cut(x, breaks, labels)
   
-  myLetters = c(LETTERS,
-                unlist(lapply(LETTERS, function(abc)
-                  paste0(abc, LETTERS))))
   
-  ltr <- toupper(as.character(sys.call())[-1])
-  
-  
-  xrange <- grep("\\:", ltr)
-  n <- 0
-  if (length(xrange)) {
-    for (i in seq_along(xrange)) {
-      posn <- xrange[i] + n - i + 1
-      mltr <- unlist(strsplit(ltr[posn], "\\:"))
-      myRange <- myLetters[letter_num(mltr[1]):letter_num(mltr[2])]
-      ltr <- append(ltr, myRange, after = posn)
-      ltr <- ltr[-posn]
-      n <- n + length(myRange)
-    }
-  }
-  
-  letter_num(ltr)
 }
 
 
-#' as_numeric
-#'
-#'
+
+
+
+
 #' @rdname as_irgenwas
-#' @param x objekt
+#' @description as_numeric: character, factor to numeric
 #' @param na.string missing
 #' @param dec  decimal
 #' @param exclude.symbols  plus und  minus sind erlaubt
 #'
-#' @param ... alles
 #' @export
 #'
 #' @examples
@@ -75,13 +111,14 @@ as_numeric <-  function (x, ...) {
   UseMethod("as_numeric")
 }
 
-
+#' @rdname as_irgenwas
 #' @export
 as_numeric.numeric <- function(x, ...)
   return(x)
 
 
 
+#' @rdname as_irgenwas
 #' @export
 as_numeric.character <-
   function(x,
@@ -143,14 +180,9 @@ as_numeric.factor <-   function(x,
 
 
 
-
-#' as_logical
-#'
-#' @param x Objekt
-#'
-#' @return logical
+#' @rdname as_irgenwas
+#' @description as_logical: alles mit zwei Merkmalen zu logical
 #' @export
-#'
 as_logical <- function(x) {
   lbl <- attr(x, "label")
   
@@ -161,14 +193,27 @@ as_logical <- function(x) {
   attr(x, "label") <- lbl
   x
 }
-#' as_factor
-#'
-#' @param x Objekt
-#' @param ... an factor
-#'
-#' @return factor
+
+
+
+
+# sjlabelled:::as_factor.data.frame
+# as_factor.data.frame <- 
+# function (x, ..., add.non.labelled = FALSE) 
+# {
+#   dots <- sapply(eval(substitute(alist(...))), deparse)
+#   .dat <- .get_dot_data(x, dots)
+#   for (i in colnames(.dat)) {
+#     x[[i]] <- to_fac_helper(.dat[[i]], add.non.labelled)
+#   }
+#   x
+# }
+
+
+
+#' @rdname as_irgenwas
+#' @description as_factor: haven_labelled zu factor
 #' @export
-#'
 as_factor <- function(x, ...) {
   if (inherits(x, "haven_labelled"))
     haven::as_factor(x)
@@ -182,14 +227,10 @@ as_factor <- function(x, ...) {
   
 }
  
-#' as_cut
-#'
-#' @param x Objekt
-#' @param ... an cut
-#'
-#' @return factor
+
+#' @rdname as_irgenwas
+#' @description as_cut: cut mit label
 #' @export
-#'
 as_cut <- function(x, ...) {
   lbl <- attr(x, "label")
   x <- cut(as.numeric(x), ...)
@@ -200,18 +241,17 @@ as_cut <- function(x, ...) {
 }
 
 
-#' rev.factor
-#'
-#' @param x  Objekt
-#'
-#' @return factor
+#' @rdname as_irgenwas
+#' @description as_rev: reverse factor
 #' @export
- 
-rev.factor<- function(x){
-  lbl <- attr(x, "label")
-  x <- factor(x, rev(levels(x)))
-  
-  attr(x, "label") <- lbl
-  x
-  
+rev.factor <- as_rev <- function(x) {
+  if (is.factor(x)) {
+    lbl <- attr(x, "label")
+    x <- factor(x, rev(levels(x)))
+    
+    attr(x, "label") <- lbl
+    x
+  }
+  else
+    rev(x)
 }

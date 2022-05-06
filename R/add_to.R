@@ -1,3 +1,7 @@
+# add_to
+
+
+
 #' add_to
 #'
 #' @param x Dataframe ore list
@@ -36,7 +40,7 @@ add_to <-function(x, ...){
 }
 
 
-
+#' @rdname add_to
 #' @export
 add_to.list <- function(x, ...) {
   what <- list(...)
@@ -46,7 +50,7 @@ add_to.list <- function(x, ...) {
 }
 
 
-
+#' @rdname add_to
 #' @export
 #' @examples 
 #'  # tibble::add_column(.data )

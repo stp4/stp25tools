@@ -1,24 +1,5 @@
+# auto_trans
 
-
-
-
-quadr <- function(x , power = 2)
-  x ^ power
-
-
-#' negative skew (max-Log)
-#'
-#' Richtung wird vertauscht.
-#' Also bei effect-plot Achse auf hoher Wert zu niedriger Wert. (kann nicht geändert werden)
-#'
-#' @noRd
-log1p_percent <- function(x)
-  log(101 - x)
-expm1_percent <- function(x)
-  101 - (exp(x))
-
-
-#expm1_percent(log1p_percent(c(0, 1, 20, 75, 100)))
 
 
 
@@ -49,7 +30,6 @@ expm1_percent <- function(x)
 #' hist(x.pos)
 #' hist(auto_trans(x.neg))
 #' hist(auto_trans(x.pos))
-
 #'
 auto_trans <- function(x, treshhold=1) {
   if (!is.null(attr(x, "inverse"))) {
@@ -98,3 +78,29 @@ auto_trans <- function(x, treshhold=1) {
   }
   x
 }
+
+
+
+
+
+quadr <- function(x , power = 2)
+  x ^ power
+
+
+#' negative skew (max-Log)
+#'
+#' Richtung wird vertauscht.
+#' Also bei effect-plot Achse auf hoher Wert zu niedriger Wert. (kann nicht geändert werden)
+#'
+#' @noRd
+log1p_percent <- function(x)
+  log(101 - x)
+
+
+expm1_percent <- function(x)
+  101 - (exp(x))
+
+
+#expm1_percent(log1p_percent(c(0, 1, 20, 75, 100)))
+
+
