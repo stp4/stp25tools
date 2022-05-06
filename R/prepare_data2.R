@@ -1,3 +1,6 @@
+# prepare_data2, print
+
+
 #' prepare_data2
 #'
 #'  Funktion wird zum Aufbereiten der Daten verwendet. Die Daten werden als
@@ -9,6 +12,8 @@
 #'  APA.formula()
 #'  corr_plot.formula()
 #'  Hmisc_rcorr() also APA_Correlation
+#'  
+#' @param ... Formula, data usw
 #'
 #' @return Liste mit Namen und Daten
 #' data,
@@ -48,12 +53,13 @@ prepare_data2 <- function(...){
 }
 
 
-#' prepare_data2.formula
+#' @rdname prepare_data2
 #'
 #' @param x formel
 #' @param data  data.frame
 #' @param na.action na.pass, na.omit
 #' @param groups condition
+#' @param drop.unused.levels an factor
 #'
 #' @export
 prepare_data2.formula <-
@@ -93,7 +99,7 @@ prepare_data2.formula <-
   }
 
 
-#' prepare_data2.data.frame
+#' @rdname prepare_data2
 #'
 #' @param ... Namen oder Nummern (y-Variablen))
 #' @param by  x-Variablen
@@ -132,7 +138,12 @@ prepare_data2.data.frame <- function(data,
       attr(data[[n+nn]], "label") <- sub_haeding [[n]]
   }
   
-  measure.vars <- cleaup_names(measure.vars, data)
+  # cat("was kommt\n")
+  # print(measure.vars )
+  # print(length(measure.vars))
+  
+  if(length(measure.vars) == 0) measure.vars <- names(data)
+  else measure.vars <- cleaup_names(measure.vars, data)
   
   # Fehlercheck
   if (length(setdiff(measure.vars, names(data))) > 0) {
@@ -219,11 +230,23 @@ default_measure <- function(measure, measure.vars, measure.class) {
 #' 
 #' @noRd
 default_digits <- function(digits, measure.vars, measure.class) {
+  # cat("\nin default_digits\n")
+  # print(list(digits, measure.vars, measure.class))
+  # 
+  # print(list(
+  #   default_stp25("digits", "prozent"),
+  #   default_stp25("digits", "mittelwert"),
+  #   get_opt(name, type)
+  #   
+  #   
+  # ))
+  
   if (length(digits) == 1) {
     digits <-  ifelse(
       measure.class == "factor",
-      default_stp25("digits", "prozent"),
-      default_stp25("digits", "mittelwert")
+      get_opt("prozent", "digits"),
+      get_opt("mittelwert", "digits")
+      
     )
   }
   else{
@@ -231,8 +254,8 @@ default_digits <- function(digits, measure.vars, measure.class) {
     digits[nas] <-
       ifelse(
         measure.class[nas] %in% c("factor", "logical"),
-        default_stp25("digits", "prozent"),
-        default_stp25("digits", "mittelwert")
+        get_opt("prozent", "digits"),
+        get_opt("mittelwert", "digits")
       )
   }
   names(digits) <- measure.vars
@@ -447,8 +470,7 @@ is_formula2 <- function (x) {
 
 
 
-#' Aufdröseln
-#' @noRd
+
 cleaup_formula <- function(formula, data, groups) {
   measure <- digits<- NA
   if (!is.null(groups)) {
@@ -593,7 +615,7 @@ cleaup_formula <- function(formula, data, groups) {
 
 
 
-#' @rdname formula_helper
+#' @noRd
 #' @description make_formula: Formel erstellen in \code{berechne_all(...)} verwendet. 
 #' Hier wird \code{cbind(a,b,c)~g} ausgegebeb.
 #' @param  measurevar,groupvars  mamen als strings

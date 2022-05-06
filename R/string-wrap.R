@@ -1,6 +1,10 @@
-#' wrap_string 
+# wrap_string
+
+
+
+#' wrap_string (umbrechen)
 #' 
-#' Kopie von \link{str_wrap} wobei die Labels mitupData2 ergaenzt werden wenn ein 
+#' Kopie von  str_wrap  wobei die Labels mitupData2 ergaenzt werden wenn ein 
 #' Data.Frame-Objekt uebergeben wird. 
 #' 
 #' wrap_label kuerzt die label fur Grafiken.
@@ -41,26 +45,28 @@
 #'         WHtR_1 ="Waist-Height-Ratio"
 #'   )
 #' 
-#' DF$BMI<- units::set_units(DF$BMI, kg/m2)
+#'   # DF$BMI<- units::set_units(DF$BMI, kg/m2)
 #' 
 #' DF<- wrap_label(DF,   width = 20, max.lines = 1)
 #' get_label(DF)
 #' 
 #' wrap_factor(DF, max.lines = 1, max.lines.char = "")
 #' 
-wrap_string <- function(x,
+#' 
+wrap_string <- function(x, ...) {
+  UseMethod("wrap_string")
+}
+
+#' @export
+wrap_string.character <- function(x,
                           width = 25,
                           sep =  "\n",
                           pattern=NULL, 
                           replacement=NULL,
                           max.lines = NULL,
-                          max.lines.char=" ...")
-{
- 
-    
+                          max.lines.char=" ..."){
     if (!is.null(pattern))
       x <- gsub(pattern, replacement, x)
-    
     
   x <- gsub("\\s+", " ", x, perl=TRUE)
   x <- gsub("(?<=[\\s])\\s*|^\\s+|\\s+$", "", x, perl=TRUE)
@@ -120,10 +126,9 @@ wrap_string <- function(x,
 
  
 
-#' @rdname wrap_string
+ 
 #' @export
-#'
-wrap_label <-
+wrap_string.data.frame  <-
   function(x,
            width = 20,
            sep = "\n",
@@ -154,9 +159,9 @@ wrap_label <-
   }
 
 
-#' @rdname wrap_string
+
 #' @export
-wrap_factor <-
+wrap_string.factor  <-
   function(x,
            width = 20,
            sep = "\n",

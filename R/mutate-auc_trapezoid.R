@@ -1,3 +1,7 @@
+# auc_trapezoid
+
+
+
 #' Area Under the Curve
 #'
 #' Method trapezoid
@@ -48,11 +52,16 @@ auc_trapezoid <- function(...,
 }
 
 
-#' stolen from  DescTools::AUC
+# stolen from  DescTools::AUC
 calc_auc_trapezoid <-
-  function (x, time = seq_along(x) ,
-            na.rm = FALSE)
-  {
+  function (x, 
+            time = seq_along(x),
+            na.rm = FALSE){
+    if(all(is.na(x))) {
+    #  print(x)
+      return(NA)
+      }
+    
     if (na.rm) {
       idtime <- na.omit(cbind(time, x))
       time <- time[idtime]

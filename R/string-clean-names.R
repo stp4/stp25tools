@@ -1,63 +1,6 @@
-#'  cleansing
-#'
-#' Data cleansing
-#'
-#' cleansing_umlaute(): Funktion entfernt stoerende Umlaute,
-#' Funktion entfernt stoerende Umlaute, unten stehende Liste ggf. erweitern
-#' sprintf("%X", as.integer(charToRaw("Ae")))
-#' @param x string
-#' @export
-#'
-cleansing_umlaute <- function(x){
-  x <- gsub("\u00e4","ae", x)
-  x <- gsub("\u00fc","ue", x)
-  x <- gsub("\u00f6","oe", x)
-  x <- gsub("\u00dc","Ue", x)
-  x <- gsub("\u00c4","Ae", x)
-  x <- gsub("\u00d6","Oe", x)
-  x <- gsub("\u00df","ss", x)
-  x <- gsub(" ", "_", x)
-  x
-}
+# clean_names, 
 
 
-
-
-
-#' @rdname cleansing_umlaute
-#' @description Sonderzeichen aus socisurvy
-#' @export
-cleansing_umlaute2 <-
-  function(x) {
-    diaeresis <- "\u00A8"
-    ae <-  paste0("a", diaeresis)
-    ue <-  paste0("u", diaeresis)
-    oe <-  paste0("o", diaeresis)
-    Ue <-  paste0("U", diaeresis)
-    Ae <-  paste0("A", diaeresis)
-    Oe <-  paste0("O", diaeresis)
-    x <- gsub(ae, "\u00e4", x)
-    x <- gsub(oe, "\u00f6", x)
-    x <- gsub(ue, "\u00fc", x)
-    x <- gsub(Ae, "\u00c4", x)
-    x <- gsub(Ue, "\u00dc", x)
-    x <- gsub(Oe, "\u00d6", x)
-    x
-  }
-
-
-#' clean_space
-#'
-#' Leerzeichen entfernen
-#'
-#' @param x string
-#'
-#' @noRd
-clean_space <- function(x) {
-  x <- sub("[[:space:]]+$", "", x)
-  x <- sub("^[[:space:]]+", "", x)
-  sub(",", ".", x)
-}
 
 #' clean_names
 #' 
@@ -98,25 +41,23 @@ clean_names <- function(x, ...) {
 #' @rdname clean_names
 #' 
 #' @param label,labels label
-#' @param ... alles
-#' @description \code{clean_names} Input data.frame  output ist ein 
+#' @param cleanup.encoding,from,to logical  UTF-8 to latin
+#' @param ... alles 
+#' @description  clean_names(): Input data.frame  output ist ein 
 #' data.frame mit bereinigten namen.
 #' @export
 #' @examples 
 #' 
-#' #df <- data.frame(
-#' #Öse = c(1, 2, 3, 1, 2, 3),
-#' #Löre = gl(2, 3, labels = c("Amy", "Bob")),
-#' #Fürn = c(9, 7, 6, 8, 6, 9),
-#' #Mäße = c(6, 7, 8, 5, 6, 7),
-#' #hüne=c(1, 2, 3, 1, 2, 3)
-#' #)
+#' # df <- data.frame(
+#' # Öse = c(1, 2, 3, 1, 2, 3),
+#' # Löre = gl(2, 3, labels = c("Amy", "Bob")),
+#' # Fürn = c(9, 7, 6, 8, 6, 9),
+#' # Mäße = c(6, 7, 8, 5, 6, 7),
+#' # hüne=c(1, 2, 3, 1, 2, 3)
+#' # )
 #' 
-#' 
-#' #clean_names(df)
-#' 
-#' 
-#' 
+#' # clean_names(df)
+
 clean_names.data.frame <-
   function(data,
            label = TRUE,
@@ -124,7 +65,6 @@ clean_names.data.frame <-
            cleanup.encoding = FALSE,
            from = "UTF8" , 
            to = "latin1",
-           
            ...) {
     nams_df <- names(data)
     if (cleanup.encoding)
@@ -154,17 +94,18 @@ clean_names.data.frame <-
   }
 
 
+#' @rdname clean_names
 #' @param x  objekt
 #'
 #' @param replace named character string
-#'
-#' @rdname clean_names
+#' 
 #' @export
 clean_names.default <-
   function(x,
            tolower = TRUE,
            unique = TRUE,
-           abbreviate = FALSE, minlength = 4,
+           abbreviate = FALSE, 
+           minlength = 4,
            replace =
              c(
                "'" = "",
@@ -210,6 +151,83 @@ clean_names.default <-
     
     n
   }
+
+
+#' @rdname clean_names
+#' @description 
+#' paste_names:  paste names
+#'
+#' @param collapse  an  character string to separate the results ", "
+#'
+#' @return
+#' @export
+#'
+paste_names <-
+  function(x, collapse = ", ") {
+    paste0(names(x) , collapse = collapse)
+  }
+
+
+
+#' @rdname clean_names
+#' @description 
+#'  cleansing_umlaute:
+#'
+#'
+#' cleansing_umlaute(): Funktion entfernt stoerende Umlaute,
+#' Funktion entfernt stoerende Umlaute, unten stehende Liste ggf. erweitern
+#' sprintf("%X", as.integer(charToRaw("Ae")))
+#' @param x string
+#' @export
+#'
+cleansing_umlaute <- function(x){
+  x <- gsub("\u00e4","ae", x)
+  x <- gsub("\u00fc","ue", x)
+  x <- gsub("\u00f6","oe", x)
+  x <- gsub("\u00dc","Ue", x)
+  x <- gsub("\u00c4","Ae", x)
+  x <- gsub("\u00d6","Oe", x)
+  x <- gsub("\u00df","ss", x)
+  x <- gsub(" ", "_", x)
+  x
+}
+
+
+
+#' @rdname clean_names
+#' @description  cleansing_umlaute2: Sonderzeichen aus socisurvy
+#' @export
+cleansing_umlaute2 <-
+  function(x) {
+    diaeresis <- "\u00A8"
+    ae <-  paste0("a", diaeresis)
+    ue <-  paste0("u", diaeresis)
+    oe <-  paste0("o", diaeresis)
+    Ue <-  paste0("U", diaeresis)
+    Ae <-  paste0("A", diaeresis)
+    Oe <-  paste0("O", diaeresis)
+    x <- gsub(ae, "\u00e4", x)
+    x <- gsub(oe, "\u00f6", x)
+    x <- gsub(ue, "\u00fc", x)
+    x <- gsub(Ae, "\u00c4", x)
+    x <- gsub(Ue, "\u00dc", x)
+    x <- gsub(Oe, "\u00d6", x)
+    x
+  }
+
+
+#' clean_space
+#'
+#' Leerzeichen entfernen
+#'
+#' @param x string
+#'
+#' @noRd
+clean_space <- function(x) {
+  x <- sub("[[:space:]]+$", "", x)
+  x <- sub("^[[:space:]]+", "", x)
+  sub(",", ".", x)
+}
 
 
 

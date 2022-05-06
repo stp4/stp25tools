@@ -1,9 +1,13 @@
-#' Dapply 
+# Dapply, dapply2
+
+
+#' Apply Functions Over Data Frames
+#'
 #' 
-#' Dapply, dapply2 ist  plyr::llply()
+#' Dapply, dapply2:  plyr::llply() + Label()
 #' 
 #' @param x Objekt
-#' @param ... Weitere Argumente an llply
+#' @param ... Weitere Argumente an llply oder prepare_data2
 #' @return  data.frame
 #' @export
 #' @examples
@@ -28,15 +32,12 @@ Dapply <- function(x, ...) {
 }
 
 
-
-
-
 #' @rdname Dapply
 #' @export
 Dapply.formula <- function(x,
                            data,
                            fun = function(xx){as.numeric(xx)},
-                           stringsAsFactors = default.stringsAsFactors(),
+                           stringsAsFactors = FALSE,
                            ...) {
   X <- prepare_data2(x, data)
   
@@ -54,9 +55,8 @@ Dapply.formula <- function(x,
 #' @export
 Dapply.data.frame <- function(data,
                               ...,
-                              fun = function(x)
-                                as.numeric(x),
-                              stringsAsFactors = default.stringsAsFactors()) {
+                              fun = function(x)as.numeric(x),
+                              stringsAsFactors = FALSE) {
   
   X <- prepare_data2(data, ...)
   apply_data <- dapply2(X$data[X$measure.vars], fun)
@@ -68,10 +68,9 @@ Dapply.data.frame <- function(data,
 
 
 
-
 #' @rdname Dapply
 #' 
-#' @description dapply2 = Copie of plyr::llply()
+#' @description dapply2: Copie of plyr::llply()
 #' 
 #' @param data  Data.frame
 #' @param fun   funktion function(x) as.numeric(x)
@@ -79,24 +78,25 @@ Dapply.data.frame <- function(data,
 #' @export
 #' 
 dapply2 <- function (data,
-                     fun = function(x)
-                       as.numeric(x),
-                     stringsAsFactors = default.stringsAsFactors(),
+                     fun = function(x) as.numeric(x),
+                     stringsAsFactors = FALSE,
                      ...) {
-  if (tibble::is_tibble(data))
-    set_label2(tibble::as_tibble(plyr::llply(data, fun, ...)),
-               get_label2(data))
-  else
-    set_label2(data.frame(plyr::llply(data, fun, ...),
-                          stringsAsFactors = stringsAsFactors),
-               get_label2(data))
+  set_label2(dapply1(data,
+                     fun,
+                     stringsAsFactors,
+                     ...),
+             get_label2(data))
 }
 
-
-
-
-
- 
+  # if (tibble::is_tibble(data))
+  #   set_label2(tibble::as_tibble(plyr::llply(data, fun, ...)),
+  #              get_label2(data))
+  # else
+  #   set_label2(data.frame(plyr::llply(data, fun, ...),
+  #                         stringsAsFactors = stringsAsFactors),
+  #              get_label2(data))
+  #
+  
 
 #' @param data an dplyr
 #'
@@ -120,10 +120,10 @@ dapply1 <-
   }
 
 
-
-
-
-#' Transpose
+#' @rdname Dapply
+#' @description  transpose2: Data Frame Transpose
+#' 
+#' Alternative: data.table::transpose(l, make.names = 1, keep.names = "Item")
 #'
 #' @param x Objekt (Data.Frame oder Tibble)
 #' @param ...   key="Item"
@@ -147,51 +147,61 @@ transpose2 <- function(x, ...) {
 
 
 
-#' @rdname transpose2
+#' @rdname Dapply
 #' @export
 transpose2.default <- function(x, ...) {
   do_transpose(x, ...)
 }
 
 
-#' @rdname transpose2
+#' @rdname Dapply
 #' @export
 transpose2.tbl_df <- function(x, ...) {
   tibble::as_tibble(do_transpose(x, ...))
   
 }
-#' @rdname transpose2
+
+#' @rdname Dapply
 #' @export
 transpose2.data.frame <- function(x, ...) {
   as.data.frame(do_transpose(x, ...))
-  
 }
 
 #' @noRd
 #' @param x data.frame
 #'
-#' @param key Item
-#' @param value value
+#' @param key  name of the first column Item
+#' @param col.names,row.names The name  of the  column  and rows
 #'
 #' @keywords internal
-do_transpose <- function(x, key = "Item", value) {
-  rslt <-  t(x)
-  colnames(rslt) <- unlist(rslt[1, ])
+do_transpose <- function(x, 
+                         key = "Item", 
+                         col.names = NULL,
+                         row.names = NULL) {
+  rslt <- t(x)
+  if(is.null(col.names)) col.names <- unlist(rslt[1, ])
+  else{
+    if((ncol(rslt)+1) == length(col.names)) {
+      key<- col.names[1]
+      col.names <- col.names[-1]
+    }
+  } 
+  colnames(rslt) <- col.names
+  
   rslt <- rslt[-1, ]
+  
+  if(is.null(row.names)) row.names <- row.names(rslt)
+  
   if (!is.null(row.names(rslt))) {
-    rslt <-  cbind(my.row.names = row.names(rslt), rslt)
+    rslt <-  cbind(my.row.names = row.names, rslt)
     colnames(rslt)[1] <- key
   }
   rslt
 }
 
 
-
-
-
-
-#' @rdname transpose2
-#' @description  transpose_factor Rangreihe transortieren
+#' @rdname Dapply
+#' @description  transpose_factor: Rangreihe transortieren
 #'
 #' @param x data.frame
 #' @param levels optional Levels
@@ -217,7 +227,8 @@ do_transpose <- function(x, key = "Item", value) {
 #'   transpose_factor(dat, NULL)
 #'   transpose_factor(dat)
 
-transpose_factor <- function(x, levels = names(x)) {
+transpose_factor <- function(x, 
+                             levels = names(x)) {
   lvl = levels(x[[1]])
   transposed <- t(apply(x, 1, function(z) {
     trans <- NULL

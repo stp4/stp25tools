@@ -1,7 +1,22 @@
+# get_data
+
+
+
+
+
 #' get_data
 #' 
 #' 
-#' Daten Einlesen
+#' Daten importieren:
+#' 
+#'  xlsx: readxl::read_excel(file, sheet, skip, range)
+#' 
+#'  csv:   read.table(file, header, sep, quote, dec, na.strings, skip, fill, comment.char)
+#'  
+#'  sav:  haven::read_sav(file, encoding,  user_na)
+#'  
+#'  Text: read.text2(file, dec)
+#'  
 #'
 #' @param file Demo.xla,
 #' Demo.sav,
@@ -11,13 +26,18 @@
 #' @param tabel_expand logical FALSE - Tabellen mit haufigkeiten werden als Dataframe im long-Format ausgegeben
 #' @param id.vars nur mit tabel_expand  - Nummer und Name der ID-Variablen bei tabel_expand default ist 1.
 #' @param value nur mit tabel_expand  - Name der output-variable bei tabel_expand.
-#' @param Data_info  Data_info = date(),
 #' @param sep,quote,dec Lesen der csv- Files = ";", = "\"", ".",
 #' @param sheet,skip,range an readxl::read_excel
-#' @param cleanup.encoding  UTF-8 = FALSE,
+#' @param cleanup.encoding,cleanup.names,cleanup.factor   cleanup UTF-8 = FALSE,
 #' @param user_na	If TRUE variables with user defined missing will be read into labelled_spss objects. If FALSE, the default, user-defined missings will be converted to NA.
-#' @param output Text Info zu File
+#' @param label use attribut label
+#' @param as_tibble output
+#' @param encoding,from,to Encoding
+#' @param header an SPSS
+#' @param fill an CSV
+#' @param comment.char an csv
 #' @param ...  Argumente fuer spss und csv. Bei SPSS-Files  kann die Zeichencodierung mit  \code{cleanup.encoding ="UTF-8"} geaendert werden.
+#'
 #' @export
 #' @examples
 #' # require(stp25tools)
@@ -49,7 +69,7 @@
 #' ftable(xtabs(~ sex + treatment + befund, dat))
 #' 
 #' file.exists("R/dummy.csv")
-#' get_data("R/dummy.csv", dec = ",", na.strings = "-")
+#' get_data("R/dummy.csv", dec = ",", na.strings = "-", skip=1, label=1)
 #' get_data("R/dummy.xlsx", na.strings = "-")
 #' get_data("R/dummy.xlsx")
 #' 
@@ -62,6 +82,7 @@ get_data <- function (file = NA,
                       sheet = 1,
                       range = NULL,
                       skip = 0,
+                      label = 0,
                       as_tibble = TRUE,
                       cleanup.names = TRUE,
                       cleanup.encoding = FALSE,
@@ -79,8 +100,7 @@ get_data <- function (file = NA,
                       fill = TRUE,
                       comment.char = "",
                       quote = "\"",
-                      ...)
-{
+                      ...){
   read_xlsx <- function() {
     if (is.null(na.strings)) {
       readxl::read_excel(file,
@@ -100,6 +120,8 @@ get_data <- function (file = NA,
   }
   
   read_csv <- function() {
+    
+    dat<-
     read.table(
       file = file,
       header = header,
@@ -111,6 +133,27 @@ get_data <- function (file = NA,
       fill = fill,
       comment.char = comment.char
     )
+    
+    if( skip > 0 & label > 0){
+      label <-
+        read.table(
+          file = file,
+          header = FALSE,
+          sep = sep,
+          quote = quote,
+          skip =label-1,
+          nrows =1
+        )
+      
+      if(any(is.na(label))){
+        isna <- which(is.na(label))
+        
+        label[isna] <- names(dat)[isna]
+      }
+      names(label)<-  names(dat)
+     dat<- set_label2(dat, label)
+    } 
+    dat
   }
   
   read_sav <- function() {

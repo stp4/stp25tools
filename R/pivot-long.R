@@ -1,3 +1,5 @@
+# Long
+
 #' Long und Wide  
 #'
 #'  Erweiterung von tidyr::pivot_longer tidyr::pivot_wider
@@ -34,6 +36,12 @@ Long <- function(x, ...) {
   UseMethod("Long")
 }
 
+
+#' @param data data
+#' @param key,value Namen fuer die Ausgabe
+#' @param use.label attribut label verwenden
+#' @param by,id.vars Items
+#'
 #' @rdname Long
 #' @export
 #' 
@@ -45,13 +53,23 @@ Long.formula <- function(x,
                          data,
                          key = "variable",
                          value = "value",
+                         use.label=TRUE,
                          ...) {
   x <- clean_dots_formula(x, names_data = names(data))
   rhs <- all.vars(x[-3])
   lhs <- all.vars(x[-2])
   
   data <- data[c(rhs, lhs)]
-  lvl <-  get_label2(data[rhs])
+  
+
+  
+  if (use.label)
+    lvl <-  get_label2(data[rhs])
+  else {
+    lvl <- rhs
+    names(lvl) <- rhs
+  }
+  
   # all.vars elimieniert doppelte namen
   # if( length(unique(rhs)) != length(rhs)) 
   #   stop(" In Long.formula sind die Variablen-Namen doppelt!")
@@ -74,7 +92,8 @@ Long.data.frame <- function(data,
                             by = NULL,
                             key = "variable",
                             value = "value",
-                            id.vars = all.vars(by)) {
+                            id.vars = all.vars(by),
+                            use.label=TRUE) {
   measure.vars <-
     sapply(lazyeval::lazy_dots(...), function(x) {
       as.character(x[1])
@@ -85,8 +104,12 @@ Long.data.frame <- function(data,
       if(length(id.vars)==0) names(data)  else names(data[-id.vars])
     }
   else {
-    if(length(measure.vars)==1 & grepl('~', measure.vars[1] ))
-      return( Long.formula(formula(measure.vars[1]), data,  key, value) )
+    if (length(measure.vars) == 1 & grepl('~', measure.vars[1])) {
+      return(Long.formula(formula(measure.vars[1]), data,  key, value))
+    }
+    else {
+      measure.vars <- cleaup_names(measure.vars, data)
+    }
        
     data <- data[c(measure.vars, id.vars)]
     
@@ -94,8 +117,12 @@ Long.data.frame <- function(data,
   
   if( length(unique(measure.vars)) != length(measure.vars)) 
     stop(" In Long.data.frame sind die Variablen-Namen (measure.vars) doppelt!")
-  
-  lvl <-  get_label2(data[measure.vars])
+  if (use.label)
+    lvl <- get_label2(data[measure.vars])
+  else {
+    lvl <- measure.vars
+    names(lvl) <- measure.vars
+  }
   rstl <-
     tidyr::pivot_longer(data, 
                         cols = measure.vars,

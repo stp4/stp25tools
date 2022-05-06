@@ -1,3 +1,8 @@
+# Long
+
+
+
+
 #' @rdname Long
 #' @description  Wide  entspricht tidyr::spread()
 #'
