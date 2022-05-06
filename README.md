@@ -5,6 +5,283 @@ stp25tools
 <!-- The following objects are masked from ‘package:stp25aggregate’: -->
 <!--     get_label, Label, set_label, wrap_label, XLS -->
 
+## Funktionen
+
+-   Pivot-Funktionen: *Long(), Wide(), Dapply(), dapply2(),
+    transpose2()*
+
+-   Zusammenfuegen von Data Frame: *Merge2, Rbind2, combine_data_frame*
+
+-   Objekt in Data Frame umwandeln: *fix_to_df, fix_to_tibble,
+    list_to_df*
+
+-   Vectoren fuer den Zugriff auf Data Frame erstellen: *Cs, XLS,
+    paste_names*
+
+-   String umbrechen: *wrap_string*
+
+-   Element zu Vectoren oder Listen hinzufuegen: *add_to, add_row_df*
+
+-   Intern Daten mit Formel aufbereiten: *prepare_data2, print*
+
+-   Vectoren transformieren: *as_numeric, as_factor, as_cut, as_logical,
+    rev.factor,as_rev, cat_bmi*
+
+-   Daten importieren: *get_data*
+
+-   Fehlende Daten ergänzen und transformieren: *na_approx, auto_trans*
+
+-   Label verwalten: *Label, delet_label, get_label, set_label*
+
+-   Bereinigen von Data Frame und strings: *clean_names,
+    cleansing_umlaute, cleansing_umlaute2*
+
+-   Rechen operationen: *auc_trapezoid*
+
+## Get Data
+
+### Direkter Import aus Text
+
+``` r
+dat <-
+  get_data("
+sex treatment control
+m  2 3
+f  3 4
+", tabel_expand = TRUE,id.vars = 1)
+
+xtabs(~ sex + value, dat)
+```
+
+    ##    value
+    ## sex control treatment
+    ##   f       4         3
+    ##   m       3         2
+
+``` r
+dat <- 
+  get_data(
+"sex treatment  neg  pos
+f   KG          3   3
+f   UG          4   5
+m   KG          5   4
+m   UG          4   2
+",
+  tabel_expand = TRUE,
+  id.vars = 1:2,
+  value = "befund"
+)
+
+ftable(xtabs(~ sex + treatment + befund, dat))
+```
+
+    ##               befund neg pos
+    ## sex treatment               
+    ## f   KG                 3   3
+    ##     UG                 4   5
+    ## m   KG                 5   4
+    ##     UG                 4   2
+
+### File Import
+
+``` r
+ file.exists("R/dummy.csv")
+```
+
+    ## [1] TRUE
+
+``` r
+#' get_data("R/dummy.csv", dec = ",", na.strings = "-", skip=1, label=1)
+#' get_data("R/dummy.xlsx", na.strings = "-")
+ get_data("R/dummy.xlsx")
+```
+
+    ## # A tibble: 5 x 5
+    ##      id group.student x         y     z
+    ##   <dbl> <chr>         <chr> <dbl> <dbl>
+    ## 1     1 A             1      4.3   59.4
+    ## 2     2 B             4      3.24  47.3
+    ## 3     3 C             8      4.02  32.2
+    ## 4     4 D             -      1.25  NA  
+    ## 5     5 E             9      1.23  36.4
+
+``` r
+#' 
+ x <- get_data("R/dummy.sav")
+ get_label(x)[1:4]
+```
+
+    ##               lfdn      external.lfdn             tester           dispcode 
+    ##           "number"    "external lfdn"           "tester" "disposition code"
+
+## Transpose
+
+### Wide
+
+``` r
+dat
+```
+
+    ##   month student  A B
+    ## 1     1     Amy 19 6
+    ## 2     2     Amy 27 7
+    ## 3     3     Amy 16 8
+    ## 4     1     Bob 28 5
+    ## 5     2     Bob 10 6
+    ## 6     3     Bob 29 7
+
+``` r
+df2<- dat %>% Wide(student,  c(A, B))
+dat %>% Wide(student,  c("A", "B"))
+```
+
+    ## # A tibble: 3 x 5
+    ##   month Amy_A Bob_A Amy_B Bob_B
+    ##   <int> <dbl> <dbl> <dbl> <dbl>
+    ## 1     1    19    28     6     5
+    ## 2     2    27    10     7     6
+    ## 3     3    16    29     8     7
+
+``` r
+dat[-3] %>% Wide(student,  B)
+```
+
+    ## # A tibble: 3 x 3
+    ##   month   Amy   Bob
+    ##   <int> <dbl> <dbl>
+    ## 1     1     6     5
+    ## 2     2     7     6
+    ## 3     3     8     7
+
+``` r
+dat  %>% Wide(student ~ month)
+```
+
+    ## Using B as value column: use value to override.
+
+    ## # A tibble: 2 x 4
+    ##   student   `1`   `2`   `3`
+    ##   <chr>   <dbl> <dbl> <dbl>
+    ## 1 Amy         6     7     8
+    ## 2 Bob         5     6     7
+
+``` r
+dat  %>% Wide(month ~ student, A)
+```
+
+    ## # A tibble: 3 x 3
+    ##   month   Amy   Bob
+    ##   <int> <dbl> <dbl>
+    ## 1     1    19    28
+    ## 2     2    27    10
+    ## 3     3    16    29
+
+``` r
+dat  %>% Wide(student ~ month, A)
+```
+
+    ## # A tibble: 2 x 4
+    ##   student   `1`   `2`   `3`
+    ##   <chr>   <dbl> <dbl> <dbl>
+    ## 1 Amy        19    27    16
+    ## 2 Bob        28    10    29
+
+### Long
+
+``` r
+df2
+```
+
+    ## # A tibble: 3 x 5
+    ##   month Amy_A Bob_A Amy_B Bob_B
+    ##   <int> <dbl> <dbl> <dbl> <dbl>
+    ## 1     1    19    28     6     5
+    ## 2     2    27    10     7     6
+    ## 3     3    16    29     8     7
+
+``` r
+df2  %>% Long(Amy_A, Amy_B, Bob_A, Bob_B, by =  ~ month)
+```
+
+    ## # A tibble: 12 x 3
+    ##    month variable value
+    ##    <int> <fct>    <dbl>
+    ##  1     1 Amy_A       19
+    ##  2     1 Amy_B        6
+    ##  3     1 Bob_A       28
+    ##  4     1 Bob_B        5
+    ##  5     2 Amy_A       27
+    ##  6     2 Amy_B        7
+    ##  7     2 Bob_A       10
+    ##  8     2 Bob_B        6
+    ##  9     3 Amy_A       16
+    ## 10     3 Amy_B        8
+    ## 11     3 Bob_A       29
+    ## 12     3 Bob_B        7
+
+``` r
+dat %>%
+  tidyr::gather(variable, value,-(month:student)) %>%
+  tidyr::unite(temp, student, variable) %>%
+  tidyr::spread(temp, value)
+```
+
+    ##   month Amy_A Amy_B Bob_A Bob_B
+    ## 1     1    19     6    28     5
+    ## 2     2    27     7    10     6
+    ## 3     3    16     8    29     7
+
+``` r
+#  df_w2 <- Wide(df, student, c("A", "B")))
+
+ stp25aggregate::Long(list(A=c("Amy_A", "Bob_A" ), B=c("Amy_B", "Bob_B")), df2,
+             by =  ~ month,
+             key = "student",
+             key.levels= c("Amy", "Bob"))
+```
+
+    ## # A tibble: 6 x 4
+    ##   month student     A     B
+    ##   <int> <fct>   <dbl> <dbl>
+    ## 1     1 Amy        19     6
+    ## 2     2 Amy        27     7
+    ## 3     3 Amy        16     8
+    ## 4     1 Bob        28     5
+    ## 5     2 Bob        10     6
+    ## 6     3 Bob        29     7
+
+### Pivot-Transpose
+
+``` r
+dat
+```
+
+    ##   pos x y
+    ## 1   A 1 3
+    ## 2   B 2 4
+    ## 3   C 3 5
+
+``` r
+transpose2(dat)
+```
+
+    ##   Item A B C
+    ## x    x 1 2 3
+    ## y    y 3 4 5
+
+``` r
+transpose2(
+  dat,
+  key = "Item",
+  col.names = c("A-level", "C-level", "D-Level"),
+  row.names = c("x-axis", "y-axis")
+)
+```
+
+    ##     Item A-level C-level D-Level
+    ## x x-axis       1       2       3
+    ## y y-axis       3       4       5
+
 ## add_to
 
 Element zu Liste hinzufügen.
@@ -164,16 +441,16 @@ Merge2(df1, df2, df3, df4, by = "id")
 ```
 
     ##     id origin.x    N   P   C origin.y  foo1      X      Y origin.z origin.u
-    ## 1  P01        E 13.5 2.8 416        B FALSE 147300 398200        A        D
-    ## 2  P02        C 24.5 1.7 449        D FALSE 146100 357600        E        C
-    ## 3  P03        A 18.5 1.8 459        B  TRUE 147500 367200        B        C
-    ## 4  P04        B 18.5 2.7 493        E FALSE 146800 390700        D        D
-    ## 5  P05        A 21.5 3.7 485        A  TRUE 146800 354200        E        C
-    ## 6  P06        D 17.5 2.6 428        B FALSE 146100 374300        D        C
-    ## 7  P07        C 18.5 3.0 418        B FALSE 147600 371300        C        B
-    ## 8  P08        E 15.0 3.8 420        D FALSE 145800 350000        C        D
-    ## 9  P09        A 14.5 4.0 500        B  TRUE 147300 388800        E        B
-    ## 10 P10        B 18.0 0.4 497        D  TRUE 147600 383900        E        D
+    ## 1  P01        A 21.5 2.4 448        B  TRUE 147600 396800        A        B
+    ## 2  P02        A 23.5 2.8 431        C FALSE 147700 361800        D        C
+    ## 3  P03        B 13.5 1.3 497        E FALSE 148300 354100        B        D
+    ## 4  P04        D 16.0 0.8 411        E  TRUE 146500 368700        A        A
+    ## 5  P05        B 21.5 2.0 431        E  TRUE 147200 357900        C        A
+    ## 6  P06        C 21.5 2.1 431        E  TRUE 145700 371400        D        D
+    ## 7  P07        B 13.5 3.3 483        C  TRUE 145900 358800        D        C
+    ## 8  P08        E 19.0 3.0 416        E FALSE 148100 362800        D        E
+    ## 9  P09        A 21.5 3.5 420        E  TRUE 147500 362300        B        A
+    ## 10 P10        C 23.0 2.3 435        E  TRUE 147300 359300        A        E
 
 ## cbind data.frame aber listenweise
 
@@ -293,7 +570,7 @@ fix_to_df(tab_3x2)
     ## 2       1        23           45
     ## 3       2        13           24
 
-# auto_trans
+## auto_trans
 
 Automatische Taranformation von numerischen Variablen entsprechend ihere
 Verteilungseigenschaft
@@ -319,12 +596,12 @@ auto_trans(x)
     ## attr(,"link")
     ## function(x)
     ##   log(101 - x)
-    ## <bytecode: 0x000000001dec6010>
+    ## <bytecode: 0x00000000213c44a0>
     ## <environment: namespace:stp25tools>
     ## attr(,"inverse")
     ## function(x)
     ##   101 - (exp(x))
-    ## <bytecode: 0x000000001dec4d08>
+    ## <bytecode: 0x00000000213c31d0>
     ## <environment: namespace:stp25tools>
     ## attr(,"name")
     ## [1] "negative skew (max-Log)"
@@ -355,13 +632,13 @@ for(i in 1:4){
 
 
 
-  p0<-plot(effect("group", fit0),
+  p0<-plot(effects::effect("group", fit0),
            main="orginal",
            ylab = names(dat)[i])
-  p1<-plot(effect("group", fit1),
+  p1<-plot(effects::effect("group", fit1),
            main="non-trans",
            ylab = "")
-  p2<-plot(effect("group", fit1,
+  p2<-plot(effects::effect("group", fit1,
                   transformation =
                     list(link = attr(dat$x, "link"),
                          inverse = attr(dat$x, "inverse"))),
