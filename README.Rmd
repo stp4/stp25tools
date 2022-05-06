@@ -6,22 +6,9 @@ output: github_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, warnings=FALSE)
 require(stp25tools)
-require(effects)
-# require(stpvers)
-# 
-# set_my_options(prozent = list(
-#   digits = c(0, 0),
-#   style = 2,
-#   null_percent_sign = "."
-# ))
-# scale2<- function(x, mn=1, mx=5){
-# x<-  x-min(x, na.rm=TRUE)
-# x<-  x/max(x, na.rm=TRUE)
-# x*(mx -1 ) + mn
-# }
-# set.seed(1234)
-# 
-# require(lavaan)
+#require(effects)
+require(magrittr)
+
 ```
 
 
@@ -33,8 +20,174 @@ require(effects)
 <!--     get_label, Label, set_label, wrap_label, XLS -->
 
 
-## add_to
 
+
+## Funktionen
+
+
+ * Pivot-Funktionen: *Long(), Wide(), Dapply(), dapply2(), transpose2()*
+
+ * Zusammenfuegen von Data Frame: *Merge2, Rbind2, combine_data_frame*
+ 
+ * Objekt in Data Frame umwandeln: *fix_to_df, fix_to_tibble, list_to_df*
+
+ * Vectoren fuer den Zugriff auf Data Frame erstellen: *Cs, XLS, paste_names*
+
+ * String umbrechen: *wrap_string*
+
+ * Element zu Vectoren oder Listen hinzufuegen: *add_to, add_row_df*
+ 
+ * Intern  Daten mit Formel aufbereiten: *prepare_data2, print*
+ 
+ * Vectoren transformieren: *as_numeric, as_factor, as_cut, as_logical, rev.factor,as_rev, cat_bmi*
+
+ * Daten importieren: *get_data*
+ 
+ * Fehlende Daten ergänzen und transformieren: *na_approx, auto_trans*
+ 
+ * Label verwalten: *Label, delet_label, get_label, set_label*
+ 
+ * Bereinigen von Data Frame und strings: *clean_names, cleansing_umlaute, cleansing_umlaute2*
+ 
+ * Rechen operationen: *auc_trapezoid*
+ 
+ 
+
+ 
+  
+ 
+ 
+ 
+ 
+
+ 
+ 
+ 
+  
+
+
+## Get Data
+
+
+### Direkter Import aus Text
+
+```{r}
+dat <-
+  get_data("
+sex treatment control
+m  2 3
+f  3 4
+", tabel_expand = TRUE,id.vars = 1)
+
+xtabs(~ sex + value, dat)
+dat <- 
+  get_data(
+"sex treatment  neg  pos
+f   KG          3   3
+f   UG          4   5
+m   KG          5   4
+m   UG          4   2
+",
+  tabel_expand = TRUE,
+  id.vars = 1:2,
+  value = "befund"
+)
+
+ftable(xtabs(~ sex + treatment + befund, dat))
+```
+
+
+### File Import
+
+```{r}
+ file.exists("R/dummy.csv")
+#' get_data("R/dummy.csv", dec = ",", na.strings = "-", skip=1, label=1)
+#' get_data("R/dummy.xlsx", na.strings = "-")
+ get_data("R/dummy.xlsx")
+#' 
+ x <- get_data("R/dummy.sav")
+ get_label(x)[1:4]
+```
+
+
+## Transpose
+
+### Wide
+```{r, include=FALSE}
+dat <- data.frame(
+  month = rep(1:3, 2),
+  student = rep(c("Amy", "Bob"), each = 3),
+  A = c(19, 27, 16, 28, 10, 29),
+  B = c(6, 7, 8, 5, 6, 7)
+)
+```
+
+```{r}
+
+dat
+
+ 
+df2<- dat %>% Wide(student,  c(A, B))
+dat %>% Wide(student,  c("A", "B"))
+dat[-3] %>% Wide(student,  B)
+dat  %>% Wide(student ~ month)
+
+dat  %>% Wide(month ~ student, A)
+dat  %>% Wide(student ~ month, A)
+ 
+```
+
+
+### Long
+
+
+```{r}
+df2
+
+df2  %>% Long(Amy_A, Amy_B, Bob_A, Bob_B, by =  ~ month)
+
+dat %>%
+  tidyr::gather(variable, value,-(month:student)) %>%
+  tidyr::unite(temp, student, variable) %>%
+  tidyr::spread(temp, value)
+
+
+```
+
+```{r}
+#  df_w2 <- Wide(df, student, c("A", "B")))
+
+ stp25aggregate::Long(list(A=c("Amy_A", "Bob_A" ), B=c("Amy_B", "Bob_B")), df2,
+             by =  ~ month,
+             key = "student",
+             key.levels= c("Amy", "Bob"))
+```
+
+
+### Pivot-Transpose
+
+```{r, include=FALSE}
+dat <- data.frame(pos = c("A", "B" , "C"),
+                  x = 1:3,
+                  y = 3:5)
+```
+
+```{r}
+dat
+
+transpose2(dat)
+
+transpose2(
+  dat,
+  key = "Item",
+  col.names = c("A-level", "C-level", "D-Level"),
+  row.names = c("x-axis", "y-axis")
+)
+```
+
+
+
+## add_to
 
 Element zu Liste hinzufügen.
 
@@ -117,7 +270,7 @@ Merge2(df1, df2, df3, df4, by = "id")
  
  
  
-##  cbind data.frame aber listenweise
+## cbind data.frame aber listenweise
 
 ```{r}
 m <- data.frame(
@@ -198,7 +351,7 @@ fix_to_df(tab_3x2)
 
 ```
 
-# auto_trans
+## auto_trans
 
 Automatische Taranformation von numerischen Variablen entsprechend ihere Verteilungseigenschaft
 
@@ -262,13 +415,13 @@ for(i in 1:4){
 
 
 
-  p0<-plot(effect("group", fit0),
+  p0<-plot(effects::effect("group", fit0),
            main="orginal",
            ylab = names(dat)[i])
-  p1<-plot(effect("group", fit1),
+  p1<-plot(effects::effect("group", fit1),
            main="non-trans",
            ylab = "")
-  p2<-plot(effect("group", fit1,
+  p2<-plot(effects::effect("group", fit1,
                   transformation =
                     list(link = attr(dat$x, "link"),
                          inverse = attr(dat$x, "inverse"))),
@@ -279,6 +432,9 @@ for(i in 1:4){
 }
 
 ```
+
+
+
 
 
 
