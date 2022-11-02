@@ -21,8 +21,17 @@ stp25settings::set_opt
 #' @noRd
 stp25_stat_methode <- function(x,
                                search_string =
-                                 c("freq", "mean", "median","multiresponse","multi", 
-                                   "pie","dot", "hist", "box","bar")) {
+                                 c("freq",
+                                   "mean",
+                                   "median",
+                                   "multiresponse",
+                                   "multi",
+                                   "ratio",
+                                   "pie",
+                                   "dot",
+                                   "hist",
+                                   "box",
+                                   "bar")) {
   stringr::str_extract(tolower(x), paste0(search_string, collapse = "|"))
 }
 

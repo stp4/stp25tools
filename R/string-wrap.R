@@ -1,7 +1,3 @@
-# wrap_string
-
-
-
 #' wrap_string (umbrechen)
 #' 
 #' Kopie von  str_wrap  wobei die Labels mitupData2 ergaenzt werden wenn ein 
@@ -15,8 +11,6 @@
 #' @param sep  default new line
 #' @param pattern,replacement  zB Unterstriche _ ersaetzen
 #' @param max.lines,max.lines.char  Anschneiden des Strings
-#' 
-#' @return Character String
 #' @export
 #' 
 #' @examples
@@ -57,7 +51,9 @@ wrap_string <- function(x, ...) {
   UseMethod("wrap_string")
 }
 
+#' @rdname wrap_string
 #' @export
+#' @return character
 wrap_string.character <- function(x,
                           width = 25,
                           sep =  "\n",
@@ -125,9 +121,37 @@ wrap_string.character <- function(x,
 }
 
  
-
- 
+#' @rdname wrap_string
 #' @export
+#' @return factor
+wrap_string.factor  <-
+  function(x,
+           width = 20,
+           sep = "\n",
+           pattern = "_",
+           replacement = " ",
+           max.lines = NULL,
+           max.lines.char = "...",
+           lvl = levels(x)) {
+    factor(
+     as.character(x),
+      levels= lvl,
+     labels =  wrap_string(
+        lvl,
+        width,
+        sep,
+        pattern,
+        replacement,
+        max.lines,
+        max.lines.char
+      )
+    )
+    
+  }
+
+#' @rdname wrap_string
+#' @export
+#' @return data.frame
 wrap_string.data.frame  <-
   function(x,
            width = 20,
@@ -136,93 +160,30 @@ wrap_string.data.frame  <-
            replacement = " ",
            max.lines = NULL,
            max.lines.char = "...") {
-    if (is.data.frame(x)) {
-      lvl <- wrap_string(get_label(x),
-                         width,
-                         sep,
-                         pattern,
-                         replacement,
-                         max.lines,
-                         max.lines.char)
-      names(lvl) <- names(x)
-      set_label(x, lvl)
-    }
-    else{
-      wrap_string(x,
-                  width,
-                  sep,
-                  pattern,
-                  replacement,
-                  max.lines,
-                  max.lines.char)
-    }
+    
+    lvl <- wrap_string(get_label(x),
+                       width,
+                       sep,
+                       pattern,
+                       replacement,
+                       max.lines,
+                       max.lines.char)
+    names(lvl) <- names(x)
+    set_label(x, lvl)
+    
   }
 
 
+#' @rdname wrap_string
+#' @description wrap_sentence: Kopie von  str_wrap ruckgabe der Labels 
+#' @return character (Labels)
+wrap_sentence <- function(x, 
+                          ...) {
+  if (is.data.frame(x))
+    x <- stp25tools::get_label(x, include.units = TRUE)
+  
+    wrap_string(x, ...)
+}
 
-#' @export
-wrap_string.factor  <-
-  function(x,
-           width = 20,
-           sep = "\n",
-           pattern = "_",
-           replacement = " ",
-           max.lines = NULL,
-           max.lines.char = "...") {
-    if (is.factor(x)) {
-      factor(
-        x,
-        lvl,
-        wrap_string(
-          lvl,
-          width,
-          sep,
-          pattern,
-          replacement,
-          max.lines,
-          max.lines.char
-        )
-      )
-      
-    }
-    if (is.data.frame(x)) {
-      for (i in      which(sapply(x, is.factor))) {
-        lvl <- levels(x[[i]])
-        x[[i]] <-  factor(
-          x[[i]],
-          lvl,
-          wrap_string(
-            lvl,
-            width,
-            sep,
-            pattern,
-            replacement,
-            max.lines,
-            max.lines.char
-          )
-        )
-        
-      }
-      x
-    }
-    else{
-      stop(" Nicht möglich!")
-      #wrap_string(x, width, sep, pattern, replacement, max.lines)
-    }
-  }
-
-# 
-# .wrap_string <- function(x, width, sep, pattern, replacement,max.lines) {
-#  
-#   if (!is.null(pattern))
-#     x <- gsub(pattern, replacement, x)
-#  
-#   
-#   wrap_string( x,
-#                width = width,
-#                sep =  sep,
-#                max.lines=max.lines)
-# }
-# 
 
 

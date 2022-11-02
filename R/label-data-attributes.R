@@ -86,6 +86,35 @@ set_label <- function(data,
   
 }
 
+#' @rdname Label
+#' @param pattern Pattern to look for.
+#'
+#' @export
+#'
+trimm_label<- 
+  function(data, pattern = "\\.\\.\\. ") {
+    lbl <- get_label2(data)
+    lbl_trm <-  stringr::str_split_fixed(lbl, pattern, n = 2)
+    #print(lbl_trm[,2] )
+    lbl_trm <- ifelse(lbl_trm[,2] == "",  lbl_trm[,1], lbl_trm[,2])
+    names(lbl_trm) <- names(lbl)
+    set_label2(data, lbl_trm)
+  }
+
+#' @rdname Label
+#' @param pattern Pattern to look for.
+#'
+#' @export
+#'
+gsub_label <- function(data, pattern = "\\&amp;", replacement="&") {
+  lbl <- get_label2(data)
+  
+  lbl_trm <-  gsub(pattern, replacement, lbl ) 
+  names(lbl_trm) <- names(lbl)
+  
+  set_label2(data, lbl_trm)
+}
+
 
 #' @rdname Label
 #' @description get_label und GetLabelOrName:  Abrufen  der Attributs label

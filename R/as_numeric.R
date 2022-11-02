@@ -1,4 +1,4 @@
-#  as_logical, rev.factor, as_numeric, as_factor, as_rev, cat_bmi
+#  as_logical, rev.factor, as_numeric, as_factor, as_rev, cut_bmi
 
 
 
@@ -19,7 +19,7 @@ NULL
 
 
 #' @rdname as_irgenwas
-#' @description cat_bmi
+#' @description cut_bmi
 #' 
 #'  BMI: WHO   (kg/m2)
 #'
@@ -40,12 +40,12 @@ NULL
 #' @export
 #' @examples 
 #' 
-#' table(cat_bmi(c(10, 15, 16, 18.5, 25, 30, 35, 40, 45)))
-#' table(cat_bmi(c(10, 15, 16, 18.5, 25, 30, 35, 40, 45), n=4))
-#' table(cat_bmi(c(10, 15, 16, 18.5, 25, 30, 35, 40, 45), n=5))
-#' table(cat_bmi(c(10, 15, 16, 18.5, 25, 30, 35, 40, 45), n=6))
+#' table(cut_bmi(c(10, 15, 16, 18.5, 25, 30, 35, 40, 45)))
+#' table(cut_bmi(c(10, 15, 16, 18.5, 25, 30, 35, 40, 45), n=4))
+#' table(cut_bmi(c(10, 15, 16, 18.5, 25, 30, 35, 40, 45), n=5))
+#' table(cut_bmi(c(10, 15, 16, 18.5, 25, 30, 35, 40, 45), n=6))
 #' 
-cat_bmi <- function(x,
+cut_bmi <- function(x,
                     breaks = c(-Inf, 15, 16, 18.5, 25, 30, 35, 40, Inf),
                     labels = c(
                       "Very severely underweight",

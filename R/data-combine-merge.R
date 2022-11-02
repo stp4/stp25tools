@@ -55,28 +55,25 @@
 #' Merge2(df1, df2, df3, df4, by = "id")
 #'
 #'
+#'
 Merge2 <-
   function (...,
-            by = NULL ,
+            by = 0 ,
             by.x = by,
             by.y = by,
             all = FALSE,
             all.x = all,
             all.y = all,
-            sort = TRUE,
+            sort = FALSE,
             suffixes = NULL,
             #include.units=FALSE,
-            include.label=TRUE)  {
+            include.label = TRUE)  {
     # stolen from
     # https://stackoverflow.com/questions/16666643/merging-more-than-2-dataframes-in-r-by-rownames
     #
-    
-    if (is.null(by))
-      stop(" by ... Fehlt! \n")
+    # if (is.null(by))
+    #  stop(" by ... Fehlt! \n")
     data_list <-  list(...)
-    
-    
-    
     i_suffixes <- 0:1
     
     if (is.null(suffixes))
@@ -84,8 +81,26 @@ Merge2 <-
       paste0(".",  letters[c(24, 25, 26, 21, 22, 23, 1:20)])[seq_len(length(data_list))]
     
     MyMerge <- function(x, y) {
+      xrwnm <- rownames(x)
+      # xclnm <- colnames(x)
+      yrwnm <- rownames(y)
+      # yclnm <- colnames(y)
+      
+      if (tibble::is_tibble(x)) {
+        x <- as.data.frame(x)
+        #  colnames(x) <- xclnm
+        rownames(x) <- xrwnm
+      }
+      if (tibble::is_tibble(y)) {
+        y <- as.data.frame(y)
+        # colnames(y) <- yclnm
+        rownames(y) <- yrwnm
+      }
+      
+      xrwnm <-   union(xrwnm,  yrwnm)
+      
       i_suffixes <<- i_suffixes + 1
-      merge(
+      rslt <-  merge(
         x,
         y,
         by = by,
@@ -97,6 +112,13 @@ Merge2 <-
         sort = sort,
         suffixes = suffixes[i_suffixes]
       )
+      
+      if (by == 0)  {
+        rownames(rslt) <- rslt[[1]]
+        rslt[xrwnm,-1]
+      }
+      else
+        rslt
       
     }
     
@@ -114,17 +136,89 @@ Merge2 <-
       # x<- c(a="A", b="B")
       # z<- c(a="A", c="C", d="D")
       # c(x, z[setdiff(names(z),  names(x))])
-      set_label(
-        Reduce(MyMerge, data_list),
-        lvl
-      )
+      set_label(Reduce(MyMerge, data_list),
+                lvl)
       
     }
     else {
-      Reduce(MyMerge, data_list) 
+      Reduce(MyMerge, data_list)
     }
     
   }
+
+
+
+
+# Merge2 <-
+#   function (...,
+#             by = NULL ,
+#             by.x = by,
+#             by.y = by,
+#             all = FALSE,
+#             all.x = all,
+#             all.y = all,
+#             sort = TRUE,
+#             suffixes = NULL,
+#             #include.units=FALSE,
+#             include.label=TRUE)  {
+#     # stolen from
+#     # https://stackoverflow.com/questions/16666643/merging-more-than-2-dataframes-in-r-by-rownames
+#     #
+#     
+#     if (is.null(by))
+#       stop(" by ... Fehlt! \n")
+#     data_list <-  list(...)
+#     
+#     
+#     
+#     i_suffixes <- 0:1
+#     
+#     if (is.null(suffixes))
+#       suffixes <-
+#       paste0(".",  letters[c(24, 25, 26, 21, 22, 23, 1:20)])[seq_len(length(data_list))]
+#     
+#     MyMerge <- function(x, y) {
+#       i_suffixes <<- i_suffixes + 1
+#       merge(
+#         x,
+#         y,
+#         by = by,
+#         by.x = by.x,
+#         by.y = by.y,
+#         all = all,
+#         all.x = all.x,
+#         all.y = all.y,
+#         sort = sort,
+#         suffixes = suffixes[i_suffixes]
+#       )
+#       
+#     }
+#     
+#     
+#     if (include.label) {
+#       lvl <- NULL
+#       
+#       for (i in  seq_len(length(data_list))) {
+#         lv <- get_label(data_list[[i]],
+#                         include.units = FALSE)
+#         
+#         lvl <- c(lvl,
+#                  lv[setdiff(names(lv), names(lvl))])
+#       }
+#       # x<- c(a="A", b="B")
+#       # z<- c(a="A", c="C", d="D")
+#       # c(x, z[setdiff(names(z),  names(x))])
+#       set_label(
+#         Reduce(MyMerge, data_list),
+#         lvl
+#       )
+#       
+#     }
+#     else {
+#       Reduce(MyMerge, data_list) 
+#     }
+#     
+#   }
 
 
 #' @rdname Merge2
@@ -213,40 +307,48 @@ combine_data_frame <- function(...,
 #' dplyr::bind_rows(df1, df2)
 #'
 Rbind2 <- function (...,
-                    .id = "which",
-                    .names = NULL,
-                    .use.label = TRUE) {
-  data <- dplyr::bind_rows(..., .id = .id)
-  
-  if (all(!grepl("[^0-9]", data[[1]]))) {
-    tmp <- list(...)
-    if (is.null(.names))
-      .names <- names(tmp)
+                      .id = "which",
+                      .names = NULL,
+                      .use.label = TRUE) {
+    data <- dplyr::bind_rows(..., .id = .id)
     
-    if (is.null(.names))
-      .names <- sapply(as.list(match.call()), deparse)[-1]
-    
-    data[[1]] <-
-      as.character(factor(data[[1]], seq_along(.names), .names))
-  }
-  
-  data[[1]] <- factor(data[[1]])
-  
-  if (.use.label) {
-    label <- c(.id)
-    names(label) <- .id
-    for (dat in list(...)) {
-      lbl <-  get_label2(dat)
-      label <-
-        append(label, lbl[setdiff(names(lbl), names(label))])
-      data<- set_label2(data, label)
+    if (all(!grepl("[^0-9]", data[[1]]))) {
+      tmp <- list(...)
+      if (is.null(.names))
+        .names <- names(tmp)
+      
+      if (is.null(.names))
+        .names <- sapply(as.list(match.call()), deparse)[-1]
+      
+      data[[1]] <-
+        as.character(factor(data[[1]], seq_along(.names), .names))
     }
-  }
- 
+    
+    data[[1]] <- factor(data[[1]])
+    
+    if (.use.label) {
+      label <- c(.id)
+      names(label) <- .id
+      for (dat in list(...)) {
+        lbl <-  get_label2(dat)
+        label <-
+          append(label, lbl[setdiff(names(lbl), names(label))])
+        data<- set_label2(data, label)
+      }
+    }
+    
+    
+    data
+    
+  } 
   
-  data
   
-}
+  
+  
+
+
+
+
 
 
 

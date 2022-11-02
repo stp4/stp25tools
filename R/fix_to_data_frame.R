@@ -71,10 +71,51 @@ fix_to_df <- function(x, ...) {
   UseMethod("fix_to_df")
 }
 
+
+#' @rdname fix_to_df
+#' @description capture_print:  Try to catch Output via print. Stolen from depigner::tidy_summary.R
+#'
+#' @param x Objekt 
+#' @param ... an print
+#'
+#' @return data.frame
+#' @export
+#' @examples
+#' 
+#'   my_summary <- summary(Species ~ ., data = iris, method = "reverse")
+#'  fix_to_df(my_summary)
+capture_print <- function(x,
+           ...) {
+    invisible(utils::capture.output({
+      printed <- print(x, ...)
+    }))
+    
+    #  dplyr::mutate_if(res, is.double, round, digits = digits)
+    if (inherits(printed,  "matrix")  | inherits(printed, "array")){
+      colnames(printed) <- printed[1L, ]
+      printed <- dplyr::as_tibble(printed, rownames = "Source")
+      printed[-1L, ]
+    }
+    else {
+      paste0("Ich weiss nich wie ich das machen soll!. Nach print kommt ein ",
+             class(printed),
+             ".")
+    }
+  }
+
+
 #' @rdname fix_to_df
 #' @export
 fix_to_df.default <- function(x, ...) {
-  broom::tidy(x)
+  rslt <-
+    try (broom::tidy(x), silent = TRUE)
+  
+  if (inherits(rslt, "try-error")) {
+    cat(rslt,
+        "I try to use the capture.output function for the class.\n\n")
+    rslt <- capture_print(x)
+  }
+  rslt
 }
 
 
@@ -121,8 +162,8 @@ fix_to_df.list <- function(x, ...) {
 
 #' @rdname fix_to_df
 #' @export
-fix_to_df.data.frame <- function(x, include.colnames = FALSE, ...) {
-  if (include.colnames )
+fix_to_df.data.frame <- function(x, include.rownames = FALSE, ...) {
+  if (include.rownames )
     cbind(
       Source = rownames(x),
       x, stringsAsFactors = FALSE
@@ -133,11 +174,11 @@ fix_to_df.data.frame <- function(x, include.colnames = FALSE, ...) {
 
 
 #' @rdname fix_to_df
-#' @param include.colnames columns as first rownames
+#' @param include.rownames columns as first rownames
 #' @export
 fix_to_df.matrix <-
-  function(x, include.colnames = TRUE, ...) {
-    if (include.colnames & (!is.null(rownames(x))))
+  function(x, include.rownames = TRUE, ...) {
+    if (include.rownames & (!is.null(rownames(x))))
       cbind(
         data.frame(Source = rownames(x),
                    stringsAsFactors = FALSE),

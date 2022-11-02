@@ -6,7 +6,7 @@
 #' @param x an object.
 #' @param ... 	further arguments passed to methods.
 #'
-#' @return
+#' @return data.frame
 #' @export
 #'
 #' @examples
@@ -56,13 +56,16 @@ na_approx.default <-
 #' @rdname na_approx
 #' @export
 na_approx.data.frame <- function(x, ...) {
-as.data.frame(na_approx.matrix(x))
- 
+  X <- prepare_data2(x, ...)
+  rslt <-
+    as.data.frame(na_approx.matrix(X$data))
+  x[X$measure.vars] <- rslt
+  x
 }
 
 #' @rdname na_approx
 #' @export
-na_approx.matrix <- function(x, ...) {
+na_approx.matrix <- function(x) {
  rslt <-
    t(apply(x, 1, na_approx.default))
  colnames(rslt) <-colnames(x)

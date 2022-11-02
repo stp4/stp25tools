@@ -229,34 +229,29 @@ default_measure <- function(measure, measure.vars, measure.class) {
 #' digits
 #' 
 #' @noRd
-default_digits <- function(digits, measure.vars, measure.class) {
-  # cat("\nin default_digits\n")
-  # print(list(digits, measure.vars, measure.class))
-  # 
-  # print(list(
-  #   default_stp25("digits", "prozent"),
-  #   default_stp25("digits", "mittelwert"),
-  #   get_opt(name, type)
-  #   
-  #   
-  # ))
+default_digits <- function(digits, 
+                           measure.vars, 
+                          # measure.class,
+                           measure
+                           ) {
   
   if (length(digits) == 1) {
-    digits <-  ifelse(
-      measure.class == "factor",
-      get_opt("prozent", "digits"),
-      get_opt("mittelwert", "digits")
-      
-    )
+    digits <-  ifelse(measure == "factor", get_opt("prozent", "digits"),
+               ifelse(measure == "multi", get_opt("prozent", "digits"), 
+               ifelse(measure == "mean", get_opt("mean", "digits"),  
+               ifelse(measure == "median", get_opt("median", "digits"),
+               ifelse(measure == "numeric", get_opt("mean", "digits"), 0
+               )))))
   }
   else{
     nas <- which(is.na(digits))
     digits[nas] <-
-      ifelse(
-        measure.class[nas] %in% c("factor", "logical"),
-        get_opt("prozent", "digits"),
-        get_opt("mittelwert", "digits")
-      )
+               ifelse(measure[nas] == "factor", get_opt("prozent", "digits"),
+               ifelse(measure[nas] == "multi", get_opt("prozent", "digits"), 
+               ifelse(measure[nas] == "mean", get_opt("mean", "digits"),  
+               ifelse(measure[nas] == "median", get_opt("median", "digits"),
+               ifelse(measure[nas] == "numeric", get_opt("mean", "digits"), 0
+                                  )))))
   }
   names(digits) <- measure.vars
   digits
@@ -297,7 +292,7 @@ which_test <-
            group.class=NULL,
            measure.test = NULL,
            # test = c("catTest", "conTest", "ordTest", "noTest", "corTest")
-           catTest = c("factor", "freq", "logical", "multi"),
+           catTest = c("factor", "freq", "logical", "multi", "ratio"),
            conTest = c("numeric", "integer", "mean", "median")
   ) {
     
@@ -552,9 +547,11 @@ cleaup_formula <- function(formula, data, groups) {
   if (any(is.na(measure)))
     measure <- default_measure(measure, measure.vars, measure.class)
   
+   # clean measre 
+  measure <- gsub("freq", "factor", measure)
   
   if (any(is.na(digits)))
-    digits <- default_digits(digits, measure.vars, measure.class)
+    digits <- default_digits(digits, measure.vars, measure)
   
   
   if (length(formula) == 3L ){
@@ -576,8 +573,7 @@ cleaup_formula <- function(formula, data, groups) {
   }
   
   
-  # clean measre 
-  measure <- gsub("freq", "factor", measure)
+ 
   
   #' Texte also Überschfifte werden zu logical mit NA
   #' daher hie die Heder vergeben
