@@ -10,7 +10,7 @@
 #' @param time time 
 #' @param na.rm  na.rm
 #'
-#' @return
+#' @return vector
 #' @export
 #'
 #' @examples
