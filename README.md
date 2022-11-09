@@ -96,7 +96,7 @@ ftable(xtabs(~ sex + treatment + befund, dat))
  get_data("R/dummy.xlsx")
 ```
 
-    ## # A tibble: 5 x 5
+    ## # A tibble: 5 × 5
     ##      id group.student x         y     z
     ##   <dbl> <chr>         <chr> <dbl> <dbl>
     ## 1     1 A             1      4.3   59.4
@@ -135,7 +135,7 @@ df2<- dat %>% Wide(student,  c(A, B))
 dat %>% Wide(student,  c("A", "B"))
 ```
 
-    ## # A tibble: 3 x 5
+    ## # A tibble: 3 × 5
     ##   month Amy_A Bob_A Amy_B Bob_B
     ##   <int> <dbl> <dbl> <dbl> <dbl>
     ## 1     1    19    28     6     5
@@ -146,7 +146,7 @@ dat %>% Wide(student,  c("A", "B"))
 dat[-3] %>% Wide(student,  B)
 ```
 
-    ## # A tibble: 3 x 3
+    ## # A tibble: 3 × 3
     ##   month   Amy   Bob
     ##   <int> <dbl> <dbl>
     ## 1     1     6     5
@@ -159,7 +159,7 @@ dat  %>% Wide(student ~ month)
 
     ## Using B as value column: use value to override.
 
-    ## # A tibble: 2 x 4
+    ## # A tibble: 2 × 4
     ##   student   `1`   `2`   `3`
     ##   <chr>   <dbl> <dbl> <dbl>
     ## 1 Amy         6     7     8
@@ -169,7 +169,7 @@ dat  %>% Wide(student ~ month)
 dat  %>% Wide(month ~ student, A)
 ```
 
-    ## # A tibble: 3 x 3
+    ## # A tibble: 3 × 3
     ##   month   Amy   Bob
     ##   <int> <dbl> <dbl>
     ## 1     1    19    28
@@ -180,7 +180,7 @@ dat  %>% Wide(month ~ student, A)
 dat  %>% Wide(student ~ month, A)
 ```
 
-    ## # A tibble: 2 x 4
+    ## # A tibble: 2 × 4
     ##   student   `1`   `2`   `3`
     ##   <chr>   <dbl> <dbl> <dbl>
     ## 1 Amy        19    27    16
@@ -192,7 +192,7 @@ dat  %>% Wide(student ~ month, A)
 df2
 ```
 
-    ## # A tibble: 3 x 5
+    ## # A tibble: 3 × 5
     ##   month Amy_A Bob_A Amy_B Bob_B
     ##   <int> <dbl> <dbl> <dbl> <dbl>
     ## 1     1    19    28     6     5
@@ -203,7 +203,7 @@ df2
 df2  %>% Long(Amy_A, Amy_B, Bob_A, Bob_B, by =  ~ month)
 ```
 
-    ## # A tibble: 12 x 3
+    ## # A tibble: 12 × 3
     ##    month variable value
     ##    <int> <fct>    <dbl>
     ##  1     1 Amy_A       19
@@ -231,24 +231,19 @@ dat %>%
     ## 2     2    27     7    10     6
     ## 3     3    16     8    29     7
 
-``` r
+Das geht nicht Mehr:
+
+``` {
 #  df_w2 <- Wide(df, student, c("A", "B")))
 
- stp25aggregate::Long(list(A=c("Amy_A", "Bob_A" ), B=c("Amy_B", "Bob_B")), df2,
-             by =  ~ month,
-             key = "student",
-             key.levels= c("Amy", "Bob"))
+ stp25aggregate::Long(
+       list(A=c("Amy_A", "Bob_A" ), 
+            B=c("Amy_B", "Bob_B")), 
+       df2,
+       by =  ~ month,
+       key = "student",
+       key.levels= c("Amy", "Bob"))
 ```
-
-    ## # A tibble: 6 x 4
-    ##   month student     A     B
-    ##   <int> <fct>   <dbl> <dbl>
-    ## 1     1 Amy        19     6
-    ## 2     2 Amy        27     7
-    ## 3     3 Amy        16     8
-    ## 4     1 Bob        28     5
-    ## 5     2 Bob        10     6
-    ## 6     3 Bob        29     7
 
 ### Pivot-Transpose
 
@@ -441,16 +436,16 @@ Merge2(df1, df2, df3, df4, by = "id")
 ```
 
     ##     id origin.x    N   P   C origin.y  foo1      X      Y origin.z origin.u
-    ## 1  P01        A 21.5 2.4 448        B  TRUE 147600 396800        A        B
-    ## 2  P02        A 23.5 2.8 431        C FALSE 147700 361800        D        C
-    ## 3  P03        B 13.5 1.3 497        E FALSE 148300 354100        B        D
-    ## 4  P04        D 16.0 0.8 411        E  TRUE 146500 368700        A        A
-    ## 5  P05        B 21.5 2.0 431        E  TRUE 147200 357900        C        A
-    ## 6  P06        C 21.5 2.1 431        E  TRUE 145700 371400        D        D
-    ## 7  P07        B 13.5 3.3 483        C  TRUE 145900 358800        D        C
-    ## 8  P08        E 19.0 3.0 416        E FALSE 148100 362800        D        E
-    ## 9  P09        A 21.5 3.5 420        E  TRUE 147500 362300        B        A
-    ## 10 P10        C 23.0 2.3 435        E  TRUE 147300 359300        A        E
+    ## 1  P01        C 27.0 3.7 415        E FALSE 148300 350100        E        C
+    ## 2  P02        E 21.5 1.2 417        C FALSE 145700 368500        A        C
+    ## 3  P03        B 19.5 0.8 432        C FALSE 145700 365200        A        C
+    ## 4  P04        D 19.0 2.1 453        B  TRUE 148300 357400        B        A
+    ## 5  P05        A 16.0 1.6 455        D FALSE 146200 359000        D        B
+    ## 6  P06        D 10.0 1.7 423        E  TRUE 147400 379500        B        D
+    ## 7  P07        D 21.5 1.1 433        A  TRUE 146400 358700        B        D
+    ## 8  P08        B 24.5 0.4 417        B FALSE 145600 352500        A        C
+    ## 9  P09        A 27.0 3.5 459        C FALSE 145800 365600        B        C
+    ## 10 P10        A 25.5 4.0 476        E FALSE 147000 351700        C        E
 
 ## cbind data.frame aber listenweise
 
@@ -596,12 +591,12 @@ auto_trans(x)
     ## attr(,"link")
     ## function(x)
     ##   log(101 - x)
-    ## <bytecode: 0x00000000213c44a0>
+    ## <bytecode: 0x0000017ecd26a468>
     ## <environment: namespace:stp25tools>
     ## attr(,"inverse")
     ## function(x)
     ##   101 - (exp(x))
-    ## <bytecode: 0x00000000213c31d0>
+    ## <bytecode: 0x0000017ecd26b7e0>
     ## <environment: namespace:stp25tools>
     ## attr(,"name")
     ## [1] "negative skew (max-Log)"

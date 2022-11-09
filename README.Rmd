@@ -154,13 +154,19 @@ dat %>%
 
 ```
 
-```{r}
+
+Das geht nicht Mehr:
+
+```{
 #  df_w2 <- Wide(df, student, c("A", "B")))
 
- stp25aggregate::Long(list(A=c("Amy_A", "Bob_A" ), B=c("Amy_B", "Bob_B")), df2,
-             by =  ~ month,
-             key = "student",
-             key.levels= c("Amy", "Bob"))
+ stp25aggregate::Long(
+       list(A=c("Amy_A", "Bob_A" ), 
+            B=c("Amy_B", "Bob_B")), 
+       df2,
+       by =  ~ month,
+       key = "student",
+       key.levels= c("Amy", "Bob"))
 ```
 
 

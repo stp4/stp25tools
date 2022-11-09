@@ -25,7 +25,7 @@
 #' dat %>% Wide(student,  c("A", "B"))
 #' dat[-3] %>% Wide(student,  B)
 #' dat  %>% Wide(student ~ month)
-#' #dat[-3] %>% reshape2::dcast(month ~ student)
+#'  #dat[-3] %>% reshape2::dcast(month ~ student)
 #' dat  %>% Wide(month ~ student, A)
 #' dat  %>% Wide(student ~ month, A)
 #'
@@ -127,14 +127,6 @@ Wide.data.frame <- function(data, key, value) {
 }
 
 
-#reshape2:::guess_value
-guess_value <- function (df){
-  if ("value" %in% names(df))
-    return("value")
-  
-  last <- names(df)[ncol(df)]
-  message("Using ", last, " as value column: use value to override.")
-  last
-}
+
 
 

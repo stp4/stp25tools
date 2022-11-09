@@ -43,7 +43,7 @@ auto_trans <- function(x, treshhold=1) {
 
   #  negative skew = left-tailed
   # positive skew = right-tailed
-  res <-  e1071::skewness(x, na.rm = TRUE)
+  res <-  e1071_skewness(x, na.rm = TRUE)
   trans <-
     if (res > treshhold) {
       x <- log1p(x)

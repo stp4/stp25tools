@@ -382,7 +382,7 @@ expand_table <-
       colnames(data2)[2] <- value
       
       data2 <-
-        cbind(reshape2::colsplit(data2[, 1], "\\+", names(data)[id.vars]),  data2)
+        cbind(reshape2_colsplit(data2[, 1], "\\+", names(data)[id.vars]),  data2)
     }
     
     data2 <-
