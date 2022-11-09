@@ -38,6 +38,16 @@ stp25tools
 
 -   Rechen operationen: *auc_trapezoid*
 
+## Factor
+
+``` r
+factor2(c(1,0,0,0,1,1,0), 
+        male = 1, female = 0)
+```
+
+    ## [1] male   female female female male   male   female
+    ## Levels: male female
+
 ## Get Data
 
 ### Direkter Import aus Text
@@ -436,16 +446,16 @@ Merge2(df1, df2, df3, df4, by = "id")
 ```
 
     ##     id origin.x    N   P   C origin.y  foo1      X      Y origin.z origin.u
-    ## 1  P01        C 27.0 3.7 415        E FALSE 148300 350100        E        C
-    ## 2  P02        E 21.5 1.2 417        C FALSE 145700 368500        A        C
-    ## 3  P03        B 19.5 0.8 432        C FALSE 145700 365200        A        C
-    ## 4  P04        D 19.0 2.1 453        B  TRUE 148300 357400        B        A
-    ## 5  P05        A 16.0 1.6 455        D FALSE 146200 359000        D        B
-    ## 6  P06        D 10.0 1.7 423        E  TRUE 147400 379500        B        D
-    ## 7  P07        D 21.5 1.1 433        A  TRUE 146400 358700        B        D
-    ## 8  P08        B 24.5 0.4 417        B FALSE 145600 352500        A        C
-    ## 9  P09        A 27.0 3.5 459        C FALSE 145800 365600        B        C
-    ## 10 P10        A 25.5 4.0 476        E FALSE 147000 351700        C        E
+    ## 1  P01        A 18.0 0.7 426        A  TRUE 147600 383200        D        E
+    ## 2  P02        E 20.5 3.1 490        A FALSE 145600 382500        D        D
+    ## 3  P03        D 10.0 0.5 411        C  TRUE 147600 350100        A        C
+    ## 4  P04        D 17.5 1.5 464        D FALSE 146700 370700        B        D
+    ## 5  P05        C 12.5 2.3 408        D  TRUE 148100 364900        D        B
+    ## 6  P06        C 23.5 2.9 442        D  TRUE 146400 371200        D        D
+    ## 7  P07        D 17.5 2.2 456        B  TRUE 146200 375400        E        B
+    ## 8  P08        E 22.0 0.3 468        E  TRUE 146600 361300        B        D
+    ## 9  P09        C 11.0 1.7 485        B FALSE 146000 396200        E        B
+    ## 10 P10        C 19.5 2.0 462        A  TRUE 147600 386600        B        E
 
 ## cbind data.frame aber listenweise
 
@@ -591,12 +601,12 @@ auto_trans(x)
     ## attr(,"link")
     ## function(x)
     ##   log(101 - x)
-    ## <bytecode: 0x0000017ecd26a468>
+    ## <bytecode: 0x00000233be69fd68>
     ## <environment: namespace:stp25tools>
     ## attr(,"inverse")
     ## function(x)
     ##   101 - (exp(x))
-    ## <bytecode: 0x0000017ecd26b7e0>
+    ## <bytecode: 0x00000233be69c988>
     ## <environment: namespace:stp25tools>
     ## attr(,"name")
     ## [1] "negative skew (max-Log)"
