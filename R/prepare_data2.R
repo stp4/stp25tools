@@ -214,6 +214,10 @@ select_data <-   function(formula,
 #' auswertungs Methode
 #' @noRd
 default_measure <- function(measure, measure.vars, measure.class) {
+    # cat(" \n in default_measure\n  ")
+  # print(measure)
+  # print(measure.vars )
+  # print(measure.class)
   if (length(measure) == 1) {
     measure <- measure.class
   }
@@ -221,8 +225,13 @@ default_measure <- function(measure, measure.vars, measure.class) {
     nas <- which(is.na(measure))
     measure[nas] <- measure.class[nas]
   }
+  
+  if( any(is.na( measure ))) 
+    stop("Achtung eine Variable ist doppelt!\n",
+         paste(names(measure), collapse=", "))
+  
   names(measure) <- measure.vars
-  measure
+  measure 
 }
 
 
@@ -543,13 +552,14 @@ cleaup_formula <- function(formula, data, groups) {
   measure.vars <- all.vars(formula[[2L]]) 
   measure.class <- get_classes(data[measure.vars])
   
-  
+ 
   if (any(is.na(measure)))
     measure <- default_measure(measure, measure.vars, measure.class)
   
    # clean measre 
   measure <- gsub("freq", "factor", measure)
-  
+
+
   if (any(is.na(digits)))
     digits <- default_digits(digits, measure.vars, measure)
   
