@@ -1,17 +1,46 @@
 #' Factors
-#' 
+#'
 #' Fancy copie der fun factor.
 #'
 #' @param x a vector of data,
 #' @param ...  levels
 #' @param levels,labels,exclude,ordered,nmax an die Funktion factor
- 
-#' @return factor 
+
+#' @return factor
 #' @export
 #'
 #' @examples
+#'
+#'
+#' x <- c(1, 0, 0, 0, 1, 1, 0, 3, 2, 2)
+#'
+#' x <- data.frame(x = x,
+#'                 sex = factor2(
+#'                   x,
+#'                   male = 1,
+#'                   female = 0,
+#'                   div = 3,
+#'                   other = 2
+#'                 ))
+#' x
+#' levels(x$sex)
+#'
+#'
+#' table(reorder2(x$sex, last = "other"))
 #' 
-#' factor2(c(1,0,0,0,1,1,0), male = 1, female = 0)
+#' 
+#' #' lattice::barchart(rev(reorder2(x$sex, last = "other")))
+#' 
+#' # dat<-as.data.frame(table(x$sex)) 
+#' # lattice::barchart( 
+#' #   reorder2(Var1, Freq, last="other") ~Freq, 
+#' #   dat, 
+#' #   origin =0)
+#' # 
+#' # with(
+#' #   dat,
+#' #   reorder2(Var1, Freq, last="other"))
+#' #'
 factor2 <- function(x,
                     ...,
                     levels,
@@ -32,4 +61,41 @@ factor2 <- function(x,
     ordered = ordered,
     nmax = nmax
   )
+}
+
+
+#' @rdname factor2
+#'
+#' @param X,... an reorder
+#' @param decreasing an ordere logical
+#' @param last character
+#'
+#' @export
+#'
+reorder2 <- function(x,
+                     X,
+                     ...,
+                     decreasing = TRUE,
+                     last = NULL) {
+  if (missing(X)) {
+    x <-
+      factor(x,  levels(x)[order (table(x), decreasing = decreasing)])
+    if (!is.null(last)) {
+      #  x <- relevel(x, ref = last)
+      lev <- levels(x)
+      ref <- match(last, lev)
+      nlev <- length(lev)
+      x <-
+        factor(x, levels = lev[c(seq_along(lev)[-ref], ref)], exclude = NULL)
+    }
+  }
+  else{
+    x <-  reorder(x, X, ...)
+    if (!is.null(last))
+      x <- relevel(x, ref = last)
+  }
+  
+  
+  x
+  
 }
