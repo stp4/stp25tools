@@ -79,23 +79,28 @@ reorder2 <- function(x,
                      last = NULL) {
   if (missing(X)) {
     x <-
-      factor(x,  levels(x)[order (table(x), decreasing = decreasing)])
-    if (!is.null(last)) {
-      #  x <- relevel(x, ref = last)
-      lev <- levels(x)
-      ref <- match(last, lev)
-      nlev <- length(lev)
-      x <-
-        factor(x, levels = lev[c(seq_along(lev)[-ref], ref)], exclude = NULL)
-    }
+      factor(x, levels(x)[order (table(x), decreasing = decreasing)])
+    if (!is.null(last))
+      for (ref in last)
+        x <- relevel2(x, ref)
   }
   else{
-    x <-  reorder(x, X, ...)
-    if (!is.null(last))
-      x <- relevel(x, ref = last)
+    x <- reorder(x, X, ...)
+    if (!is.null(last)) 
+      for (ref in last)
+        x <- relevel(x, ref)
   }
-  
-  
   x
-  
 }
+
+# helper 
+# letzter level am ende
+# copie von relevel ohne fehlerpruefung
+relevel2 <- function(x,
+                     last,
+                     lev = levels(x))  {
+  ref <- match(last, lev)
+  nlev <- length(lev)
+  factor(x, levels = lev[c(seq_along(lev)[-ref], ref)], exclude = NULL)
+}
+
