@@ -285,6 +285,7 @@ combine_data_frame <- function(...,
 #' @param .names alternative zur vergabe der labels in which
 #' @param .id Data frame identifier.  dplyr::bind_rows(..., .id = NULL)
 #' @param .use.label set_label TRUE/FALSE
+#' @return data.frame(which, ...)
 #' @export
 #'
 #' @examples
