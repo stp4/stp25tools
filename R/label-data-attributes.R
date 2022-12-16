@@ -123,6 +123,9 @@ gsub_label <- function(data, pattern = "\\&amp;", replacement="&") {
 get_label <-
   function(data, ...,
            include.units = FALSE) {
+    
+    if(!is.data.frame(data))  return( attr(data, "label") )
+    
     measure.vars <-
       sapply(lazyeval::lazy_dots(...),
              function(x) {as.character(x[1])})
