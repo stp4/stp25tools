@@ -240,18 +240,17 @@ as_cut <- function(x, ...) {
   
 }
 
-
+ 
 #' @rdname as_irgenwas
 #' @description as_rev: reverse factor
 #' @export
 rev.factor <- as_rev <- function(x) {
-  if (is.factor(x)) {
-    lbl <- attr(x, "label")
-    x <- factor(x, rev(levels(x)))
-    
-    attr(x, "label") <- lbl
-    x
-  }
-  else
-    rev(x)
+  lbl <- attr(x, "label")
+  x <- factor(x, rev(levels(x)))
+  attr(x, "label") <- lbl
+  x
 }
+
+
+
+

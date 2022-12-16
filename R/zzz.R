@@ -77,11 +77,13 @@ guess_value <- function (df){
 
 #' Skewness
 #' 
+#' stolen from e1071::skewness
+#' 
 #' Type 1:
 #' g_1 = m_3 / m_2^{3/2}  This is the typical definition used in many older textbooks.
 #' 
 #' Type 2:
-#'   G_1 = g_1 \sqrt{n(n-1)} / (n-2)  Used in SAS and SPSS.
+#'   G_1 = g_1 sqrt{n(n-1)} / (n-2)  Used in SAS and SPSS.
 #' 
 #' Type 3:
 #'   b_1 = m_3 / s^3 = g_1 ((n-1)/n)^{3/2}  Used in MINITAB and BMDP.
@@ -93,7 +95,7 @@ guess_value <- function (df){
 #' @examples
 #' x <- rnorm(100)
 #' skewness(x)
-e1071_skewness<- 
+e1071_skewness <- 
 function (x, na.rm = FALSE, type = 3) 
 {
   if (any(ina <- is.na(x))) {
