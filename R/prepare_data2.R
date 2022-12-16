@@ -68,9 +68,12 @@ prepare_data2.formula <-
            groups = NULL,
            na.action = na.pass,
            drop.unused.levels=FALSE) {
-    
+  #  cat("\nprepare_data2.formula \n")
+ #   print(x)
     lbl <- get_label2(data)
     fm <- cleaup_formula(x, data, groups)
+  #  print(fm)
+
     dat <- select_data(fm$all.vars, 
                        data, 
                        na.action,
@@ -114,6 +117,7 @@ prepare_data2.data.frame <- function(data,
   # measure.vars <-
   #   sapply(lazyeval::lazy_dots(...), function(x)
   #     as.character(x[1]))
+ 
   
   hsub<- "h__"
   hend<- "__h"
@@ -128,6 +132,22 @@ prepare_data2.data.frame <- function(data,
       }
     })
 
+  
+  # abfangen vo prepare_data2(data, . ~ gender)
+  if (grepl('~', measure.vars[1]))
+    return(
+      prepare_data2.formula(
+        x =   as.formula(measure.vars[1]),
+        data = data,
+        groups = groups,
+        na.action  = na.action,
+        drop.unused.levels = drop.unused.levels
+      )
+    )
+    
+    
+  
+  
   if( !is.null(sub_haeding ) ){
     #i<- length(sub_haeding)
     
@@ -476,6 +496,9 @@ is_formula2 <- function (x) {
 
 
 cleaup_formula <- function(formula, data, groups) {
+  
+  #cat( "   in cleaup_formula\n")
+ 
   measure <- digits<- NA
   if (!is.null(groups)) {
     # das ist nicht schoen aber es funktioniert auch bei langen Formeln
@@ -486,6 +509,10 @@ cleaup_formula <- function(formula, data, groups) {
   }
   
   formula <- clean_dots_formula(formula, names_data = names(data))
+  
+  
+ # print(formula )
+  
   frml <- formula_split(formula)
   formula <- frml$formula
   dedect_string_test <- NULL
@@ -714,21 +741,28 @@ to_formula <-
 clean_dots_formula <- function(x,
                                data = NULL,
                                names_data = names(data)) {
+  
+#  cat( "   in clean_dots_formula\n")
   myvars <- all.vars(x)
   
+#  print( myvars )
+  
   if (any(myvars %in% ".")) {
+    
     if (length(myvars) == 1) {
       return(formula(paste(
         " ~ ", paste(names_data, collapse = "+")
       )))
-    } else if (myvars[1] == ".") {
+    } 
+    else if (myvars[1] == ".") {
       var_dots <- names_data[!names_data %in% myvars[-1]]
       return(formula(paste(
         paste(var_dots, collapse = "+"),
         " ~ ",
         paste(myvars[-1], collapse = "+")
       )))
-    } else if (myvars[length(myvars)] == ".") {
+    } 
+    else if (myvars[length(myvars)] == ".") {
       var_dots <- names_data[!names_data %in% myvars[-length(myvars)]]
       return(formula(paste(
         paste(myvars[-length(myvars)],
@@ -738,9 +772,11 @@ clean_dots_formula <- function(x,
       )))
     }
     
-  } else {
+  } 
+  else {
     return(x)
   }
+  
 }
 
 
