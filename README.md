@@ -7,36 +7,34 @@ stp25tools
 
 ## Funktionen
 
--   Pivot-Funktionen: *Long(), Wide(), Dapply(), dapply2(),
-    transpose2()*
+- Pivot-Funktionen: *Long(), Wide(), Dapply(), dapply2(), transpose2()*
 
--   Zusammenfuegen von Data Frame: *Merge2, Rbind2, combine_data_frame*
+- Zusammenfuegen von Data Frame: *Merge2, Rbind2, combine_data_frame*
 
--   Objekt in Data Frame umwandeln: *fix_to_df, fix_to_tibble,
-    list_to_df*
+- Objekt in Data Frame umwandeln: *fix_to_df, fix_to_tibble, list_to_df*
 
--   Vectoren fuer den Zugriff auf Data Frame erstellen: *Cs, XLS,
-    paste_names*
+- Vectoren fuer den Zugriff auf Data Frame erstellen: *Cs, XLS,
+  paste_names*
 
--   String umbrechen: *wrap_string*
+- String umbrechen: *wrap_string*
 
--   Element zu Vectoren oder Listen hinzufuegen: *add_to, add_row_df*
+- Element zu Vectoren oder Listen hinzufuegen: *add_to, add_row_df*
 
--   Intern Daten mit Formel aufbereiten: *prepare_data2, print*
+- Intern Daten mit Formel aufbereiten: *prepare_data2, print*
 
--   Vectoren transformieren: *as_numeric, as_factor, as_cut, as_logical,
-    rev.factor,as_rev, cat_bmi*
+- Vectoren transformieren: *as_numeric, as_factor, as_cut, as_logical,
+  rev.factor,as_rev, cat_bmi*
 
--   Daten importieren: *get_data*
+- Daten importieren: *get_data*
 
--   Fehlende Daten ergänzen und transformieren: *na_approx, auto_trans*
+- Fehlende Daten ergänzen und transformieren: *na_approx, auto_trans*
 
--   Label verwalten: *Label, delet_label, get_label, set_label*
+- Label verwalten: *Label, delet_label, get_label, set_label*
 
--   Bereinigen von Data Frame und strings: *clean_names,
-    cleansing_umlaute, cleansing_umlaute2*
+- Bereinigen von Data Frame und strings: *clean_names,
+  cleansing_umlaute, cleansing_umlaute2*
 
--   Rechen operationen: *auc_trapezoid*
+- Rechen operationen: *auc_trapezoid*
 
 ## Factor
 
@@ -446,16 +444,16 @@ Merge2(df1, df2, df3, df4, by = "id")
 ```
 
     ##     id origin.x    N   P   C origin.y  foo1      X      Y origin.z origin.u
-    ## 1  P01        A 18.0 0.7 426        A  TRUE 147600 383200        D        E
-    ## 2  P02        E 20.5 3.1 490        A FALSE 145600 382500        D        D
-    ## 3  P03        D 10.0 0.5 411        C  TRUE 147600 350100        A        C
-    ## 4  P04        D 17.5 1.5 464        D FALSE 146700 370700        B        D
-    ## 5  P05        C 12.5 2.3 408        D  TRUE 148100 364900        D        B
-    ## 6  P06        C 23.5 2.9 442        D  TRUE 146400 371200        D        D
-    ## 7  P07        D 17.5 2.2 456        B  TRUE 146200 375400        E        B
-    ## 8  P08        E 22.0 0.3 468        E  TRUE 146600 361300        B        D
-    ## 9  P09        C 11.0 1.7 485        B FALSE 146000 396200        E        B
-    ## 10 P10        C 19.5 2.0 462        A  TRUE 147600 386600        B        E
+    ## 1  P01        A 13.5 0.7 434        D FALSE 146300 378500        C        E
+    ## 2  P02        C 22.0 2.2 483        C  TRUE 146400 359800        B        D
+    ## 3  P03        D 20.0 2.7 440        B  TRUE 147600 355900        E        A
+    ## 4  P04        B 19.0 1.6 439        D  TRUE 146300 373100        A        C
+    ## 5  P05        B 20.5 2.5 459        A FALSE 147300 371500        A        D
+    ## 6  P06        C 12.0 2.8 442        D  TRUE 147300 383900        C        C
+    ## 7  P07        D 26.0 2.7 441        D  TRUE 147000 358800        D        D
+    ## 8  P08        D 12.0 4.0 500        B FALSE 147300 389100        E        D
+    ## 9  P09        A 14.0 2.1 414        C  TRUE 147500 360800        B        A
+    ## 10 P10        C 27.0 3.5 490        B  TRUE 146900 386600        E        E
 
 ## cbind data.frame aber listenweise
 
@@ -601,12 +599,12 @@ auto_trans(x)
     ## attr(,"link")
     ## function(x)
     ##   log(101 - x)
-    ## <bytecode: 0x00000233be69fd68>
+    ## <bytecode: 0x00000196d2a1e208>
     ## <environment: namespace:stp25tools>
     ## attr(,"inverse")
     ## function(x)
     ##   101 - (exp(x))
-    ## <bytecode: 0x00000233be69c988>
+    ## <bytecode: 0x00000196d2a10dd8>
     ## <environment: namespace:stp25tools>
     ## attr(,"name")
     ## [1] "negative skew (max-Log)"
@@ -655,3 +653,108 @@ for(i in 1:4){
 ```
 
 ![](README_files/figure-gfm/model-fit-1.png)<!-- -->![](README_files/figure-gfm/model-fit-2.png)<!-- -->![](README_files/figure-gfm/model-fit-3.png)<!-- -->![](README_files/figure-gfm/model-fit-4.png)<!-- -->
+
+## separate multiple choice
+
+Aufdroeseln von Mehrfachantworten
+
+``` r
+ #require(stp25tools)
+lbl <- c (
+  '1 Heart Failure' = 1,
+  '2 Rhythm Abnormality' = 2,
+  '3 Valve Dysfunction' = 3,
+  '4 Bleeding with OAC' = 4,
+  '5 ACS' = 5,
+  '6 Neurological Event' = 6,
+  '7 Neoplastic Disease' = 7,
+  '8 Others' = 8,
+  '0 No Complications' = 0
+)
+
+x <- c(0,
+       "1,3,6,8,4",
+       2,
+       "",
+       "8,4",
+       #  3.8,100,
+       "4,6,8,3",
+       "2,3,4,5")
+
+#x <- gsub("\\.", ",", x)
+rslt <-
+  separate_multiple_choice(x ,
+                           sep = ",",
+                           as_logical = TRUE,
+                           label = lbl)
+```
+
+    ## 
+    ## ----------------------------------------------------------------
+    ## Warnung: wenn komische Leerzeichen daher kommen gut aufpassen!
+    ## Das was unten kommt wird aufgedröselt.
+    ## [1] "0"         "1,3,6,8,4" "2"         "2,3,4,5"   "4,6,8,3"   "8,4"      
+    ## [7] "zz_9999"  
+    ## 
+    ## ----------------------------------------------------------------
+
+    ## Warning: Expected 9 pieces. Missing pieces filled with `NA` in 7 rows [1, 2, 3,
+    ## 4, 5, 6, 7].
+
+``` r
+stp25stat2::Tbll_desc(rslt)
+```
+
+    ## 
+    ## Hallo Wolfgang!
+
+    ## # A tibble: 8 × 3
+    ##   Item                         n     m      
+    ## * <chr>                        <chr> <chr>  
+    ## 1 "0 No Complications true "   6     17% (1)
+    ## 2 "1 Heart Failure true "      6     17% (1)
+    ## 3 "2 Rhythm Abnormality true " 6     33% (2)
+    ## 4 "3 Valve Dysfunction true "  6     50% (3)
+    ## 5 "4 Bleeding with OAC true "  6     67% (4)
+    ## 6 "5 ACS true "                6     17% (1)
+    ## 7 "6 Neurological Event true " 6     33% (2)
+    ## 8 "8 Others true "             6     50% (3)
+
+## Creation of dummy variables and reverse
+
+``` r
+ z <- gl(3, 2, 12, labels = c("apple", "salad", "orange"))
+table(z)
+```
+
+    ## z
+    ##  apple  salad orange 
+    ##      4      4      4
+
+``` r
+levels(z) <- list("veg"   = "salad", "fruit" = c("apple", "orange"))
+table(z)
+```
+
+    ## z
+    ##   veg fruit 
+    ##     4     8
+
+``` r
+z <- factor_to_dummy(z)
+table(z)
+```
+
+    ##    fruit
+    ## veg 0 1
+    ##   0 0 8
+    ##   1 4 0
+
+``` r
+z <- dummy_to_factor(z)
+table(z)
+```
+
+    ## z
+    ##   veg fruit 
+    ##     4     8
