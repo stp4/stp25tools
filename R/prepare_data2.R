@@ -67,34 +67,31 @@ prepare_data2.formula <-
            data,
            groups = NULL,
            na.action = na.pass,
-           drop.unused.levels=FALSE) {
-  #  cat("\nprepare_data2.formula \n")
- #   print(x)
+           drop.unused.levels = FALSE) {
+    
     lbl <- get_label2(data)
-    fm <- cleaup_formula(x, data, groups)
-  #  print(fm)
-
-    dat <- select_data(fm$all.vars, 
-                       data, 
+    fm  <- cleaup_formula(x, data, groups)
+    dat <- select_data(fm$all.vars,
+                       data,
                        na.action,
                        drop.unused.levels)
-
+    
     stp25Data <- list(
-      data =    dat,
-      measure.vars = fm$measure.vars,
-      group.vars = fm$group.vars,
-      condition.vars = fm$condition.vars,
-      formula = fm$formula,
-      by = fm$by,
-      measure = fm$measure,
-      measure.test =fm$measure.test,
-      row_name = lbl[fm$measure.vars],
-      col_name = lbl[fm$group.vars],
-      measure.class = fm$measure.class,
-      group.class = fm$group.class,
+      data            = dat,
+      measure.vars    = fm$measure.vars,
+      group.vars      = fm$group.vars,
+      condition.vars  = fm$condition.vars,
+      formula         = fm$formula,
+      by              = fm$by,
+      measure         = fm$measure,
+      measure.test    = fm$measure.test,
+      row_name        = lbl[fm$measure.vars],
+      col_name        = lbl[fm$group.vars],
+      measure.class   = fm$measure.class,
+      group.class     = fm$group.class,
       condition.class = fm$condition.class,
-      digits = fm$digits,
-      N = nrow(dat)
+      digits          = fm$digits,
+      N               = nrow(dat)
     )
     
     class(stp25Data) <- c("stp25data", "list")
@@ -114,14 +111,10 @@ prepare_data2.data.frame <- function(data,
                                      groups = NULL,
                                      na.action = na.pass,
                                      drop.unused.levels=FALSE) {
-  # measure.vars <-
-  #   sapply(lazyeval::lazy_dots(...), function(x)
-  #     as.character(x[1]))
- 
+  hsub <- "h__"
+  hend <- "__h"
+  sub_haeding <- c()
   
-  hsub<- "h__"
-  hend<- "__h"
-  sub_haeding<- c()
   measure.vars <-
     sapply(lazyeval::lazy_dots(...), function(x) {
       if (!is.character(x$expr))
@@ -132,7 +125,6 @@ prepare_data2.data.frame <- function(data,
       }
     })
 
-  
   # abfangen vo prepare_data2(data, . ~ gender)
   if (grepl('~', measure.vars[1]))
     return(
@@ -145,12 +137,9 @@ prepare_data2.data.frame <- function(data,
       )
     )
     
-    
-  
-  
+
+  # Leere Daten fuer die Zwischen-Ueberschrift
   if( !is.null(sub_haeding ) ){
-    #i<- length(sub_haeding)
-    
     nn <- ncol(data)
     data[ paste0(hsub, seq_along(sub_haeding), hend) ] <- NA
     
@@ -158,18 +147,14 @@ prepare_data2.data.frame <- function(data,
       attr(data[[n+nn]], "label") <- sub_haeding [[n]]
   }
   
-  # cat("was kommt\n")
-  # print(measure.vars )
-  # print(length(measure.vars))
-  
+ 
+   # Fall prepare_data2(data)
   if(length(measure.vars) == 0) measure.vars <- names(data)
   else measure.vars <- cleaup_names(measure.vars, data)
   
   # Fehlercheck
   if (length(setdiff(measure.vars, names(data))) > 0) {
     missing_measure.vars <- setdiff(measure.vars, names(data))
-  #  i <- length(missing_measure.vars)
-    
     nn <- ncol(data)
     data[missing_measure.vars] <- NA
 
@@ -184,10 +169,12 @@ prepare_data2.data.frame <- function(data,
       condition.vars = groups
     )
 
-  prepare_data2.formula(x = fm, 
-                        data = data, 
-                        na.action=na.action,
-                        drop.unused.levels=drop.unused.levels)
+  prepare_data2.formula(
+    x = fm,
+    data = data,
+    na.action = na.action,
+    drop.unused.levels = drop.unused.levels
+  )
   
 }
 
@@ -495,9 +482,9 @@ is_formula2 <- function (x) {
 
 
 
-cleaup_formula <- function(formula, data, groups) {
-  
-  #cat( "   in cleaup_formula\n")
+cleaup_formula <- function(formula, 
+                           data, 
+                           groups) {
  
   measure <- digits<- NA
   if (!is.null(groups)) {
@@ -505,25 +492,23 @@ cleaup_formula <- function(formula, data, groups) {
     warnings(" prepare_data2.formula : benutze Gruppen als condition.vars!")
     condition.vars <- gsub("~", "", deparse(groups))
     formula <-  paste(deparse(formula), collapse = "")
-    formula <- formula(paste(formula, "|", condition.vars))
+    formula <-  formula(paste(formula, "|", condition.vars))
   }
   
   formula <- clean_dots_formula(formula, names_data = names(data))
-  
-  
- # print(formula )
   
   frml <- formula_split(formula)
   formula <- frml$formula
   dedect_string_test <- NULL
   
   if (any(all.names(formula[[2L]]) %in% '[')) {
-    #  bei var[2,median] kommt der Median durch, error wegen  width.cutoff = 60L
+    #  bei var[2,median] kommt der Median durch, 
+    #  error wegen  width.cutoff = 60L
     y_hsd <-
       gsub(" ", "", paste(deparse(formula[[2L]]), collapse = ""))
     y_hsd <- strsplit(y_hsd, "\\+")[[1]]
-    
-    measure.vars <- gsub("\\[.+\\]", "", y_hsd) # bereinigen von Klammern
+    # bereinigen von Klammern
+    measure.vars <- gsub("\\[.+\\]", "", y_hsd) 
     measure <- as.character(rep(NA, length(measure.vars)))
     dedect_string_test <- measure
     digits <- as.integer(rep(NA, length(measure.vars)) )
@@ -562,10 +547,6 @@ cleaup_formula <- function(formula, data, groups) {
           digits[pos[i]] <- dedect_number[i]
     }
     
-    
-    
-    
-    
     if (length(formula) == 2) {
       formula <- to_formula(measure.vars, NULL)
       
@@ -579,17 +560,14 @@ cleaup_formula <- function(formula, data, groups) {
   measure.vars <- all.vars(formula[[2L]]) 
   measure.class <- get_classes(data[measure.vars])
   
- 
   if (any(is.na(measure)))
     measure <- default_measure(measure, measure.vars, measure.class)
   
    # clean measre 
   measure <- gsub("freq", "factor", measure)
 
-
   if (any(is.na(digits)))
     digits <- default_digits(digits, measure.vars, measure)
-  
   
   if (length(formula) == 3L ){
     group.vars <-  all.vars(formula[[3L]])
@@ -609,12 +587,8 @@ cleaup_formula <- function(formula, data, groups) {
     condition.vars<-condition.class <- NULL
   }
   
-  
- 
-  
   #' Texte also Überschfifte werden zu logical mit NA
   #' daher hie die Heder vergeben
-  
   if (any(measure == "logical")) {
     logik <-  which(measure == "logical")
     any_missing <-
@@ -626,23 +600,23 @@ cleaup_formula <- function(formula, data, groups) {
         measure[logik]  == "logical" & (any_missing == 0),
         "header", measure[logik])
   }
-  # 
+   
   list(
-    formula = formula,
-    by =   by,
-    measure.vars = measure.vars,
-    group.vars = group.vars,
-    condition.vars = condition.vars,
-    measure = measure,
-    measure.test = which_test(measure, group.class[1], dedect_string_test),
-    digits = digits,
-    measure.class = measure.class,
-    group.class = group.class,
+    formula         = formula,
+    by              = by,
+    measure.vars    = measure.vars,
+    group.vars      = group.vars,
+    condition.vars  = condition.vars,
+    measure         = measure,
+    measure.test    = which_test(measure, group.class[1], dedect_string_test),
+    digits          = digits,
+    measure.class   = measure.class,
+    group.class     = group.class,
     condition.class = condition.class,
-    all.vars = if(is.null(condition.vars)) formula 
-    else update(formula, 
-                formula(paste("~ . +", paste(
-                  condition.vars, collapse="+"))))
+    all.vars        = if(is.null(condition.vars)) formula 
+                     else update(formula, formula(
+                       paste("~ . +", 
+                             paste(condition.vars, collapse="+"))))
   )
 }
 
