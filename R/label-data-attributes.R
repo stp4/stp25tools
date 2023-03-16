@@ -92,13 +92,19 @@ set_label <- function(data,
 #' @export
 #'
 trimm_label<- 
-  function(data, pattern = "\\.\\.\\. ") {
+  function(data, pattern = "\\.\\.\\. ", pos = 2) {
     lbl <- get_label2(data)
-    lbl_trm <-  stringr::str_split_fixed(lbl, pattern, n = 2)
-    #print(lbl_trm[,2] )
-    lbl_trm <- ifelse(lbl_trm[,2] == "",  lbl_trm[,1], lbl_trm[,2])
+    lbl_trm <-  stringr::str_split_fixed(lbl, pattern, n = pos + 1)
+    
+    if (pos == 1)
+      lbl_trm <-  lbl_trm[, 1]
+    else if (pos == 2)
+      lbl_trm <- ifelse(lbl_trm[, 2] == "",  lbl_trm[, 1], lbl_trm[, 2])
+    else
+      stop("Nur pos 1 oder 2 sind definiert.")
     names(lbl_trm) <- names(lbl)
     set_label2(data, lbl_trm)
+    
   }
 
 #' @rdname Label

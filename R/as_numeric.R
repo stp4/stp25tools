@@ -83,7 +83,6 @@ cut_bmi <- function(x,
 #' @description as_numeric: character, factor to numeric
 #' @param na.string missing
 #' @param dec  decimal
-#' @param exclude.symbols  plus und  minus sind erlaubt
 #'
 #' @export
 #'
@@ -119,25 +118,40 @@ as_numeric.numeric <- function(x, ...)
 
 
 #' @rdname as_irgenwas
+#' @param ...  readr::parse_number trim_ws	Should leading and trailing whitespace (ASCII spaces and tabs) be trimmed from each field before parsing it?
 #' @export
 as_numeric.character <-
   function(x,
            na.string = "",
-           dec = ".",
-           exclude.symbols =  "[^0-9.\\+\\-]",
+           dec = c(".", ","),
+           trim_ws= TRUE,
+          #exclude.symbols =  "[^0-9.\\+\\-]",
            ...) {
     lbl <- attr(x, "label")
     
-    x <- sub("[[:space:]]+$", "", x)
-    x <- sub("^[[:space:]]+", "", x)
-    if (dec != ".")
-      x <- gsub(dec, ".", x)
+    if(  length(dec) == 2 & "," %in% dec) { 
+      x <- gsub(",", ".", x)
+      x <- readr::parse_number(x, na=na.string, trim_ws=trim_ws)
+      }
+    else if( dec[1] == ","){
+      x <- readr::parse_number(x, 
+                               locale = readr::locale(decimal_mark = ","),
+                               na=na.string, trim_ws=trim_ws)
+    }
+    else{
+      x <- readr::parse_number(x, na=na.string, trim_ws=trim_ws)
+    }
     
-    
-    x[which(x %in% na.string)] <- NA
-    x[which(ifelse(is.na(x), NA,  grepl(exclude.symbols, x)))] <- NA
-    x <- gsub(exclude.symbols, "", x)
-    x <- as.numeric(x)
+    # x <- sub("[[:space:]]+$", "", x)
+    # x <- sub("^[[:space:]]+", "", x)
+    # if (dec != ".")
+    #   x <- gsub(dec, ".", x)
+    # 
+    # 
+    # x[which(x %in% na.string)] <- NA
+    # x[which(ifelse(is.na(x), NA,  grepl(exclude.symbols, x)))] <- NA
+    # x <- gsub(exclude.symbols, "", x)
+    # x <- as.numeric(x)
     attr(x, "label") <- lbl
     x
   }
@@ -146,18 +160,16 @@ as_numeric.character <-
 #' @export
 as_numeric.factor <-   function(x,
                                 na.string = "",
-                                dec = ".",
-                                exclude.symbols =  "[^0-9.\\+\\-]",
+                                dec = c(".", ","),
                                 ...) {
   lbl <- attr(x, "label")
-  lvl <- as_numeric(levels(x), na.string,
-                    dec,
-                    exclude.symbols)
+  # x <- as_numeric(as.character(x), na.string, dec)
+  #   bei langen Vectoren sollte das schneller sein
+  lvl <- as_numeric.character(levels(x), na.string, dec)
   if (!all(is.na(lvl))) {
-    levels(x) <-   lvl
+    levels(x) <- lvl
     x <- as.character(x)
   }
-  
   x <- as.numeric(x)
   attr(x, "label") <- lbl
   x

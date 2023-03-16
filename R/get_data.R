@@ -1,9 +1,3 @@
-# get_data
-
-
-
-
-
 #' get_data
 #' 
 #' 
@@ -498,4 +492,5 @@ names_label_encoding <- function(data,
 #   attr(x, "label") <- lbl
 #   x
 # }
+
 

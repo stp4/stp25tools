@@ -30,7 +30,7 @@
 #'
 #'
 #'
-add_row_df <- function(x, add_row = NULL) {
+add_row_df <- function(x, add_row = NULL, pos=NULL) {
  # cat("\n in add_row_df")
   if (length(add_row) > 0 & is.null(names(add_row))) {
 
@@ -39,7 +39,8 @@ add_row_df <- function(x, add_row = NULL) {
     names(add_row) <- nms
   }
   new_element <- add_emty_col(x, names(add_row))
-  rbind_at(x, new_element, pos = as.numeric(add_row))
+  if(is.null(pos)) pos <-  as.numeric(add_row)
+  rbind_at(x, new_element, pos = pos)
 }
 
 

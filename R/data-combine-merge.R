@@ -307,11 +307,18 @@ combine_data_frame <- function(...,
 #' 
 #' dplyr::bind_rows(df1, df2)
 #'
-Rbind2 <- function (...,
-                      .id = "which",
-                      .names = NULL,
-                      .use.label = TRUE) {
-    data <- dplyr::bind_rows(..., .id = .id)
+Rbind2 <- function (...,.id = "which",
+                    .names = NULL,
+                    .use.label = TRUE,
+                    include.rownames = FALSE) {
+  data <- dplyr::bind_rows(..., .id = .id)
+  
+  if (include.rownames)   {
+    data <- cbind(data[1],
+                  # Source =  sub("(.*)\\.\\.\\.*", "\\1", rownames(data)),
+                  Source =  sub("(.*).....*", "\\1", rownames(data)),
+                  data[-1])
+  }
     
     if (all(!grepl("[^0-9]", data[[1]]))) {
       tmp <- list(...)

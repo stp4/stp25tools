@@ -11,6 +11,7 @@
 #' @param sep  default new line
 #' @param pattern,replacement  zB Unterstriche _ ersaetzen
 #' @param max.lines,max.lines.char  Anschneiden des Strings
+#' @name wrap_string
 #' @export
 #' 
 #' @examples
@@ -176,6 +177,7 @@ wrap_string.data.frame  <-
 
 #' @rdname wrap_string
 #' @description wrap_sentence: Kopie von  str_wrap ruckgabe der Labels 
+#' @export
 #' @return character (Labels)
 wrap_sentence <- function(x, 
                           ...) {

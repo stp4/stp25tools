@@ -93,7 +93,7 @@ capture_print <- function(x,
     #  dplyr::mutate_if(res, is.double, round, digits = digits)
     if (inherits(printed,  "matrix")  | inherits(printed, "array")){
       colnames(printed) <- printed[1L, ]
-      printed <- dplyr::as_tibble(printed, rownames = "Source")
+      printed <- tibble::as_tibble(printed, rownames = "Source")
       printed[-1L, ]
     }
     else {
@@ -177,15 +177,31 @@ fix_to_df.data.frame <- function(x, include.rownames = FALSE, ...) {
 #' @param include.rownames columns as first rownames
 #' @export
 fix_to_df.matrix <-
-  function(x, include.rownames = TRUE, ...) {
-    if (include.rownames & (!is.null(rownames(x))))
-      cbind(
-        data.frame(Source = rownames(x),
-                   stringsAsFactors = FALSE),
+  function(x,
+           include.rownames = TRUE,
+           include.dimnames = FALSE,
+           ...) {
+    if (include.rownames & (!is.null(rownames(x)))) {
+      rslt <-
+        cbind(
+          data.frame(Source = rownames(x),
+                     stringsAsFactors = FALSE),
+          as.data.frame(x, stringsAsFactors = FALSE)
+        )
+      if (include.dimnames) {
+        names(rslt)[1] <- names(dimnames(x))[1]
+        names(rslt)[2:ncol(rslt)] <-
+          paste(names(dimnames(x))[2], names(rslt)[2:ncol(rslt)], sep = "_")
+      }
+      
+    }
+    else{
+      rslt <-
         as.data.frame(x, stringsAsFactors = FALSE)
-      )
-    else
-      as.data.frame(x, stringsAsFactors = FALSE)
+    }
+    
+    
+    rslt
   }
 
 

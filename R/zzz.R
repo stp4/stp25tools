@@ -1,21 +1,32 @@
-#' @importFrom stp25settings default_stp25
-#' @export
-stp25settings::default_stp25
+#' @keywords internal
+#' @importFrom plyr llply alply
+#' @importFrom dplyr select filter n_distinct bind_rows mutate bind_rows
+#' @importFrom tibble is_tibble as_tibble tibble
+#' @importFrom tidyr pivot_longer pivot_wider gather uncount separate
+#' @importFrom lazyeval lazy_dots 
+#' @importFrom rlang enquo quo_get_expr quo_get_expr is_formula
+#' @importFrom stringr str_split str_extract str_split_fixed str_replace_all
+#' @importFrom Formula Formula
+#' @importFrom writexl write_xlsx
+#' @importFrom readxl read_excel
+#' @importFrom utils write.csv2 modifyList
+#' @importFrom haven read_sav as_factor 
+#' @importFrom tools file_ext
+#' @importFrom readr parse_number
+#' @importFrom tools file_ext
 
 
-#' @importFrom stp25settings get_opt
-#' @export
-stp25settings::get_opt
 
-#' @importFrom stp25settings set_opt
-#' @export
-stp25settings::set_opt
+ 
+ 
+ 
+ 
+
+ 
 
 
-#' stp25_stat_methode
-#'  
-#' in Tbll verwendet
-#' 
+ 
+ 
 #' @param x string
 #' @param search_string Meine Methoden
 #' @noRd
