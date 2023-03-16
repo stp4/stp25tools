@@ -22,8 +22,8 @@ stp25tools
 
 - Intern Daten mit Formel aufbereiten: *prepare_data2, print*
 
-- Vectoren transformieren: *as_numeric, as_factor, as_cut, as_logical,
-  rev.factor,as_rev, cat_bmi*
+- Vectoren transformieren: *as_numeric, as_factor, factor2, as_cut,
+  as_logical, rev.factor,as_rev, cat_bmi*
 
 - Daten importieren: *get_data*
 
@@ -45,6 +45,39 @@ factor2(c(1,0,0,0,1,1,0),
 
     ## [1] male   female female female male   male   female
     ## Levels: male female
+
+## Numeric
+
+``` r
+x <-
+  c("3,6",  "> 15100",  "+1",  "-1",
+    "$10 -> expensive", "cheap: $2.50", "free $0 !!",
+    "699.91  ",  " 228.4031.9 ",
+    "",  NA,  "hallo1",  "-77"
+  )
+ 
+ 
+cbind(
+  stp = as_numeric(x,  na.string = c("-77")),
+  fct = as_numeric(factor(x)),
+  rdr = readr::parse_number(x,  na = c("-77"))
+)
+```
+
+    ##              stp        fct        rdr
+    ##  [1,]     3.6000     3.6000    36.0000
+    ##  [2,] 15100.0000 15100.0000 15100.0000
+    ##  [3,]     1.0000     1.0000     1.0000
+    ##  [4,]    -1.0000    -1.0000    -1.0000
+    ##  [5,]    10.0000    10.0000    10.0000
+    ##  [6,]     2.5000     2.5000     2.5000
+    ##  [7,]     0.0000     0.0000     0.0000
+    ##  [8,]   699.9100   699.9100   699.9100
+    ##  [9,]   228.4031   228.4031   228.4031
+    ## [10,]         NA         NA         NA
+    ## [11,]         NA         NA         NA
+    ## [12,]     1.0000     1.0000     1.0000
+    ## [13,]         NA   -77.0000         NA
 
 ## Get Data
 
@@ -90,7 +123,7 @@ ftable(xtabs(~ sex + treatment + befund, dat))
     ## m   KG                 5   4
     ##     UG                 4   2
 
-### File Import
+### Daten File Import
 
 ``` r
  file.exists("R/dummy.csv")
@@ -121,6 +154,59 @@ ftable(xtabs(~ sex + treatment + befund, dat))
 
     ##               lfdn      external.lfdn             tester           dispcode 
     ##           "number"    "external lfdn"           "tester" "disposition code"
+
+### Daten speichern und aus Codebook rekostruieren
+
+``` r
+ save_data(dat, "demo.xlsx", include.codebook=TRUE)
+```
+
+    ## Writing file to:
+    ## C:/Users/wpete/Dropbox/3_Forschung/R-Project/stp25tools/demo.xlsx
+
+``` r
+ DF2 <- use_codebook(file = "demo.xlsx")
+```
+
+    ## 
+    ## Use data from file demo.xlsx 
+    ## # A tibble: 6 × 4
+    ##   sex   treatment Var1  befund
+    ##   <chr> <chr>     <chr> <chr> 
+    ## 1 f     KG        f+KG  neg   
+    ## 2 f     KG        f+KG  neg   
+    ## 3 f     KG        f+KG  neg   
+    ## 4 f     UG        f+UG  neg   
+    ## 5 f     UG        f+UG  neg   
+    ## 6 f     UG        f+UG  neg   
+    ## 
+    ## Label and levels from file demo.xlsx 
+    ## # A tibble: 4 × 3
+    ##   names     label     value.labels                     
+    ##   <chr>     <chr>     <chr>                            
+    ## 1 sex       sex       factor: f | m                    
+    ## 2 treatment treatment factor: KG | UG                  
+    ## 3 Var1      Var1      factor: f+KG | f+UG | m+KG | m+UG
+    ## 4 befund    befund    factor: neg | pos                
+    ## 
+    ##  sex : character -> factor
+    ##  treatment : character -> factor
+    ##  Var1 : character -> factor
+    ##  befund : character -> factor
+
+``` r
+ head(DF2)
+```
+
+    ## # A tibble: 6 × 4
+    ##   sex   treatment Var1  befund
+    ##   <fct> <fct>     <fct> <fct> 
+    ## 1 f     KG        f+KG  neg   
+    ## 2 f     KG        f+KG  neg   
+    ## 3 f     KG        f+KG  neg   
+    ## 4 f     UG        f+UG  neg   
+    ## 5 f     UG        f+UG  neg   
+    ## 6 f     UG        f+UG  neg
 
 ## Transpose
 
@@ -444,16 +530,16 @@ Merge2(df1, df2, df3, df4, by = "id")
 ```
 
     ##     id origin.x    N   P   C origin.y  foo1      X      Y origin.z origin.u
-    ## 1  P01        A 13.5 0.7 434        D FALSE 146300 378500        C        E
-    ## 2  P02        C 22.0 2.2 483        C  TRUE 146400 359800        B        D
-    ## 3  P03        D 20.0 2.7 440        B  TRUE 147600 355900        E        A
-    ## 4  P04        B 19.0 1.6 439        D  TRUE 146300 373100        A        C
-    ## 5  P05        B 20.5 2.5 459        A FALSE 147300 371500        A        D
-    ## 6  P06        C 12.0 2.8 442        D  TRUE 147300 383900        C        C
-    ## 7  P07        D 26.0 2.7 441        D  TRUE 147000 358800        D        D
-    ## 8  P08        D 12.0 4.0 500        B FALSE 147300 389100        E        D
-    ## 9  P09        A 14.0 2.1 414        C  TRUE 147500 360800        B        A
-    ## 10 P10        C 27.0 3.5 490        B  TRUE 146900 386600        E        E
+    ## 1  P01        E 18.0 1.4 490        D FALSE 145800 386500        A        C
+    ## 2  P02        C 25.5 2.6 495        B  TRUE 148300 395600        D        A
+    ## 3  P03        A 12.0 0.3 433        A FALSE 145600 358600        D        D
+    ## 4  P04        C 24.5 2.9 437        B  TRUE 147600 392700        A        C
+    ## 5  P05        D 24.5 2.3 482        E  TRUE 148100 395600        C        E
+    ## 6  P06        B 17.5 0.5 447        A  TRUE 145800 364300        E        E
+    ## 7  P07        B 10.5 2.0 447        E FALSE 147700 373700        B        D
+    ## 8  P08        B  9.0 0.9 457        D FALSE 146100 370300        C        C
+    ## 9  P09        C 21.0 0.8 439        E FALSE 147300 376000        E        E
+    ## 10 P10        E 16.0 0.5 406        E FALSE 147700 388600        E        E
 
 ## cbind data.frame aber listenweise
 
@@ -599,12 +685,12 @@ auto_trans(x)
     ## attr(,"link")
     ## function(x)
     ##   log(101 - x)
-    ## <bytecode: 0x00000196d2a1e208>
+    ## <bytecode: 0x000001d1c9efcb38>
     ## <environment: namespace:stp25tools>
     ## attr(,"inverse")
     ## function(x)
     ##   101 - (exp(x))
-    ## <bytecode: 0x00000196d2a10dd8>
+    ## <bytecode: 0x000001d1c9efb7f8>
     ## <environment: namespace:stp25tools>
     ## attr(,"name")
     ## [1] "negative skew (max-Log)"
@@ -698,8 +784,8 @@ rslt <-
     ## 
     ## ----------------------------------------------------------------
 
-    ## Warning: Expected 9 pieces. Missing pieces filled with `NA` in 7 rows [1, 2, 3,
-    ## 4, 5, 6, 7].
+    ## Warning: Expected 9 pieces. Missing pieces filled with `NA` in 7 rows [1, 2, 3, 4, 5, 6,
+    ## 7].
 
 ``` r
 stp25stat2::Tbll_desc(rslt)

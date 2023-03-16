@@ -1,7 +1,14 @@
 ---
 title: "stp25tools"
-output: github_document
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
 ---
+
+
+<!-- github_document -->
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, warnings=FALSE)
@@ -14,59 +21,43 @@ require(magrittr)
 
 
 <!-- Attaching package: ‘stp25tools’ -->
-
 <!-- The following objects are masked from ‘package:stp25aggregate’: -->
-
 <!--     get_label, Label, set_label, wrap_label, XLS -->
 
-
-
-
-## Funktionen
-
-
- * Pivot-Funktionen: *Long(), Wide(), Dapply(), dapply2(), transpose2()*
-
- * Zusammenfuegen von Data Frame: *Merge2, Rbind2, combine_data_frame*
+## Vector manipulation  
  
- * Objekt in Data Frame umwandeln: *fix_to_df, fix_to_tibble, list_to_df*
-
- * Vectoren fuer den Zugriff auf Data Frame erstellen: *Cs, XLS, paste_names*
-
- * String umbrechen: *wrap_string*
-
- * Element zu Vectoren oder Listen hinzufuegen: *add_to, add_row_df*
- 
- * Intern  Daten mit Formel aufbereiten: *prepare_data2, print*
+ * Vectoren fuer den Zugriff auf Data Frame erstellen: *Cs, XLS, paste_names* 
  
  * Vectoren transformieren: *as_numeric, as_factor, factor2, as_cut, as_logical, rev.factor,as_rev, cat_bmi*
-
- * Daten importieren: *get_data*
  
- * Fehlende Daten ergänzen und transformieren: *na_approx, auto_trans*
- 
- * Label verwalten: *Label, delet_label, get_label, set_label*
- 
- * Bereinigen von Data Frame und strings: *clean_names, cleansing_umlaute, cleansing_umlaute2*
- 
- * Rechen operationen: *auc_trapezoid*
- 
- 
-
- 
-  
- 
- 
-## Factor
+### Factor
  
  
 ```{r}
-factor2(c(1,0,0,0,1,1,0), 
+sex <- factor2(c(1,0,0,0,1,1,0), 
         male = 1, female = 0)
+ sex
 ```
  
-
+###  Numeric
  
+ 
+```{r}
+x <-
+  c("3,6",  "> 15100",  "+1",  "-1",
+    "$10 -> expensive", "cheap: $2.50", "free $0 !!",
+    "699.91  ",  " 228.4031.9 ",
+    "",  NA,  "hallo1",  "-77"
+  )
+ 
+ 
+cbind(
+  stp = as_numeric(x,  na.string = c("-77")),
+  fct = as_numeric(factor(x)),
+  rdr = readr::parse_number(x,  na = c("-77"))
+)
+
+```
  
  
   
@@ -74,6 +65,7 @@ factor2(c(1,0,0,0,1,1,0),
 
 ## Get Data
 
+ * Daten importieren: *get_data*
 
 ### Direkter Import aus Text
 
@@ -103,7 +95,7 @@ ftable(xtabs(~ sex + treatment + befund, dat))
 ```
 
 
-### File Import
+### Daten File Import
 
 ```{r}
  file.exists("R/dummy.csv")
@@ -115,8 +107,81 @@ ftable(xtabs(~ sex + treatment + befund, dat))
  get_label(x)[1:4]
 ```
 
+### Daten speichern und aus Codebook rekostruieren
+
+```{r}
+ save_data(dat, "demo.xlsx", include.codebook=TRUE)
+
+ DF2 <- use_codebook(file = "demo.xlsx")
+
+ 
+ head(DF2)
+```
+
+## Filter
+
+
+```{r}
+
+#require(stp25stat2)
+#require(stp25tools)
+
+data(DFdummy, package = "stp25data")
+
+DF1 <- DFdummy %>% 
+  filter2(study.agreement)
+
+attr(DF1, "filter")
+
+DF2 <- DF1 %>% filter2(
+  st.p.sars.cov2 == "nein",
+  !is.na(spike.igg.3.impfung),
+  !is.na(MPN)
+
+)
+
+DF3 <- DF2 %>% filter2(
+  study.agreement,
+  sero.negativ.after.dose.2,
+  !is.na(spike.igg.3.impfung),
+  !is.na(spike.igg.4.impfung),
+  spike.igg.3.impfung == "<7.1 BAU/ml"
+)
+
+```
+
+```{r}
+require(consort)
+
+dat <- prepare_consort(DF1, DF2, DF3)
+out <- consort_plot(
+  data = dat,
+  orders = c(
+    Trial.Nr   = "Population",
+    Condition.1           = "Excluded",
+    Trial.Nr     = "Allocated \nDeskriptive Analyse",
+    Condition.2    =    "Fehlende Daten",
+    Trial.Nr = "Regressionsanalyse",
+    Condition.3    = "Not evaluable for the final analysis",
+    Trial.Nr = "Final Analysis"
+  ),
+  side_box = c("Condition.1", "Condition.2", "Condition.3"),
+  cex = 0.9
+)
+
+
+
+plot(out)
+```
+
+```{r}
+
+```
 
 ## Transpose
+
+
+
 
 ### Wide
 ```{r, include=FALSE}
@@ -199,7 +264,95 @@ transpose2(
 
 
 
-## add_to
+
+## Merge
+
+ * Pivot-Funktionen: *Long(), Wide(), Dapply(), dapply2(), transpose2()*
+
+ * Zusammenfuegen von Data Frame: *Merge2, Rbind2, combine_data_frame*
+ 
+### cbind() und rbind()
+
+```{r}
+df1 = data.frame(CustomerId = c(1:6), Product = c(rep("Oven", 3), rep("Television", 3)))
+df2 = data.frame(CustomerId = c(4:7), Product = c(rep("Television", 2), rep("Air conditioner", 2)))
+df3 = data.frame(
+   CustomerId = c(4:7),
+   Product = c(rep("Television", 2), rep("Air conditioner", 2)),
+   State = c(rep("California", 2), rep("New Jersey", 2))
+ )
+
+ Rbind2(df1, df3)
+ #dplyr::bind_rows(df1, df2)
+```
+
+
+### merge()
+
+```{r}
+n<-10
+df1 <- 
+  data.frame(
+  origin = sample(c("A", "B", "C", "D", "E"), n, replace = T),
+  N = sample(seq(9, 27, 0.5), n, replace = T),
+  P = sample(seq(0.3, 4, 0.1), n, replace = T),
+  C = sample(seq(400, 500, 1), n, replace = T))
+df2 <-
+  data.frame(
+    origin = sample(c("A", "B", "C", "D", "E"), n, replace = T),
+    foo1 = sample(c(T, F), n, replace = T),
+    X = sample(seq(145600, 148300, 100), n, replace = T),
+    Y = sample(seq(349800, 398600, 100), n, replace = T))
+df3 <-
+  data.frame(origin = sample(c("A", "B", "C", "D", "E"), n, replace = T))
+df4 <-
+  data.frame(origin = sample(c("A", "B", "C", "D", "E"), n, replace = T))
+
+df1$id <- df2$id <- df3$id <- df4$id <- paste("P", sprintf("%02d", c(1:n)), sep = "")  
+ 
+Merge2(df1, df2, df3, df4, by = "id")
+ 
+```
+ 
+ 
+ 
+### cbind listenweise
+
+
+```{r}
+#' cbind data.frame aber listenweise
+m <- data.frame(
+  Item = 1:3,
+  a = (1:3),
+  b = (1:3) * 2,
+  c = (1:3) * 3
+)
+sd <- data.frame(
+  Item = (1:3),
+  a = (1:3) * 4,
+  b = (1:3) * 5,
+  c = (1:3) * 6
+)
+combine_data_frame(m, sd)
+combine_data_frame(m, sd, by = NULL)
+```
+
+
+
+
+## data.frame manipulation
+
+ * Objekt in Data Frame umwandeln: *fix_to_df, fix_to_tibble, list_to_df*
+
+ * Element zu Vectoren oder Listen hinzufuegen: *add_to, add_row_df*
+
+ * Fehlende Daten ergänzen und transformieren: *na_approx, auto_trans*
+ 
+ * Label verwalten: *Label, delet_label, get_label, set_label*
+ 
+ * Rechen operationen: *auc_trapezoid*
+
+### add_to
 
 Element zu Liste hinzufügen.
 
@@ -237,73 +390,7 @@ add_to(df, data.frame(  Source = c("G", "H"),
 
 
 
-## cbind() und rbind()
-
-```{r}
-df1 = data.frame(CustomerId = c(1:6), Product = c(rep("Oven", 3), rep("Television", 3)))
-df2 = data.frame(CustomerId = c(4:7), Product = c(rep("Television", 2), rep("Air conditioner", 2)))
-df3 = data.frame(
-   CustomerId = c(4:7),
-   Product = c(rep("Television", 2), rep("Air conditioner", 2)),
-   State = c(rep("California", 2), rep("New Jersey", 2))
- )
-
- Rbind2(df1, df3)
- #dplyr::bind_rows(df1, df2)
-```
-
-
-## merge()
-
-```{r}
-n<-10
-df1 <- 
-  data.frame(
-  origin = sample(c("A", "B", "C", "D", "E"), n, replace = T),
-  N = sample(seq(9, 27, 0.5), n, replace = T),
-  P = sample(seq(0.3, 4, 0.1), n, replace = T),
-  C = sample(seq(400, 500, 1), n, replace = T))
-df2 <-
-  data.frame(
-    origin = sample(c("A", "B", "C", "D", "E"), n, replace = T),
-    foo1 = sample(c(T, F), n, replace = T),
-    X = sample(seq(145600, 148300, 100), n, replace = T),
-    Y = sample(seq(349800, 398600, 100), n, replace = T))
-df3 <-
-  data.frame(origin = sample(c("A", "B", "C", "D", "E"), n, replace = T))
-df4 <-
-  data.frame(origin = sample(c("A", "B", "C", "D", "E"), n, replace = T))
-
-df1$id <- df2$id <- df3$id <- df4$id <- paste("P", sprintf("%02d", c(1:n)), sep = "")  
- 
-Merge2(df1, df2, df3, df4, by = "id")
- 
-```
- 
- 
- 
-## cbind data.frame aber listenweise
-
-```{r}
-m <- data.frame(
-  Item = 1:3,
-  a = (1:3),
-  b = (1:3) * 2,
-  c = (1:3) * 3
-)
-sd <- data.frame(
-  Item = (1:3),
-  a = (1:3) * 4,
-  b = (1:3) * 5,
-  c = (1:3) * 6
-)
-combine_data_frame(m, sd)
-combine_data_frame(m, sd, by = NULL)
-```
-
-
-
-## list_to_df
+### list_to_df
 
 
 
@@ -363,7 +450,7 @@ fix_to_df(tab_3x2)
 
 ```
 
-## auto_trans
+### auto_trans
 
 Automatische Taranformation von numerischen Variablen entsprechend ihere Verteilungseigenschaft
 
@@ -445,9 +532,29 @@ for(i in 1:4){
 
 ```
 
+### separate & separate_rows
+
+```{r}
+data_games <- tibble::tibble(
+  country = c("Germany", "France", "Spain"),
+  game = c("England - win", "Brazil - loss", "Portugal - tie")
+)
+
+#'   sep = "[^[:alnum:].]+"
+data_games |> tidyr::separate(col = game, into = c("opponent", "result"))
+```
+```{r}
+data_opponents <- tibble::tibble(
+  country = c("Germany", "France", "Spain"),
+  opponent = c("England, Switzerland", "Brazil, Denmark", "Portugal, Argentina")
+)
+
+data_opponents
+data_opponents |> tidyr::separate_rows(opponent)
+```
 
 
-## separate multiple choice
+### separate multiple choice
 
  Aufdroeseln von Mehrfachantworten
 
@@ -485,7 +592,7 @@ stp25stat2::Tbll_desc(rslt)
 ```
 
 
-##  Creation of dummy variables and reverse
+### Creation of dummy variables and reverse
 
 ```{r}
  z <- gl(3, 2, 12, labels = c("apple", "salad", "orange"))
@@ -498,6 +605,42 @@ z <- dummy_to_factor(z)
 table(z)
 ```
 
+## string manipulation
+
+ * String umbrechen: *wrap_string* 
+ 
+ * Bereinigen von Data Frame und strings: *clean_names, cleansing_umlaute, cleansing_umlaute2*
+
+```{r}
+clean_names(tibble::tibble("Öli"=1:3, "p-k"=1:3, "95%-CI"=4:6) )
+```
+
+
+```{r}
+cleansing_umlaute( " Öäüö? hallo")
+```
+```{r}
+txt<- wrap_string(
+  "R is free   software and comes with ABSOLUTELY NO WARRANTY.
+  You are welcome to redistribute it under certain conditions.
+  ", 35, sep = "<br>")
+txt
+```
+
+`r txt`
+
+
+```{r}
+animals <- c("cat", "dog", "mouse", "elephant")
+stringr::str_flatten_comma(animals, last = " and ")
+```
+
+## Sonstiges
+
+ 
+ * Intern  Daten mit Formel aufbereiten: *prepare_data2*
+ 
 
 
 
+ 
