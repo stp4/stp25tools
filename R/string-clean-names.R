@@ -273,3 +273,19 @@ mgsub <- function(pattern, replacement = NULL, text.var, fixed = TRUE, ...){
 }
 
 
+ 
+#' @rdname clean_names
+#' @param x  string
+#' 
+#' @export
+#' @examples 
+#' abbreviate2(c("Hallö", "Halü"))
+#' 
+abbreviate2 <- function(x,  minlength = 4)
+  abbreviate(stringi::stri_trans_general(x, "latin-ascii"),
+             minlength = 4, named = FALSE)
+
+ 
+
+
+
