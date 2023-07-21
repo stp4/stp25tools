@@ -6,6 +6,12 @@
 \alias{wrap_string.factor}
 \alias{wrap_string.data.frame}
 \alias{wrap_sentence}
+\alias{wrap_string_at}
+\alias{wrap_string_at.character}
+\alias{wrap_string_at.factor}
+\alias{split_string}
+\alias{split_string.character}
+\alias{split_string.factor}
 \title{wrap_string (umbrechen)}
 \usage{
 wrap_string(x, ...)
@@ -42,6 +48,23 @@ wrap_string(x, ...)
 )
 
 wrap_sentence(x, ...)
+
+wrap_string_at(x, ...)
+
+\method{wrap_string_at}{character}(x, pattern, replacement = paste0("\\n", pattern))
+
+\method{wrap_string_at}{factor}(
+  x,
+  pattern,
+  replacement = paste0("\\n", pattern),
+  lvl = levels(x)
+)
+
+split_string(x, ...)
+
+\method{split_string}{character}(x, pattern, pos = 1)
+
+\method{split_string}{factor}(x, pattern, pos = 1, lvl = levels(x))
 }
 \arguments{
 \item{x}{data.frame oder String}
@@ -62,6 +85,14 @@ factor
 data.frame
 
 character (Labels)
+
+character
+
+factor
+
+character
+
+factor
 }
 \description{
 Kopie von  str_wrap  wobei die Labels mitupData2 ergaenzt werden wenn ein 
@@ -106,4 +137,14 @@ get_label(DF)
 wrap_factor(DF, max.lines = 1, max.lines.char = "")
 
 
+# example code
+  
+x <- c("Potassium (mg/l)", "Calcium (mg/l)","Adjusted CoQ10 (µmol/mmol Chol)")
+wrap_string_at(x, "\\\\(")
+wrap_string_at(factor(x), "\\\\(")
+# example code
+
+x <- c("Potassium (mg/l)", "Calcium (mg/l)","Adjusted CoQ10 (µmol/mmol Chol)")
+split_string(x, "\\\\(")
+split_string(factor(x), "\\\\("
 }

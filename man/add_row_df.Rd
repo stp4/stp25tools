@@ -4,7 +4,7 @@
 \alias{add_row_df}
 \title{add_row_df}
 \usage{
-add_row_df(x, add_row = NULL)
+add_row_df(x, add_row = NULL, pos = NULL)
 }
 \arguments{
 \item{x}{data.frame}

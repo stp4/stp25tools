@@ -7,6 +7,7 @@
 \alias{paste_names}
 \alias{cleansing_umlaute}
 \alias{cleansing_umlaute2}
+\alias{abbreviate2}
 \title{clean_names}
 \usage{
 clean_names(x, ...)
@@ -38,6 +39,8 @@ paste_names(x, collapse = ", ")
 cleansing_umlaute(x)
 
 cleansing_umlaute2(x)
+
+abbreviate2(x, minlength = 4)
 }
 \arguments{
 \item{x}{string}
@@ -112,4 +115,6 @@ c(
 # )
 
 # clean_names(df)
+abbreviate2(c("Hallö", "Halü"))
+
 }

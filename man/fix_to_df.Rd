@@ -28,7 +28,7 @@ fix_to_tibble(x, ...)
 
 \method{fix_to_df}{data.frame}(x, include.rownames = FALSE, ...)
 
-\method{fix_to_df}{matrix}(x, include.rownames = TRUE, ...)
+\method{fix_to_df}{matrix}(x, include.rownames = TRUE, include.dimnames = FALSE, ...)
 
 \method{fix_to_df}{vector}(x, ...)
 

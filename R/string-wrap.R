@@ -100,7 +100,9 @@ wrap_string.character <- function(x,
       simplify = FALSE
     )
 
-  x <-  vapply(x,  stringr::str_c, collapse = sep, character(1))
+  x <-  vapply(x, 
+               stringr::str_c, 
+               collapse = sep, character(1))
   } 
   if (!is.null(max.lines)) {
     x_split <- strsplit(x, sep)
@@ -120,6 +122,14 @@ wrap_string.character <- function(x,
   
   x
 }
+
+
+
+
+
+
+
+
 
  
 #' @rdname wrap_string
@@ -182,10 +192,91 @@ wrap_string.data.frame  <-
 wrap_sentence <- function(x, 
                           ...) {
   if (is.data.frame(x))
-    x <- stp25tools::get_label(x, include.units = TRUE)
-  
+    x <- get_label(x, include.units = TRUE)
     wrap_string(x, ...)
 }
 
 
+#' @rdname wrap_string
+#' @export
+#' @examples
+#' # example code
+#'   
+#' x <- c("Potassium (mg/l)", "Calcium (mg/l)","Adjusted CoQ10 (µmol/mmol Chol)")
+#' wrap_string_at(x, "\\(")
+#' wrap_string_at(factor(x), "\\(")
+wrap_string_at <- function(x, ...) {
+  UseMethod("wrap_string_at")
+}
 
+#' @rdname wrap_string
+#' @export
+#' @return character
+wrap_string_at.character <-
+  function(x,
+           pattern,
+           replacement = paste0("\n", pattern)) {
+    gsub(pattern = pattern, replacement = replacement, x)
+  }
+
+#' @rdname wrap_string
+#' @export
+#' @return factor
+wrap_string_at.factor <-
+  function(x,
+           pattern,
+           replacement = paste0("\n", pattern),
+           lvl = levels(x)) {
+    factor(
+      as.character(x),
+      levels = lvl,
+      labels =  wrap_string_at(lvl,
+                               pattern,
+                               replacement)
+    )
+  }
+
+# 
+# x<- c("Potassium (mg/l)", "Calcium (mg/l)","Adjusted CoQ10 (µmol/mmol Chol)")
+# wrap_string_at(x, "\\(")
+# wrap_string_at(factor(x), "\\(")
+
+
+
+
+#' @rdname wrap_string
+#' @export
+#' @examples
+#' # example code
+#'
+#' x <- c("Potassium (mg/l)", "Calcium (mg/l)","Adjusted CoQ10 (µmol/mmol Chol)")
+#' split_string(x, "\\(")
+#' split_string(factor(x), "\\("
+split_string <- function(x, ...) {
+  UseMethod("split_string")
+}
+
+#' @rdname wrap_string
+#' @export
+#' @return character
+split_string.character <-
+  function(x,
+           pattern,
+           pos = 1) {
+    str_trim(sapply(stringr::str_split(x, pattern = pattern), "[", pos))
+  }
+
+#' @rdname wrap_string
+#' @export
+#' @return factor
+split_string.factor <-
+  function(x,
+           pattern,
+           pos = 1,
+           lvl = levels(x)) {
+    factor(as.character(x),
+           levels = lvl,
+           labels =  split_string(lvl,
+                                  pattern,
+                                  pos))
+  }

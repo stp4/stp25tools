@@ -95,6 +95,7 @@ get_data <- function (file = NA,
                       comment.char = "",
                       quote = "\"",
                       ...){
+  
   read_xlsx <- function() {
     if (is.null(na.strings)) {
       readxl::read_excel(file,
@@ -135,31 +136,40 @@ get_data <- function (file = NA,
           header = FALSE,
           sep = sep,
           quote = quote,
-          skip =label-1,
-          nrows =1
+          skip = label - 1,
+          nrows = 1
         )
       
-      if(any(is.na(label))){
+      if (any(is.na(label))) {
         isna <- which(is.na(label))
         
         label[isna] <- names(dat)[isna]
       }
-      names(label)<-  names(dat)
-     dat<- set_label2(dat, label)
+      names(label) <-  names(dat)
+      dat <- set_label2(dat, label)
     } 
     dat
   }
   
   read_sav <- function() {
     dat <-
-      haven::read_sav(file, encoding = encoding,  user_na = user_na)
+      haven::read_sav(file, 
+                      encoding = encoding,  
+                      user_na = user_na)
     haven::as_factor(dat)
   }
   
   data <- data.frame(NULL)
   if (length(grep("\n", file)) > 0) {
     # cat("\n\nread-text\n")
-    data <- read.text2(file, dec = dec)
+    # workaround
+    # ich habe nachträglich die tabs eingebaut!
+    if( sep == ";" ) sep<- "" 
+    data <-
+      read.text2(file,
+                 na.strings = na.strings,
+                 sep = sep,
+                 dec = dec)
   }
   else {
     if (file.exists(file)) {
@@ -195,15 +205,13 @@ get_data <- function (file = NA,
       expand_table(data, id.vars = id.vars, value = value, ...)
   }
   
-  if (as_tibble & !tibble::is_tibble(data)) {
+  if (as_tibble & !tibble::is_tibble(data)) 
     data <- tibble::tibble(data)
-  } else if (!as_tibble & tibble::is_tibble(data))
-  {
+  else if (!as_tibble & tibble::is_tibble(data)) 
     data <- data.frame(data)
-  }
-  else {
-    NULL
-  }
+  else NULL
+  
+  
   
   data
 }
@@ -244,25 +252,34 @@ cleanup_NA <-
     obj
   }
 
-#' Read Text Lines
+#' @rdname get_data
+#' @description
+#' 
+#'   Read Text Lines
 #'
 #' @param string  character string
 #' @param na.strings 	  a character vector of strings which are to be interpreted as NA values.
 #' @param sep 	  the field separator character.
 #' @param dec  the character used in the file for decimal points.
 #' @param stringsAsFactors TRUE
+#' @export
 #'
 #' @return data.frame
-#' @noRd
 read.text2 <-
   function (string,
             na.strings = c("NA", "na"),
-            sep = "\t",
+            sep = "", # the separator is ‘white space’
             dec = ".",
             stringsAsFactors = TRUE) {
+    
+    if(sep == " ") string <- gsub("\t", " ", string)
+   # cat("\nsep", sep,"\n")
+  #  print(sep)
+    
     data <- read.table(
-      zz <- textConnection(gsub(sep, " ", string)),
+      zz <- textConnection(string),
       header = TRUE,
+      sep = sep,
       dec = dec,
       na.strings = na.strings,
       stringsAsFactors = stringsAsFactors
@@ -343,10 +360,14 @@ expand_table <-
            value = "value",
            na.strings = "NA",
            as.is = FALSE,
+           sep = " ",
            dec = ".") {
     if (is.character(data))
       data <-
-        read.text2(data)  # nur wenn die Funktion dierekt aufgerufen wird moeglich
+        read.text2(data,
+                   na.strings = na.strings,
+                   sep = sep,
+                   dec = dec)  # nur wenn die Funktion dierekt aufgerufen wird moeglich
     
     
     if (!is.numeric(id.vars))

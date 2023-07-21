@@ -25,21 +25,9 @@ as_numeric(x, ...)
 
 \method{as_numeric}{numeric}(x, ...)
 
-\method{as_numeric}{character}(
-  x,
-  na.string = "",
-  dec = ".",
-  exclude.symbols = "[^0-9.\\\\+\\\\-]",
-  ...
-)
+\method{as_numeric}{character}(x, na.string = "", dec = c(".", ","), trim_ws = TRUE, ...)
 
-\method{as_numeric}{factor}(
-  x,
-  na.string = "",
-  dec = ".",
-  exclude.symbols = "[^0-9.\\\\+\\\\-]",
-  ...
-)
+\method{as_numeric}{factor}(x, na.string = "", dec = c(".", ","), ...)
 
 as_logical(x)
 
@@ -56,13 +44,11 @@ as_cut(x, ...)
 
 \item{n}{anzahl der BMI-Kategorien default = 4 Underweight,        Normal,    Overweight, Obese Class I}
 
-\item{...}{weitere methoden}
+\item{...}{readr::parse_number trim_ws    Should leading and trailing whitespace (ASCII spaces and tabs) be trimmed from each field before parsing it?}
 
 \item{na.string}{missing}
 
 \item{dec}{decimal}
-
-\item{exclude.symbols}{plus und  minus sind erlaubt}
 }
 \value{
 vector

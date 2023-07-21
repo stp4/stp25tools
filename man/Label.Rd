@@ -16,7 +16,7 @@ delet_label(data)
 
 set_label(data, label = NULL, include.units = FALSE)
 
-trimm_label(data, pattern = "\\\\.\\\\.\\\\. ")
+trimm_label(data, pattern = "\\\\.\\\\.\\\\. ", pos = 2)
 
 gsub_label(data, pattern = "\\\\&amp;", replacement = "&")
 

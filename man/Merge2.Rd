@@ -21,7 +21,13 @@ Merge2(
 
 combine_data_frame(..., by = 1, prefix = NULL)
 
-Rbind2(..., .id = "which", .names = NULL, .use.label = TRUE)
+Rbind2(
+  ...,
+  .id = "which",
+  .names = NULL,
+  .use.label = TRUE,
+  include.rownames = FALSE
+)
 }
 \arguments{
 \item{...}{data.frames}
@@ -46,6 +52,8 @@ Rbind2(..., .id = "which", .names = NULL, .use.label = TRUE)
 }
 \value{
 data.frame
+
+data.frame(which, ...)
 }
 \description{
 Combine more then two Data Frames  Objects by Columns

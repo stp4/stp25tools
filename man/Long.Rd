@@ -93,7 +93,7 @@ dat \%>\% Wide(student,  c(A, B))
 dat \%>\% Wide(student,  c("A", "B"))
 dat[-3] \%>\% Wide(student,  B)
 dat  \%>\% Wide(student ~ month)
-#dat[-3] \%>\% reshape2::dcast(month ~ student)
+ #dat[-3] \%>\% reshape2::dcast(month ~ student)
 dat  \%>\% Wide(month ~ student, A)
 dat  \%>\% Wide(student ~ month, A)
 
