@@ -37,9 +37,6 @@
 #' DF<- delet_label(DF)
 #' get_label(DF)
 #'
-#' DF<- wrap_label(DF)
-#' get_label(DF)
-#'
 Label <- function(data, ...) {
   lbl <- list(...)
   if (length(lbl) == 0) {

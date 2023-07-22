@@ -202,7 +202,7 @@ Umcodieren <- function(x,
 #       erfahrung.5,
 #       re.code=TRUE)
 # 
-# DF2<- DF %>% mutate(erfahrung=Index(
+# DF2<- DF |> mutate(erfahrung=Index(
 #   erfahrung.1,
 #   erfahrung.2,
 #   erfahrung.3,

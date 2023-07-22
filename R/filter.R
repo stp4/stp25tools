@@ -10,59 +10,6 @@
 #' @return data.frame mit attr(x, "filter")
 #' @export
 #'
-#' @examples
-#'
-#'  #?prepare_consort
-#' #'
-#' require(stp25stat2)
-#' require(stp25tools)
-#'
-#'
-#' data(DFdummy, package = "stp25data")
-#'
-#' DF1 <- DFdummy %>% filter2(study.agreement)
-#' attr(DF1, "filter")
-#'
-#' DF2 <- DF1 %>% filter2(
-#'   st.p.sars.cov2 == "nein",
-#'   !is.na(spike.igg.3.impfung),
-#'   !is.na(MPN)
-#'
-#' )
-#'
-#' DF3 <- DF2 %>% filter2(
-#'   study.agreement,
-#'   sero.negativ.after.dose.2,
-#'   !is.na(spike.igg.3.impfung),
-#'   !is.na(spike.igg.4.impfung),
-#'   spike.igg.3.impfung == "<7.1 BAU/ml"
-#' )
-#'
-#'
-#'
-#' dat <- prepare_consort(DF1, DF2, DF3)
-#'
-#'
-#' require(consort)
-#'
-#' out <- consort_plot(
-#'   data = dat,
-#'   orders = c(
-#'     Trial.Nr   = "Population",
-#'     Condition.1           = "Excluded",
-#'     Trial.Nr     = "Allocated \nDeskriptive Analyse",
-#'     Condition.2    =    "Fehlende Daten",
-#'     Trial.Nr = "Regressionsanalyse",
-#'     Condition.3    = "Not evaluable for the final analysis",
-#'     Trial.Nr = "Final Analysis"
-#'   ),
-#'   side_box = c("Condition.1", "Condition.2", "Condition.3"),
-#'   cex = 0.9
-#' )
-#'
-#'
-#'
-#' plot(out)
 filter2 <- function(.data,
                     ...,
                     #  .by = NULL,
@@ -119,7 +66,7 @@ filter2 <- function(.data,
 #'
 #' @return The counts and percentages of the remaining and excluded subjects
 #' for each step of the cohort selection in a table format.
-#' @importFrom magrittr %>%
+
 visR_get_attrition <- function(data,
                                criteria_descriptions =
                                  paste0(seq_along(criteria_conditions), ". Filter"),
@@ -156,9 +103,9 @@ visR_get_attrition <- function(data,
                            )
       # print(final_cond)
       person_count_temp <-
-                      data %>%
-                      dplyr::filter(eval(parse(text = final_cond))) %>%
-                      dplyr::select(!!subject_column_name) %>%
+                      data |>
+                      dplyr::filter(eval(parse(text = final_cond))) |>
+                      dplyr::select(!!subject_column_name) |>
                       dplyr::n_distinct()
       # print(person_count_temp)
       
@@ -173,22 +120,22 @@ visR_get_attrition <- function(data,
         tibble::tibble(
               criteria_conditions = "none",
               criteria_descriptions = "Total cohort size",
-              Remaining.N = dplyr::select(data,!!subject_column_name) %>%
+              Remaining.N = dplyr::select(data,!!subject_column_name) |>
                 dplyr::n_distinct()
             )
       
       # generate attrition table
       attrition_table <-
-        criterion_0 %>%
-        dplyr::bind_rows(cbind(criteria_map, count_master_table)) %>%
+        criterion_0 |>
+        dplyr::bind_rows(cbind(criteria_map, count_master_table)) |>
         dplyr::mutate(
           Remaining.prc = round(100 * Remaining.N / max(Remaining.N), 1),
           Excluded.N = dplyr::lag(Remaining.N,n = 1L,default = max(Remaining.N)) - Remaining.N,
           Excluded.prc = round(100 * Excluded.N / max(Remaining.N), 1)
-        ) %>%
+        ) |>
         # rename columns
         dplyr::rename(Condition = criteria_conditions,
-                      Criteria = criteria_descriptions) %>%
+                      Criteria = criteria_descriptions) |>
         # fix formatting
         dplyr::select(Criteria, Condition, dplyr::everything())
       

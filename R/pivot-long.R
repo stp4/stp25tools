@@ -15,22 +15,22 @@
 #' A=c(9, 7, 6, 8, 6, 9),
 #' B=c(6, 7, 8, 5, 6, 7))
 #' 
-#' df2<-df %>% Wide(student, c(A, B))
+#' df2<-df |> Wide(student, c(A, B))
 #' 
 #' 
 #' 
-#' df[-4] %>% tidyr::spread(student, A)
-#' df[-4] %>% Wide(student, A)
+#' df[-4] |> tidyr::spread(student, A)
+#' df[-4] |> Wide(student, A)
 #' 
 #' 
-#' df2  %>% Long( Amy_A, Amy_B, Bob_A, Bob_B, by=~month)
+#' df2  |> Long( Amy_A, Amy_B, Bob_A, Bob_B, by=~month)
 #' 
 #' 
 #' 
 #' 
-#' df %>%
-#'   tidyr::gather(variable, value, -(month:student)) %>%
-#'   tidyr::unite(temp, student, variable) %>%
+#' df |>
+#'   tidyr::gather(variable, value, -(month:student)) |>
+#'   tidyr::unite(temp, student, variable) |>
 #'   tidyr::spread(temp, value)
 Long <- function(x, ...) {
   UseMethod("Long")

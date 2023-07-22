@@ -5,7 +5,7 @@
 #' Transformiere zu data.frame
 #'
 #'
-#' fix_levels ist fuer dta %>% gather(Parameter, Wert, x1:x5)  %>% fix_levels(dta)
+#' fix_levels ist fuer dta |> gather(Parameter, Wert, x1:x5)  |> fix_levels(dta)
 #' fix_colnames ist fuer Formatieren in der Funktion \code{Output()}
 #' @param x  vektor liste oder matrix
 #' @param ... weiter Argumente
@@ -233,7 +233,7 @@ fix_to_df.matrix <-
 # 
 # # Convert a matrix to standard data frame
 # matrix_to_dataframe <- function(x){
-#   x <- as.data.frame(x, stringsAsFactors = FALSE) %>%
+#   x <- as.data.frame(x, stringsAsFactors = FALSE) |>
 #     add_column(rowname = rownames(x), .before = 1)
 #   rownames(x) <- NULL
 #   x
@@ -333,7 +333,7 @@ fix_to_df.ftable <-
 #'  # 3x2x3
 #' tab_3x2x3
 #' # ftable(tab_3x2x3)
-#' # as.data.frame(ftable(tab_3x2x3)) %>%
+#' # as.data.frame(ftable(tab_3x2x3)) |>
 #' #   Wide(induced  +  case ~education )
 #' fix_to_df(tab_3x2x3)
 #'

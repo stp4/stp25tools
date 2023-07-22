@@ -1,8 +1,8 @@
 Package: stp25tools
 Type: Package
-Title: Tools for data manipulation
-Version: 0.1.4
-Date: 2023-03-16
+Title: Tools for data wrangling and statistical transformations.
+Version: 0.2.0
+Date: 2023-07-22
 Authors@R: person("Wolfgang", "Peter", email = "w.peter@statistik-peter.at",  role = c("aut", "cre"))
 Description: Collection of convenient functions for common data manipulation.
 License: GPL-3
@@ -12,12 +12,11 @@ RoxygenNote: 7.2.3
 Suggests: 
  stats,
  e1071,
- broom,
+ broom,  
  utils
 Imports:
   stp25settings,
   magrittr,
-  writexl,
   plyr, 
   dplyr,
   tibble,
@@ -25,5 +24,10 @@ Imports:
   lazyeval,
   rlang,
   stringr,
-  Formula
+  haven,
+  Formula,
+  readr,  
+  writexl,
+  readxl, 
+  zoo
 

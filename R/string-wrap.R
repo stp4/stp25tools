@@ -3,7 +3,6 @@
 #' Kopie von  str_wrap  wobei die Labels mitupData2 ergaenzt werden wenn ein 
 #' Data.Frame-Objekt uebergeben wird. 
 #' 
-#' wrap_label kuerzt die label fur Grafiken.
 #' 
 #'
 #' @param x data.frame oder String
@@ -24,33 +23,10 @@
 #' 
 #' 
 #' 
-#' 
-#' df <- data.frame(
-#'   BMI=c(1,2,3,1,2,3),
-#'   WHtR= gl(2,3, label =c("R is free   software  and comes with ABSOLUTELY NO WARRANTY", 
-#'                          "You are welcome to redistribute it under certain conditions.")),
-#'   WHtR_1=c(9,7,6,8,6,9),
-#'   bildprof=c(6,7,8,5,6,7)
-#' )
-#' 
-#' DF<-
-#'   Label(df, BMI = "Body-Mass-Index   Masszahl für die Bewertung des Koerpergewichts eines
-#'    Menschen in Relation zu seiner Koerpergroesse.",
-#'         WHtR =  "Waist-Height-Ratio",
-#'         WHtR_1 ="Waist-Height-Ratio"
-#'   )
-#' 
-#'   # DF$BMI<- units::set_units(DF$BMI, kg/m2)
-#' 
-#' DF<- wrap_label(DF,   width = 20, max.lines = 1)
-#' get_label(DF)
-#' 
-#' wrap_factor(DF, max.lines = 1, max.lines.char = "")
-#' 
-#' 
 wrap_string <- function(x, ...) {
   UseMethod("wrap_string")
 }
+
 
 #' @rdname wrap_string
 #' @export
@@ -124,14 +100,6 @@ wrap_string.character <- function(x,
 }
 
 
-
-
-
-
-
-
-
- 
 #' @rdname wrap_string
 #' @export
 #' @return factor
@@ -159,6 +127,7 @@ wrap_string.factor  <-
     )
     
   }
+
 
 #' @rdname wrap_string
 #' @export
@@ -202,12 +171,15 @@ wrap_sentence <- function(x,
 #' @examples
 #' # example code
 #'   
-#' x <- c("Potassium (mg/l)", "Calcium (mg/l)","Adjusted CoQ10 (µmol/mmol Chol)")
-#' wrap_string_at(x, "\\(")
-#' wrap_string_at(factor(x), "\\(")
+#' 1+1
+#' # x <- c("Potassium (mg/l)", "Calcium (mg/l)","Adjusted CoQ10 (µmol/mmol Chol)")
+#' # wrap_string_at(x, "\\(")
+#' # wrap_string_at(factor(x), "\\(")
+#' 
 wrap_string_at <- function(x, ...) {
   UseMethod("wrap_string_at")
 }
+
 
 #' @rdname wrap_string
 #' @export
@@ -218,6 +190,7 @@ wrap_string_at.character <-
            replacement = paste0("\n", pattern)) {
     gsub(pattern = pattern, replacement = replacement, x)
   }
+
 
 #' @rdname wrap_string
 #' @export
@@ -236,25 +209,13 @@ wrap_string_at.factor <-
     )
   }
 
-# 
-# x<- c("Potassium (mg/l)", "Calcium (mg/l)","Adjusted CoQ10 (µmol/mmol Chol)")
-# wrap_string_at(x, "\\(")
-# wrap_string_at(factor(x), "\\(")
-
-
-
 
 #' @rdname wrap_string
 #' @export
-#' @examples
-#' # example code
-#'
-#' x <- c("Potassium (mg/l)", "Calcium (mg/l)","Adjusted CoQ10 (µmol/mmol Chol)")
-#' split_string(x, "\\(")
-#' split_string(factor(x), "\\("
 split_string <- function(x, ...) {
   UseMethod("split_string")
 }
+
 
 #' @rdname wrap_string
 #' @export
@@ -265,6 +226,7 @@ split_string.character <-
            pos = 1) {
     str_trim(sapply(stringr::str_split(x, pattern = pattern), "[", pos))
   }
+
 
 #' @rdname wrap_string
 #' @export

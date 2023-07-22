@@ -14,7 +14,8 @@
 #' @importFrom tools file_ext
 #' @importFrom readr parse_number
 #' @importFrom tools file_ext
-
+#' @importFrom stp25settings get_opt
+#' @importFrom magrittr %>%
 
 
  
@@ -61,7 +62,7 @@ stp25_stat_methode <- function(x,
 #'
 #' @examples
 #' x <- c("a_1", "a_2", "b_2", "c_3")
-#' vars <- reshape2_colsplit(x, "_", c("trt", "time"))
+#' vars <- stp25tools:::reshape2_colsplit(x, "_", c("trt", "time"))
 #' vars
 #' str(vars)
 reshape2_colsplit<-
@@ -105,7 +106,7 @@ guess_value <- function (df){
 #'
 #' @examples
 #' x <- rnorm(100)
-#' skewness(x)
+#' e1071::skewness(x)
 e1071_skewness <- 
 function (x, na.rm = FALSE, type = 3) 
 {
