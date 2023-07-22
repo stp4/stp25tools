@@ -28,5 +28,5 @@ Type 3:
 }
 \examples{
 x <- rnorm(100)
-skewness(x)
+e1071::skewness(x)
 }

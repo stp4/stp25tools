@@ -129,12 +129,16 @@ m   UG          4   2
 )
 
 ftable(xtabs(~ sex + treatment + befund, dat))
+ 
+if(file.exists("R/dummy.csv")){
+  
+  get_data("R/dummy.csv", dec = ",", na.strings = "-", skip=1, label=1)
+  get_data("R/dummy.xlsx", na.strings = "-")
+  get_data("R/dummy.xlsx")
+  
+  x <- get_data("R/dummy.sav")
+  get_label(x)[1:4]
+  
+}
 
-file.exists("R/dummy.csv")
-get_data("R/dummy.csv", dec = ",", na.strings = "-", skip=1, label=1)
-get_data("R/dummy.xlsx", na.strings = "-")
-get_data("R/dummy.xlsx")
-
-x <- get_data("R/dummy.sav")
-get_label(x)[1:4]
 }

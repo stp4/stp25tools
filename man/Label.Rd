@@ -70,7 +70,4 @@ get_label(DF)
 DF<- delet_label(DF)
 get_label(DF)
 
-DF<- wrap_label(DF)
-get_label(DF)
-
 }

@@ -44,8 +44,7 @@ Aufdroeseln von Mehrfachantworten
 zu einem Multi-Set mit 0 und 1. (Separate multiple choice)
 }
 \examples{
-
- #require(stp25tools)
+#' #require(stp25tools)
 lbl <- c (
   '1 Heart Failure' = 1,
   '2 Rhythm Abnormality' = 2,
@@ -63,11 +62,9 @@ x <- c(0,
        2,
        "",
        "8,4",
-       #  3.8,100,
        "4,6,8,3",
        "2,3,4,5")
 
-#x <- gsub("\\.", ",", x)
 rslt <-
   separate_multiple_choice(x ,
                            sep = ",",
@@ -76,16 +73,17 @@ rslt <-
 stp25stat2::Tbll_desc(rslt)
 
 
-
-dat <-  data.frame(Q1=c(134, NA, 35, 134, 5, 24),
-                   Q2=c(
-                     "Alm Dudler, Essig, Cola",
-                     NA,
-                     "Cola, Holer",
-                     "Alm Dudler, Cola, Essig",
-                     "Holer",
-                     "Bier, Essig"))
-
+dat <-  data.frame(
+  Q1 = c(134, NA, 35, 134, 5, 24),
+  Q2 = c(
+    "Alm Dudler, Essig, Cola",
+    NA,
+    "Cola, Holer",
+    "Alm Dudler, Cola, Essig",
+    "Holer",
+    "Bier, Essig"
+  )
+)
 
 
 dat2 <- cbind(dat[2],
@@ -95,18 +93,21 @@ dat2
 
 
 dat1 <- cbind(dat[1],
-              separate_multiple_choice(
-                dat$Q1,
-                label = 
-                  c("Alm Dudler", 
-                    "Bier", 
-                    "Cola", 
-                    "Essig", 
-                    "Holer")))
+              separate_multiple_choice(dat$Q1,
+                                       label =
+                                         c(
+                                           "Alm Dudler",
+                                           "Bier",
+                                           "Cola",
+                                           "Essig",
+                                           "Holer"
+                                         )))
 names(dat1) <- get_label(dat1)
 dat1
 
 
-x<-data.frame(A=c(15911, 261011, 3711, 48111))
+x <- data.frame(A = c(15911, 261011, 3711, 48111))
 separate_multiple_choice(x$A)
+
+
 }

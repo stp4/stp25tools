@@ -51,7 +51,7 @@ ein data.frame Objekt
 data.frame
 }
 \description{
-fix_levels ist fuer dta %>% gather(Parameter, Wert, x1:x5)  %>% fix_levels(dta)
+fix_levels ist fuer dta |> gather(Parameter, Wert, x1:x5)  |> fix_levels(dta)
 fix_colnames ist fuer Formatieren in der Funktion \code{Output()}
 
 capture_print:  Try to catch Output via print. Stolen from depigner::tidy_summary.R
@@ -147,7 +147,7 @@ fix_to_df(tab_3x3x2)
  # 3x2x3
 tab_3x2x3
 # ftable(tab_3x2x3)
-# as.data.frame(ftable(tab_3x2x3)) \%>\%
+# as.data.frame(ftable(tab_3x2x3)) |>
 #   Wide(induced  +  case ~education )
 fix_to_df(tab_3x2x3)
 

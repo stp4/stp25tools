@@ -18,7 +18,7 @@ Stolen from reshape2
 }
 \examples{
 x <- c("a_1", "a_2", "b_2", "c_3")
-vars <- reshape2_colsplit(x, "_", c("trt", "time"))
+vars <- stp25tools:::reshape2_colsplit(x, "_", c("trt", "time"))
 vars
 str(vars)
 }
