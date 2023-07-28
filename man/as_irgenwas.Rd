@@ -49,6 +49,8 @@ as_cut(x, ...)
 \item{na.string}{missing}
 
 \item{dec}{decimal}
+
+\item{trim_ws}{logical trim ws}
 }
 \value{
 vector

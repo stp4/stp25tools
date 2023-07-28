@@ -15,6 +15,7 @@ factor_to_dummy <- function(x) {
 
 #' @rdname factor_to_dummy
 #' @param x data.frame all 0 / 1
+#' @param value integer
 #'
 #' @return factor
 #' @export
@@ -29,10 +30,10 @@ factor_to_dummy <- function(x) {
 #' table(z)
 #' z <- dummy_to_factor(z)
 #' table(z)
-dummy_to_factor <- function(x, value=1L) {
+dummy_to_factor <- function(x, value = 1L) {
   lbl <-  get_label(x)
   x[is.na(x)] <- 0L
- 
+  
   for (i in seq_along(x)) {
     x[[i]] <- ifelse(x[[i]] == value, i, 0L)
   }

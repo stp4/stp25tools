@@ -11,6 +11,8 @@ dummy_to_factor(x, value = 1L)
 }
 \arguments{
 \item{x}{data.frame all 0 / 1}
+
+\item{value}{integer}
 }
 \value{
 data.frame

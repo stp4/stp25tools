@@ -41,7 +41,7 @@ fix_to_tibble(x, ...)
 
 \item{...}{an print}
 
-\item{include.rownames}{columns as first rownames}
+\item{include.rownames, include.dimnames}{columns as first rownames}
 
 \item{dim_x, atrb}{nicht zum aendern}
 }

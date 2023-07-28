@@ -69,6 +69,8 @@ split_string(x, ...)
 \arguments{
 \item{x}{data.frame oder String}
 
+\item{...}{alles weiter}
+
 \item{width}{default width= 25}
 
 \item{sep}{default new line}
@@ -76,6 +78,10 @@ split_string(x, ...)
 \item{pattern, replacement}{zB Unterstriche _ ersaetzen}
 
 \item{max.lines, max.lines.char}{Anschneiden des Strings}
+
+\item{lvl}{character levels}
+
+\item{pos}{integer Position}
 }
 \value{
 character

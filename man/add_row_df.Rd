@@ -10,6 +10,8 @@ add_row_df(x, add_row = NULL, pos = NULL)
 \item{x}{data.frame}
 
 \item{add_row}{named vector}
+
+\item{pos}{an rbind_at}
 }
 \value{
 data.frame

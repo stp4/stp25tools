@@ -23,6 +23,8 @@ Bei Zahlen gehen nur 1 bis 11}
 
 \item{sep}{wichtig ist das trennzeichen}
 
+\item{id}{unique id}
+
 \item{out_labels, out_levels}{Outut nimmeric oder factor}
 
 \item{as_logical}{ausgabe logical}
@@ -32,6 +34,8 @@ Bei Zahlen gehen nur 1 bis 11}
 \item{into}{brauch nicht gesetzt werden entspricht der Anzahl an levels}
 
 \item{label}{Labels}
+
+\item{na.strings}{missing}
 }
 \value{
 data.frame mit 0 1 Kodierung und den Fragen als Labels
@@ -70,7 +74,7 @@ rslt <-
                            sep = ",",
                            as_logical = TRUE,
                            label = lbl)
-stp25stat2::Tbll_desc(rslt)
+# stp25stat2::Tbll_desc(rslt)
 
 
 dat <-  data.frame(

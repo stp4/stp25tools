@@ -30,11 +30,13 @@ save_text(..., file = "INFO.txt")
 \arguments{
 \item{x}{data.frame}
 
-\item{file, sheet.data, sheet.codebook}{file= "demo.xlsx", sheet.data = 1, sheet.codebook = 2,}
+\item{file}{file to write to default INFO.txt}
 
 \item{data}{data.frame, default is NULL}
 
 \item{codebook}{data.frame codebook = codebook(DF), default is NULL}
+
+\item{sheet.data, sheet.codebook}{file= "demo.xlsx", sheet.data = 1, sheet.codebook = 2,}
 
 \item{names, label, value.labels}{Variablen NNamen im codebook}
 
@@ -45,8 +47,6 @@ separator string in Excel is a comma.}
 \item{row.names, include.codebook}{logical include something}
 
 \item{...}{Text}
-
-\item{file}{file to write to default INFO.txt}
 }
 \value{
 data.frame
@@ -67,6 +67,8 @@ Excel file created by the Codebook function.
 save_data: Write an Excel or SPSS file.
 }
 \examples{
+ \dontrun{
+
 #' require(stp25tools)
 df <- data.frame(
   BMI = c(1, 2, 3, 1, 2, 3),
@@ -91,10 +93,14 @@ cdb$Value.Labels[2] <- "factor: Big | Small"
 
 (use_codebook(df, cdb))
 
+}
+ \dontrun{
 # save_data(DF, "demo.xlsx")
 # use_codebook(DF, codebook(DF))
 # use_codebook(file = "demo.xlsx")
+}
 
+\dontrun{
 # require(stp25tools)
 dat <-  Label(
   data.frame(
@@ -106,11 +112,13 @@ dat <-  Label(
   month="Monat", student="Student", A= "Anzahl", B= "B-Score" )
 
 save_data(dat, "demo.xlsx")
+}
 
-
+\dontrun{
  save_text(
 "Analyse der Auswirkungen des Homeoffice während der
 Corona-Pandemie, insbesondere auf 
 Schlafverhalten, Physis und Psyche“ Titel der Arbeit"
 )
+}
 }

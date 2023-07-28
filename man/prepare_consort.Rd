@@ -8,6 +8,8 @@ prepare_consort(..., split = NULL)
 }
 \arguments{
 \item{...}{data.frame mit filter2}
+
+\item{split}{table-Objekt}
 }
 \value{
 data.frame
@@ -16,8 +18,7 @@ data.frame
 prepare_consort
 }
 \examples{
-#'  
-#'
+\dontrun{
 require(stp25stat2)
 require(stp25tools)
 
@@ -130,4 +131,8 @@ if(exists("DFdummy")){
 #   labels = c("1" = "Screening", "2" = "Randomization", "4" = "Final"),
 #   cex = 0.9
 # )
+
+}
+
+
 }

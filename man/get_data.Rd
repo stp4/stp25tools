@@ -50,7 +50,7 @@ oder ein String in Textformat dierekt im R-File.}
 
 \item{dec}{the character used in the file for decimal points.}
 
-\item{sep, quote, dec}{Lesen der csv- Files = ";", = "\"", ".",}
+\item{sep}{the field separator character.}
 
 \item{sheet, skip, range}{an readxl::read_excel}
 
@@ -76,13 +76,13 @@ oder ein String in Textformat dierekt im R-File.}
 
 \item{comment.char}{an csv}
 
+\item{quote}{Lesen der csv- Files = ";", = "\"", ".",}
+
 \item{...}{Argumente fuer spss und csv. Bei SPSS-Files  kann die Zeichencodierung mit  \code{cleanup.encoding ="UTF-8"} geaendert werden.}
 
 \item{string}{character string}
 
 \item{stringsAsFactors}{TRUE}
-
-\item{sep}{the field separator character.}
 }
 \value{
 data.frame
@@ -130,6 +130,7 @@ m   UG          4   2
 
 ftable(xtabs(~ sex + treatment + befund, dat))
  
+ \dontrun{
 if(file.exists("R/dummy.csv")){
   
   get_data("R/dummy.csv", dec = ",", na.strings = "-", skip=1, label=1)
@@ -140,5 +141,5 @@ if(file.exists("R/dummy.csv")){
   get_label(x)[1:4]
   
 }
-
+}
 }

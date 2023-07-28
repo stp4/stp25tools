@@ -20,8 +20,6 @@ reorder2(x, X, ..., decreasing = TRUE, last = NULL)
 \arguments{
 \item{x}{a vector of data,}
 
-\item{...}{levels}
-
 \item{levels, labels, exclude, ordered, nmax}{an die Funktion factor}
 
 \item{X, ...}{an reorder}

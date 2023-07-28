@@ -33,7 +33,9 @@ label_data_frame(data, label)
 
 \item{include.units}{einheiten}
 
-\item{pattern}{Pattern to look for.}
+\item{pattern, replacement}{Pattern to look for.}
+
+\item{pos}{an stringr::str_split_fixed}
 }
 \description{
 Setzen des attr(data, "label")

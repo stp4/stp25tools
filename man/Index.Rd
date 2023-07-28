@@ -7,7 +7,7 @@
 \alias{Sum2}
 \title{Summen-Index
  
- Summen Index eine Summenfunktion mit der Erweiterung zum Umcodieren}
+Summen Index eine Summenfunktion mit der Erweiterung zum Umcodieren}
 \usage{
 Index(x, ...)
 
@@ -42,11 +42,26 @@ Sum2(
   min.level = NA
 )
 }
+\arguments{
+\item{x}{data.frame}
+
+\item{...}{alles weitere}
+
+\item{re.code}{revers code logical}
+
+\item{fun}{mean or sum}
+
+\item{na.rm}{NA remove}
+
+\item{digits}{Nachkomastellen}
+
+\item{max.level, min.level}{nin und max levels}
+}
 \value{
 Vektor
 }
 \description{
 Summen-Index
  
- Summen Index eine Summenfunktion mit der Erweiterung zum Umcodieren
+Summen Index eine Summenfunktion mit der Erweiterung zum Umcodieren
 }
