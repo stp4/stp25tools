@@ -7,6 +7,8 @@
 #' @param x Vektor ist entweder ein Character oder eine zahl
 #' Bei Zahlen gehen nur 1 bis 11
 #' @param sep  wichtig ist das trennzeichen
+#' @param id unique id
+#' @param na.strings missing
 #' @param prafix neue Variablen Name fuer die ausgabe default ist der Name vom Input
 #' @param as_logical ausgabe logical
 #' @param out_labels,out_levels Outut nimmeric oder factor
@@ -42,7 +44,7 @@
 #'                            sep = ",",
 #'                            as_logical = TRUE,
 #'                            label = lbl)
-#' stp25stat2::Tbll_desc(rslt)
+#' # stp25stat2::Tbll_desc(rslt)
 #' 
 #' 
 #' dat <-  data.frame(

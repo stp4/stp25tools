@@ -11,6 +11,7 @@
 #' @param pattern,replacement  zB Unterstriche _ ersaetzen
 #' @param max.lines,max.lines.char  Anschneiden des Strings
 #' @name wrap_string
+#' @param ... alles weiter
 #' @export
 #' 
 #' @examples
@@ -101,6 +102,7 @@ wrap_string.character <- function(x,
 
 
 #' @rdname wrap_string
+#' @param lvl character levels  
 #' @export
 #' @return factor
 wrap_string.factor  <-
@@ -218,6 +220,7 @@ split_string <- function(x, ...) {
 
 
 #' @rdname wrap_string
+#' @param pos  integer Position
 #' @export
 #' @return character
 split_string.character <-

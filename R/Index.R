@@ -1,6 +1,8 @@
 #' Summen-Index
 #'  
-#'  Summen Index eine Summenfunktion mit der Erweiterung zum Umcodieren
+#' Summen Index eine Summenfunktion mit der Erweiterung zum Umcodieren
+#' @param x data.frame
+#' @param ... alles weitere
 #' @return Vektor
 #' @export
 #' 
@@ -15,6 +17,14 @@ Index.formula <- function(x,
   Index.data.frame(data[ all.vars(x) ])
 }
 
+
+
+#' @param re.code revers code logical
+#' @param fun mean or sum
+#' @param na.rm NA remove
+#' @param digits Nachkomastellen
+#' @param max.level,min.level nin und max levels
+#'
 #' @rdname Index
 #' @export
 Index.data.frame <- function(x,

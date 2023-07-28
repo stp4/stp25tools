@@ -8,6 +8,8 @@
 #' @export
 #'
 #' @examples
+#'  \dontrun{
+#' 
 #' #' require(stp25tools)
 #' df <- data.frame(
 #'   BMI = c(1, 2, 3, 1, 2, 3),
@@ -31,6 +33,8 @@
 #' cdb$Value.Labels[2] <- "factor: Big | Small"
 #' 
 #' (use_codebook(df, cdb))
+#' 
+#' }
 codebook <- function(x) {
   lbl <- get_label(x)
   value_lbl <- sapply(x, function(y) {
@@ -67,18 +71,18 @@ save_codebook <- function(x,
 #'
 #' @param data data.frame, default is NULL
 #' @param codebook data.frame codebook = codebook(DF), default is NULL
-#' @param file,sheet.data,sheet.codebook  file= "demo.xlsx", sheet.data = 1, sheet.codebook = 2,
+#' @param sheet.data,sheet.codebook  file= "demo.xlsx", sheet.data = 1, sheet.codebook = 2,
 #' @param names,label,value.labels Variablen NNamen im codebook
 #'
 #' @return data.frame or tibble
 #' @export
 #'
 #' @examples
-#' 
+#'  \dontrun{
 #' # save_data(DF, "demo.xlsx")
 #' # use_codebook(DF, codebook(DF))
 #' # use_codebook(file = "demo.xlsx")
-#' 
+#' }
 use_codebook <-
   function(data = NULL,
            codebook = NULL,
@@ -177,6 +181,8 @@ use_codebook <-
 #' @importFrom  writexl write_xlsx
 #' @export
 #' @examples 
+#' 
+#' \dontrun{
 #' # require(stp25tools)
 #' dat <-  Label(
 #'   data.frame(
@@ -188,6 +194,7 @@ use_codebook <-
 #'   month="Monat", student="Student", A= "Anzahl", B= "B-Score" )
 #' 
 #' save_data(dat, "demo.xlsx")
+#' }
 #' 
 save_data <- function(x,
                       file,
@@ -259,12 +266,13 @@ save_data <- function(x,
 #' @export
 #'
 #' @examples
-#' 
+#' \dontrun{
 #'  save_text(
 #' "Analyse der Auswirkungen des Homeoffice während der
 #' Corona-Pandemie, insbesondere auf 
 #' Schlafverhalten, Physis und Psyche“ Titel der Arbeit"
 #' )
+#' }
 save_text <- function(..., file = "INFO.txt") {
   msg <- paste(..., sep = "")
   # msg <- gsub("#' ", "", msg)

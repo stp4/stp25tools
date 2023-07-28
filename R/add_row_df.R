@@ -10,6 +10,7 @@
 #'
 #' @param x data.frame
 #' @param add_row  named vector
+#' @param pos an rbind_at  
 #'
 #' @return data.frame
 #' @export

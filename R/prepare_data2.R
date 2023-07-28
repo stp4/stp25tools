@@ -481,7 +481,8 @@ is_formula2 <- function (x) {
 
 
 
-
+#' @param formula,data,groups  input
+#' @noRd
 cleaup_formula <- function(formula, 
                            data, 
                            groups) {

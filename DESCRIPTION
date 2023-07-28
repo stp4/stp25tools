@@ -29,5 +29,7 @@ Imports:
   readr,  
   writexl,
   readxl, 
-  zoo
+  zoo,
+  psych,
+  stringi
 

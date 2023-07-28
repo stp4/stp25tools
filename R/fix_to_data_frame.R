@@ -174,7 +174,7 @@ fix_to_df.data.frame <- function(x, include.rownames = FALSE, ...) {
 
 
 #' @rdname fix_to_df
-#' @param include.rownames columns as first rownames
+#' @param include.rownames,include.dimnames columns as first rownames
 #' @export
 fix_to_df.matrix <-
   function(x,

@@ -1,13 +1,13 @@
 #' prepare_consort
 #'
 #' @param ...  data.frame mit filter2
+#' @param split table-Objekt
 #'
 #' @return data.frame
 #' @export
 #'
 #' @examples
-#' #'  
-#' #'
+#' \dontrun{
 #' require(stp25stat2)
 #' require(stp25tools)
 #' 
@@ -120,8 +120,10 @@
 #' #   labels = c("1" = "Screening", "2" = "Randomization", "4" = "Final"),
 #' #   cex = 0.9
 #' # )
- 
-
+#' 
+#' }
+#' 
+#' 
 prepare_consort <- function(..., split=NULL) {
   dots <- list(...)
   rslt <- NULL

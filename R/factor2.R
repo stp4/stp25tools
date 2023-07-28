@@ -3,7 +3,6 @@
 #' Fancy copie der fun factor.
 #'
 #' @param x a vector of data,
-#' @param ...  levels
 #' @param levels,labels,exclude,ordered,nmax an die Funktion factor
 
 #' @return factor

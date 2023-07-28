@@ -20,7 +20,7 @@
 #' @param tabel_expand logical FALSE - Tabellen mit haufigkeiten werden als Dataframe im long-Format ausgegeben
 #' @param id.vars nur mit tabel_expand  - Nummer und Name der ID-Variablen bei tabel_expand default ist 1.
 #' @param value nur mit tabel_expand  - Name der output-variable bei tabel_expand.
-#' @param sep,quote,dec Lesen der csv- Files = ";", = "\"", ".",
+#' @param quote Lesen der csv- Files = ";", = "\"", ".",
 #' @param sheet,skip,range an readxl::read_excel
 #' @param cleanup.encoding,cleanup.names,cleanup.factor   cleanup UTF-8 = FALSE,
 #' @param user_na	If TRUE variables with user defined missing will be read into labelled_spss objects. If FALSE, the default, user-defined missings will be converted to NA.
@@ -62,6 +62,7 @@
 #' 
 #' ftable(xtabs(~ sex + treatment + befund, dat))
 #'  
+#'  \dontrun{
 #' if(file.exists("R/dummy.csv")){
 #'   
 #'   get_data("R/dummy.csv", dec = ",", na.strings = "-", skip=1, label=1)
@@ -72,7 +73,7 @@
 #'   get_label(x)[1:4]
 #'   
 #' }
-#' 
+#' }
 get_data <- function (file = NA,
                       na.strings = NULL,
                       dec = ".",

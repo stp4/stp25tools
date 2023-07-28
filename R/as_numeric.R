@@ -118,6 +118,7 @@ as_numeric.numeric <- function(x, ...)
 
 
 #' @rdname as_irgenwas
+#' @param trim_ws  logical trim ws
 #' @param ...  readr::parse_number trim_ws	Should leading and trailing whitespace (ASCII spaces and tabs) be trimmed from each field before parsing it?
 #' @export
 as_numeric.character <-

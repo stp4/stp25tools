@@ -84,7 +84,7 @@ set_label <- function(data,
 }
 
 #' @rdname Label
-#' @param pattern Pattern to look for.
+#' @param pos an stringr::str_split_fixed
 #'
 #' @export
 #'
@@ -105,7 +105,7 @@ trimm_label<-
   }
 
 #' @rdname Label
-#' @param pattern Pattern to look for.
+#' @param pattern,replacement Pattern to look for.
 #'
 #' @export
 #'
