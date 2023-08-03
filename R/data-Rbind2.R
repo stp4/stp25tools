@@ -7,7 +7,19 @@
 #' @export
 #'
 #' @examples
-#'
+#' 
+#' 
+#' # require(plyr)
+#' # require(stp25tools)
+#' 
+#' df1 <- data.frame(a=1, b=2)
+#' df2 <- data.frame(a=2, c=3, d=5)
+#' 
+#' 
+#' 
+#' do.call(plyr::rbind.fill, list(df1, df2))
+#' Rbind2(df1, df2)
+#'  
 #'
 #' df1 = data.frame(CustomerId = c(1:6), 
 #' Product = c(rep("Oven", 3), rep("Television", 3)))
@@ -25,7 +37,8 @@
 #' 
 #' dplyr::bind_rows(df1, df2)
 #'
-Rbind2 <- function (...,.id = "which",
+Rbind2 <- function (...,
+                    .id = "which",
                     .names = NULL,
                     .use.label = TRUE,
                     include.rownames = FALSE) {
@@ -59,12 +72,10 @@ Rbind2 <- function (...,.id = "which",
       lbl <-  get_label2(dat)
       label <-
         append(label, lbl[setdiff(names(lbl), names(label))])
-      data<- set_label2(data, label)
+      data <- set_label2(data, label)
     }
   }
   
-  
   data
-  
 } 
 
