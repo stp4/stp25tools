@@ -182,13 +182,11 @@ prepare_data2.data.frame <- function(data,
 
 # Data --------------------------------------------------------------------
 
-
-
-
-#' select_data
-#' 
-#' model.frame
-#' Formula::Formula splitet log(m1) + m2 + m3 + m4 ~ g richtig auf
+# select_data
+#'
+#'model.frame
+# Formula::Formula splitet log(m1) + m2 + m3 + m4 ~ g richtig auf
+#
 #' @noRd
 select_data <-   function(formula,
                           data,
@@ -213,12 +211,8 @@ select_data <-   function(formula,
 }
 
 
-
-
-
-#' default_measure
-#' 
-#' auswertungs Methode
+# auswertungs Methode
+#
 #' @noRd
 default_measure <- function(measure, measure.vars, measure.class) {
     # cat(" \n in default_measure\n  ")
@@ -242,8 +236,6 @@ default_measure <- function(measure, measure.vars, measure.class) {
 }
 
 
-#' digits
-#' 
 #' @noRd
 default_digits <- function(digits, 
                            measure.vars, 
@@ -274,17 +266,10 @@ default_digits <- function(digits,
 }
 
 
-
-
-
-
-
 # Satatistics -------------------------------------------------------------
 
 
-
-#' which_test
-#' 
+#' @rdname prepare_data2
 #' 
 #' @examples 
 #' which_test( "factor", NULL)
@@ -302,7 +287,6 @@ default_digits <- function(digits,
 #'   numeric = "contest" ,
 #'   multi = "notest"
 #' )
-#' @noRd
 which_test <-
   function(measure,
            group.class=NULL,
@@ -335,8 +319,6 @@ which_test <-
     rslt
   }
 
-
-
 #
 # contest <-
 #   c("contest",
@@ -356,11 +338,8 @@ which_test <-
 
 
 
-#' default test methods
-#' 
-#' @param x string
-#' @param search_string  such-String
-#'
+# default test methods
+#
 #' @noRd
 stp25_test_methode <- function(x,
                                search_string = c(
@@ -379,9 +358,8 @@ stp25_test_methode <- function(x,
 
 
 
-#' is_empty
-#'
-#' @param x A object to be tested
+# is_empty
+#
 #' @noRd
 is_empty2 <- function (x) {
   if (length(x) == 0) TRUE
@@ -398,11 +376,8 @@ is_empty2 <- function (x) {
 # helpers -----------------------------------------------------------------
 
 
-#' Variablen als Nummer
-#' 
-#' @param measure.vars  variablen-String
-#' @param data daten
-#'
+# Variablen als Nummer
+#
 #' @noRd
 cleaup_names <- function(measure.vars, data) {
   measure <- makeNamesNum(measure.vars, data)
@@ -416,13 +391,8 @@ cleaup_names <- function(measure.vars, data) {
 }
 
 
-
-#' class  
-#'
-#' Arbeiten mit mehrfachen Classen.
-#'
-#' @param data data.frame
-#'
+# Arbeiten mit mehrfachen Classen.
+#
 #' @noRd
 get_classes <-
   function(data) {
@@ -431,13 +401,10 @@ get_classes <-
   }
 
 
-
-#' @noRd
+#' @rdname prepare_data2
+#' 
 #' @description makeNamesNum: aus Nummern die Namen extrahieren
-#' @param  data Daten als data.frame
-#' @param  measure Variablen
 #' @param  meAsNum  logical welche sind Zahlen
-#' @return   string( )
 #' @examples
 #'
 #' #  measure <- c("geschl", "1" , "3:5", 1)
@@ -469,19 +436,16 @@ makeNamesNum <- function(measure,
 }
 
 
-
-
 # Formula -----------------------------------------------------------------
 
-#' @param x A object to be tested
+# @param x A object to be tested
+#
 #' @noRd
 is_formula2 <- function (x) {
   inherits(x, "formula")
 }
 
 
-
-#' @param formula,data,groups  input
 #' @noRd
 cleaup_formula <- function(formula, 
                            data, 
@@ -588,8 +552,8 @@ cleaup_formula <- function(formula,
     condition.vars<-condition.class <- NULL
   }
   
-  #' Texte also Überschfifte werden zu logical mit NA
-  #' daher hie die Heder vergeben
+  # Texte also Überschfifte werden zu logical mit NA
+  # daher hie die Heder vergeben
   if (any(measure == "logical")) {
     logik <-  which(measure == "logical")
     any_missing <-
@@ -622,8 +586,8 @@ cleaup_formula <- function(formula,
 }
 
 
-
-#' @noRd
+#' @rdname prepare_data2
+#' 
 #' @description make_formula: Formel erstellen in \code{berechne_all(...)} verwendet. 
 #' Hier wird \code{cbind(a,b,c)~g} ausgegebeb.
 #' @param  measurevar,groupvars  mamen als strings
@@ -663,12 +627,8 @@ make_formula <- function(measurevar,
 }
 
 
-#' formel generieren
-#'
-#' in prepare_data2 
-#'
-#' @param measure.vars.group.vars,condition.vars mamen als strings
-#'
+# formel generieren
+#
 #' @noRd
 to_formula <-
   function(measure.vars,
@@ -697,12 +657,10 @@ to_formula <-
 
 
 
-#' @noRd
-#' @param x  Formula
-#' @param data,names_data data.frame
+#' @rdname prepare_data2
 #' 
 #' @description clean_dots_formula: Formel bereinigen
-#' @return clean_dots_formula: formula - Objekt
+#' return: clean_dots_formula: formula - Objekt
 #' 
 #' @examples
 #'
@@ -758,9 +716,7 @@ clean_dots_formula <- function(x,
 
 
 #' @noRd
-#' @description formula_split stolen from mosaic ggformula
-#' @return formula_split: liste  formula, condition, facet_type
-#'
+#  formula_split stolen from mosaic ggformula
 formula_split <- function(x) {
   # split A | B into formula <- A; condition <- B
   fs <-
@@ -802,10 +758,8 @@ formula_split <- function(x) {
 # Print -------------------------------------------------------------------
 
 
-# Print Methode
-#
+#' @rdname prepare_data2
 #' @export
-#' @noRd
 print.stp25data <- function(x, ...) {
   cat("\nformula: ")
   print(x$formula)
