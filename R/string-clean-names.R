@@ -106,6 +106,9 @@ clean_names.default <-
            unique = TRUE,
            abbreviate = FALSE, 
            minlength = 4,
+          #
+          #gtools::ASCIIfy("ö ä ü Ä Ö Ü  ß", 2)
+           
            replace =
              c(
                "'" = "",
@@ -166,8 +169,22 @@ paste_names <-
   function(x, collapse = ", ") {
     paste0(names(x) , collapse = collapse)
   }
-
-
+#' @rdname clean_names
+#' @description 
+#' paste_names_levels:  paste names + Labels
+#'
+#' @param collapse  an  character string to separate the results ", "
+#'
+#' @return character
+#' @export
+#'
+paste_names_levels <- function(x, abbreviate = TRUE, collapse = ", ") {
+  strg <-  get_label(x)
+  if (abbreviate)
+    paste0(names(strg), " = '", abbreviate(as.vector(strg), 15), "'", collapse = collapse)
+  else
+    paste0(names(strg), " = '", abbreviate(as.vector(strg), 15), "'", collapse = collapse)
+}
 
 #' @rdname clean_names
 #' @description 

@@ -75,7 +75,9 @@ dat <-
 sex treatment control
 m  2 3
 f  3 4
-", tabel_expand = TRUE,id.vars = 1)
+", 
+tabel_expand = TRUE,
+id.vars = 1)
 
 xtabs(~ sex + value, dat)
 dat <- 
@@ -97,7 +99,7 @@ ftable(xtabs(~ sex + treatment + befund, dat))
 
 ### Daten File Import
 
-```{r}
+```{r, error=TRUE}
  file.exists("R/dummy.csv")
 #' get_data("R/dummy.csv", dec = ",", na.strings = "-", skip=1, label=1)
 #' get_data("R/dummy.xlsx", na.strings = "-")

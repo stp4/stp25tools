@@ -200,7 +200,7 @@ get_data <- function (file = NA,
       }
     }
     else {
-      stop(note, "Kein file: ", file, "vorhanden!")
+      stop("Kein file: ", file, " vorhanden!")
     }
   }
   
