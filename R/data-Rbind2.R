@@ -1,5 +1,5 @@
 #' @rdname Merge2
-#' @description Rbind2: dplyr::bind_rows()
+#' @description Rbind2: dplyr::bind_rows() mit labels + name der Daten
 #' @param .names alternative zur vergabe der labels in which
 #' @param .id Data frame identifier.  dplyr::bind_rows(..., .id = NULL)
 #' @param .use.label set_label TRUE/FALSE
@@ -7,26 +7,26 @@
 #' @export
 #'
 #' @examples
-#' 
-#' 
+#'
+#'
 #' # require(plyr)
 #' # require(stp25tools)
-#' 
+#'
 #' df1 <- data.frame(a=1, b=2)
 #' df2 <- data.frame(a=2, c=3, d=5)
-#' 
-#' 
-#' 
+#'
+#'
+#'
 #' do.call(plyr::rbind.fill, list(df1, df2))
 #' Rbind2(df1, df2)
-#'  
 #'
-#' df1 = data.frame(CustomerId = c(1:6), 
+#'
+#' df1 = data.frame(CustomerId = c(1:6),
 #' Product = c(rep("Oven", 3), rep("Television", 3)))
 #'
-#' df2 = data.frame(CustomerId = c(4:7), 
+#' df2 = data.frame(CustomerId = c(4:7),
 #' Product = c(rep("Television", 2), rep("Air conditioner", 2)))
-#' 
+#'
 #' df3 = data.frame(
 #'   CustomerId = c(4:7),
 #'   Product = c(rep("Television", 2), rep("Air conditioner", 2)),
@@ -34,7 +34,7 @@
 #' )
 #'
 #' Rbind2(df1, df3)
-#' 
+#'
 #' dplyr::bind_rows(df1, df2)
 #'
 Rbind2 <- function (...,
@@ -46,12 +46,11 @@ Rbind2 <- function (...,
   
   if (include.rownames)   {
     data <- cbind(data[1],
-                  # Source =  sub("(.*)\\.\\.\\.*", "\\1", rownames(data)),
                   Source =  sub("(.*).....*", "\\1", rownames(data)),
                   data[-1])
   }
   
-  if (all(!grepl("[^0-9]", data[[1]]))) {
+  if (!is.null(.id)) {
     tmp <- list(...)
     if (is.null(.names))
       .names <- names(tmp)
@@ -77,5 +76,22 @@ Rbind2 <- function (...,
   }
   
   data
-} 
+}
 
+
+
+# require(stp25tools)
+# require(tidyverse)
+# df1 <-
+#   data.frame(CustomerId = c(1:6), Product = c(rep("Oven", 3), rep("Television", 3))) %>%
+#   Label(Product = "Produkt")
+# df2 <-
+#   data.frame(CustomerId = c(4:7), Product = c(rep("Television", 2), rep("Air conditioner", 2)))
+# df3 <- data.frame(
+#   CustomerId = c(4:7),
+#   Product = c(rep("Television", 2), rep("Air conditioner", 2)),
+#   State = c(rep("California", 2), rep("New Jersey", 2))
+# ) %>%
+#   Label(Product = "Produkt-Kategorie", State = "Bundes-Staat")
+# 
+# Rbind2(df1, df2, df3, .id = NULL, .use.label = FALSE)
