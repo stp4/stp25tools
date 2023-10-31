@@ -43,6 +43,10 @@ Wide <- function(data,
                   values_fill = NULL,
                   names_sep = "_",
                   names_vary = "fastest") {
+  
+  library(crayon)
+  cat(bgMagenta('\n\n   Achtung neue Version von Wide() !!!!\n\n' )  )
+  
   values_from <-
     as.character(sapply(lazyeval::lazy_dots(...),
                         function(x) {
@@ -51,6 +55,7 @@ Wide <- function(data,
                         simplify = TRUE))
   
   # erlaubt verschiedene Schreibweisen
+  # Wide(formula, data, ...)
   if (rlang::is_formula(data))  {
     # my.formula <- data
     names_from <- data
