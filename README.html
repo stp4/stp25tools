@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2023-10-11" />
+<meta name="date" content="2023-10-29" />
 
 <title>stp25tools</title>
 
@@ -1479,7 +1479,7 @@ border-radius: 0px;
 
 
 <h1 class="title toc-ignore">stp25tools</h1>
-<h4 class="date">2023-10-11</h4>
+<h4 class="date">2023-10-29</h4>
 
 </div>
 
@@ -1496,13 +1496,35 @@ paste_names</em></p></li>
 <li><p>Vectoren transformieren: <em>as_numeric, as_factor, factor2,
 as_cut, as_logical, rev.factor,as_rev, cat_bmi</em></p></li>
 </ul>
-<div id="factor" class="section level3">
-<h3>Factor</h3>
+<div id="factor-factor2" class="section level3">
+<h3>Factor (factor2)</h3>
 <pre class="r"><code>sex &lt;- factor2(c(1,0,0,0,1,1,0), 
         male = 1, female = 0)
  sex</code></pre>
 <pre><code>## [1] male   female female female male   male   female
 ## Levels: male female</code></pre>
+</div>
+<div id="reorder2" class="section level3">
+<h3>reorder2</h3>
+<pre class="r"><code> x &lt;-
+c(
+  rep(1, 21),rep(2, 120),rep(3, 28),rep(4, 4),rep(5, 56),
+  rep(6, 2),rep(7, 92),rep(8, 42),rep(9, 74),rep(10, 20)
+)
+
+x &lt;- factor(x, 1:10, letters[1:10])
+table(x)</code></pre>
+<pre><code>## x
+##   a   b   c   d   e   f   g   h   i   j 
+##  21 120  28   4  56   2  92  42  74  20</code></pre>
+<pre class="r"><code>table(reorder2(x))</code></pre>
+<pre><code>## 
+##   b   g   i   e   h   c   a   j   d   f 
+## 120  92  74  56  42  28  21  20   4   2</code></pre>
+<pre class="r"><code>table(reorder2(x, threshold = 30))</code></pre>
+<pre><code>## 
+##     b     g     i     e     h Other 
+##   120    92    74    56    42    75</code></pre>
 </div>
 <div id="numeric" class="section level3">
 <h3>Numeric</h3>
@@ -1579,17 +1601,16 @@ ftable(xtabs(~ sex + treatment + befund, dat))</code></pre>
 </div>
 <div id="daten-file-import" class="section level3">
 <h3>Daten File Import</h3>
-<pre class="r"><code> file.exists(&quot;R/dummy.csv&quot;)</code></pre>
-<pre><code>## [1] FALSE</code></pre>
-<pre class="r"><code>#&#39; get_data(&quot;R/dummy.csv&quot;, dec = &quot;,&quot;, na.strings = &quot;-&quot;, skip=1, label=1)
-#&#39; get_data(&quot;R/dummy.xlsx&quot;, na.strings = &quot;-&quot;)
- get_data(&quot;R/dummy.xlsx&quot;)</code></pre>
-<pre><code>## Error in get_data(&quot;R/dummy.xlsx&quot;): Kein file: R/dummy.xlsxvorhanden!</code></pre>
-<pre class="r"><code>#&#39; 
- x &lt;- get_data(&quot;R/dummy.sav&quot;)</code></pre>
-<pre><code>## Error in get_data(&quot;R/dummy.sav&quot;): Kein file: R/dummy.savvorhanden!</code></pre>
-<pre class="r"><code> get_label(x)[1:4]</code></pre>
-<pre><code>## NULL</code></pre>
+<pre class="r"><code>if( file.exists(&quot;R/dummy.csv&quot;)) {
+  
+# get_data(&quot;R/dummy.csv&quot;, dec = &quot;,&quot;, na.strings = &quot;-&quot;, skip=1, label=1)
+# get_data(&quot;R/dummy.xlsx&quot;, na.strings = &quot;-&quot;)
+  
+ get_data(&quot;R/dummy.xlsx&quot;)
+ 
+ x &lt;- get_data(&quot;R/dummy.sav&quot;)
+ get_label(x)[1:4]
+ }</code></pre>
 </div>
 <div id="daten-speichern-und-aus-codebook-rekostruieren" class="section level3">
 <h3>Daten speichern und aus Codebook rekostruieren</h3>
@@ -1634,8 +1655,54 @@ ftable(xtabs(~ sex + treatment + befund, dat))</code></pre>
 ## 6 f     UG        f+UG  neg</code></pre>
 </div>
 </div>
-<div id="filter" class="section level2">
-<h2>Filter</h2>
+<div id="filter-consort-plot" class="section level2">
+<h2>Filter + Consort-Plot</h2>
+<p>subset2: verwendet base::subset + label_data_frame</p>
+<p>filter2: verwendet dplyr::filter + info was gefiltert wurde</p>
+<pre class="r"><code>airquality2 &lt;-
+  airquality %&gt;% Label(Ozone = &quot;Ozone in ppm&quot;, Temp = &quot;Temperatur in °C&quot;)
+
+str(subset2(airquality2, Temp &gt; 80, select = c(Ozone, Temp)))</code></pre>
+<pre><code>## &#39;data.frame&#39;:    68 obs. of  2 variables:
+##  $ Ozone: int  45 NA NA 29 NA 71 39 NA NA 23 ...
+##   ..- attr(*, &quot;label&quot;)= chr &quot;Ozone in ppm&quot;
+##  $ Temp : int  81 84 85 82 87 90 87 93 92 82 ...
+##   ..- attr(*, &quot;label&quot;)= chr &quot;Temperatur in °C&quot;</code></pre>
+<pre class="r"><code>str(dplyr::filter(airquality2, Temp &gt; 80))</code></pre>
+<pre><code>## &#39;data.frame&#39;:    68 obs. of  6 variables:
+##  $ Ozone  : int  45 NA NA 29 NA 71 39 NA NA 23 ...
+##   ..- attr(*, &quot;label&quot;)= chr &quot;Ozone in ppm&quot;
+##  $ Solar.R: int  252 186 220 127 273 291 323 259 250 148 ...
+##  $ Wind   : num  14.9 9.2 8.6 9.7 6.9 13.8 11.5 10.9 9.2 8 ...
+##  $ Temp   : int  81 84 85 82 87 90 87 93 92 82 ...
+##   ..- attr(*, &quot;label&quot;)= chr &quot;Temperatur in °C&quot;
+##  $ Month  : int  5 6 6 6 6 6 6 6 6 6 ...
+##  $ Day    : int  29 4 5 7 8 9 10 11 12 13 ...</code></pre>
+<pre class="r"><code>dat &lt;- filter2(airquality2, Temp &gt; 80)
+str(dat)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    68 obs. of  6 variables:
+##  $ Ozone  : int  45 NA NA 29 NA 71 39 NA NA 23 ...
+##   ..- attr(*, &quot;label&quot;)= chr &quot;Ozone in ppm&quot;
+##  $ Solar.R: int  252 186 220 127 273 291 323 259 250 148 ...
+##  $ Wind   : num  14.9 9.2 8.6 9.7 6.9 13.8 11.5 10.9 9.2 8 ...
+##  $ Temp   : int  81 84 85 82 87 90 87 93 92 82 ...
+##   ..- attr(*, &quot;label&quot;)= chr &quot;Temperatur in °C&quot;
+##  $ Month  : int  5 6 6 6 6 6 6 6 6 6 ...
+##  $ Day    : int  29 4 5 7 8 9 10 11 12 13 ...
+##  - attr(*, &quot;filter&quot;)= attritin [2 × 6] (S3: attrition/tbl_df/tbl/data.frame)
+##   ..$ Criteria     : chr [1:2] &quot;Total cohort size&quot; &quot;1. Filter&quot;
+##   ..$ Condition    : chr [1:2] &quot;none&quot; &quot;Temp &gt; 80&quot;
+##   ..$ Remaining.N  : int [1:2] 153 68
+##   ..$ Remaining.prc: num [1:2] 100 44.4
+##   ..$ Excluded.N   : int [1:2] 0 85
+##   ..$ Excluded.prc : num [1:2] 0 55.6</code></pre>
+<pre class="r"><code># simple_consort_plot(dat)
+attr(dat, &quot;filter&quot;)</code></pre>
+<pre><code>## # A tibble: 2 × 6
+##   Criteria          Condition Remaining.N Remaining.prc Excluded.N Excluded.prc
+##   &lt;chr&gt;             &lt;chr&gt;           &lt;int&gt;         &lt;dbl&gt;      &lt;int&gt;        &lt;dbl&gt;
+## 1 Total cohort size none              153         100            0          0  
+## 2 1. Filter         Temp &gt; 80          68          44.4         85         55.6</code></pre>
 <pre class="r"><code>#require(stp25stat2)
 #require(stp25tools)
 
@@ -1689,6 +1756,12 @@ plot(out)</code></pre>
 </div>
 <div id="transpose" class="section level2">
 <h2>Transpose</h2>
+<ul>
+<li><p>Pivot-Funktionen: <em>Long(), Wide(), Dapply(), dapply2(),
+transpose2()</em></p></li>
+<li><p>Zusammenfuegen von Data Frame: <em>Merge2, Rbind2,
+combine_data_frame</em></p></li>
+</ul>
 <div id="wide" class="section level3">
 <h3>Wide</h3>
 <pre class="r"><code>dat</code></pre>
@@ -1699,89 +1772,185 @@ plot(out)</code></pre>
 ## 4     1     Bob 28 5
 ## 5     2     Bob 10 6
 ## 6     3     Bob 29 7</code></pre>
-<pre class="r"><code>df2&lt;- dat %&gt;% Wide(student,  c(A, B))
-dat %&gt;% Wide(student,  c(&quot;A&quot;, &quot;B&quot;))</code></pre>
+<pre class="r"><code>dat %&gt;% 
+  Wide(student,  A)</code></pre>
+<pre><code>## 
+## 
+##    Achtung neue Version von Wide() !!!!</code></pre>
+<pre><code>## # A tibble: 6 × 4
+##   month     B   Amy   Bob
+##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1     1     6    19    NA
+## 2     2     7    27    NA
+## 3     3     8    16    NA
+## 4     1     5    NA    28
+## 5     2     6    NA    10
+## 6     3     7    NA    29</code></pre>
+<pre class="r"><code>dat %&gt;% 
+  tidyr::pivot_wider(names_from = student, 
+                           values_from = A)</code></pre>
+<pre><code>## # A tibble: 6 × 4
+##   month     B   Amy   Bob
+##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1     1     6    19    NA
+## 2     2     7    27    NA
+## 3     3     8    16    NA
+## 4     1     5    NA    28
+## 5     2     6    NA    10
+## 6     3     7    NA    29</code></pre>
+<pre class="r"><code>#&#39; dat %&gt;% tidyr::pivot_wider(names_from = student, A)
+#&#39; error Column `value` doesn&#39;t exist.
+
+dat %&gt;% 
+  tidyr::pivot_wider(names_from = student, 
+                    values_from = A, 
+                    values_fill = 0)</code></pre>
+<pre><code>## # A tibble: 6 × 4
+##   month     B   Amy   Bob
+##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1     1     6    19     0
+## 2     2     7    27     0
+## 3     3     8    16     0
+## 4     1     5     0    28
+## 5     2     6     0    10
+## 6     3     7     0    29</code></pre>
+<pre class="r"><code># mehere values
+dat %&gt;% tidyr::pivot_wider(names_from = student, 
+                           values_from = c(A, B))</code></pre>
 <pre><code>## # A tibble: 3 × 5
-##   month Amy_A Bob_A Amy_B Bob_B
+##   month A_Amy A_Bob B_Amy B_Bob
 ##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
 ## 1     1    19    28     6     5
 ## 2     2    27    10     7     6
 ## 3     3    16    29     8     7</code></pre>
-<pre class="r"><code>dat[-3] %&gt;% Wide(student,  B)</code></pre>
-<pre><code>## # A tibble: 3 × 3
-##   month   Amy   Bob
-##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1     1     6     5
-## 2     2     7     6
-## 3     3     8     7</code></pre>
-<pre class="r"><code>dat  %&gt;% Wide(student ~ month)</code></pre>
-<pre><code>## Using B as value column: use value to override.</code></pre>
-<pre><code>## # A tibble: 2 × 4
-##   student   `1`   `2`   `3`
-##   &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1 Amy         6     7     8
-## 2 Bob         5     6     7</code></pre>
-<pre class="r"><code>dat  %&gt;% Wide(month ~ student, A)</code></pre>
+<pre class="r"><code>dat %&gt;% Wide(month ~ student, A, B)</code></pre>
+<pre><code>## 
+## 
+##    Achtung neue Version von Wide() !!!!</code></pre>
+<pre><code>## # A tibble: 6 × 4
+##   which month   Amy   Bob
+##   &lt;fct&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1 A         1    19    28
+## 2 A         2    27    10
+## 3 A         3    16    29
+## 4 B         1     6     5
+## 5 B         2     7     6
+## 6 B         3     8     7</code></pre>
+<p>Formeln werden auf zwei Arten evaluiert</p>
+<ol style="list-style-type: decimal">
+<li><code>Wide(A ~ student)</code> links steht <code>values_from</code>
+rechts <code>names_from</code></li>
+<li><code>Wide(month ~ student, A)</code> jetzt steht in der formula die
+ausgabe Strucktur und <code>names_from</code> wird extra übergeben</li>
+</ol>
+<pre class="r"><code>dat %&gt;% Wide(A ~ student)</code></pre>
+<pre><code>## 
+## 
+##    Achtung neue Version von Wide() !!!!</code></pre>
+<pre><code>## # A tibble: 6 × 4
+##   month     B   Amy   Bob
+##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1     1     6    19    NA
+## 2     2     7    27    NA
+## 3     3     8    16    NA
+## 4     1     5    NA    28
+## 5     2     6    NA    10
+## 6     3     7    NA    29</code></pre>
+<pre class="r"><code>dat %&gt;% Wide(A + B ~ student)</code></pre>
+<pre><code>## 
+## 
+##    Achtung neue Version von Wide() !!!!</code></pre>
+<pre><code>## # A tibble: 3 × 5
+##   month A_Amy A_Bob B_Amy B_Bob
+##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1     1    19    28     6     5
+## 2     2    27    10     7     6
+## 3     3    16    29     8     7</code></pre>
+<pre class="r"><code>dat %&gt;% Wide(A + B ~ student + month)</code></pre>
+<pre><code>## 
+## 
+##    Achtung neue Version von Wide() !!!!</code></pre>
+<pre><code>## # A tibble: 1 × 12
+##   A_Amy_1 A_Amy_2 A_Amy_3 A_Bob_1 A_Bob_2 A_Bob_3 B_Amy_1 B_Amy_2 B_Amy_3
+##     &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+## 1      19      27      16      28      10      29       6       7       8
+## # ℹ 3 more variables: B_Bob_1 &lt;dbl&gt;, B_Bob_2 &lt;dbl&gt;, B_Bob_3 &lt;dbl&gt;</code></pre>
+<pre class="r"><code># dat %&gt;% Wide(A ~ student)
+# dat %&gt;% Wide(A ~ student + month)
+
+dat %&gt;% Wide(month ~ student, A)</code></pre>
+<pre><code>## 
+## 
+##    Achtung neue Version von Wide() !!!!</code></pre>
 <pre><code>## # A tibble: 3 × 3
 ##   month   Amy   Bob
 ##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
 ## 1     1    19    28
 ## 2     2    27    10
 ## 3     3    16    29</code></pre>
-<pre class="r"><code>dat  %&gt;% Wide(student ~ month, A)</code></pre>
-<pre><code>## # A tibble: 2 × 4
-##   student   `1`   `2`   `3`
-##   &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1 Amy        19    27    16
-## 2 Bob        28    10    29</code></pre>
+<pre class="r"><code>dat %&gt;% Wide(month ~ student, A , B)</code></pre>
+<pre><code>## 
+## 
+##    Achtung neue Version von Wide() !!!!</code></pre>
+<pre><code>## # A tibble: 6 × 4
+##   which month   Amy   Bob
+##   &lt;fct&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1 A         1    19    28
+## 2 A         2    27    10
+## 3 A         3    16    29
+## 4 B         1     6     5
+## 5 B         2     7     6
+## 6 B         3     8     7</code></pre>
 </div>
 <div id="long" class="section level3">
 <h3>Long</h3>
-<pre class="r"><code>df2</code></pre>
-<pre><code>## # A tibble: 3 × 5
-##   month Amy_A Bob_A Amy_B Bob_B
-##   &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1     1    19    28     6     5
-## 2     2    27    10     7     6
-## 3     3    16    29     8     7</code></pre>
-<pre class="r"><code>df2  %&gt;% Long(Amy_A, Amy_B, Bob_A, Bob_B, by =  ~ month)</code></pre>
-<pre><code>## # A tibble: 12 × 3
-##    month variable value
-##    &lt;int&gt; &lt;fct&gt;    &lt;dbl&gt;
-##  1     1 Amy_A       19
-##  2     1 Amy_B        6
-##  3     1 Bob_A       28
-##  4     1 Bob_B        5
-##  5     2 Amy_A       27
-##  6     2 Amy_B        7
-##  7     2 Bob_A       10
-##  8     2 Bob_B        6
-##  9     3 Amy_A       16
-## 10     3 Amy_B        8
-## 11     3 Bob_A       29
-## 12     3 Bob_B        7</code></pre>
+<pre class="r"><code>df2 &lt;-  
+dat %&gt;% Wide(student,  A, B)</code></pre>
+<pre><code>## 
+## 
+##    Achtung neue Version von Wide() !!!!</code></pre>
+<pre class="r"><code>df2  %&gt;% Long(A_Amy, A_Bob, B_Amy ,B_Bob, by =  ~ month) %&gt;% 
+  tidyr::separate(variable , c(&#39;First&#39;, &#39;Last&#39;))</code></pre>
+<pre><code>## # A tibble: 12 × 4
+##    month First Last  value
+##    &lt;int&gt; &lt;chr&gt; &lt;chr&gt; &lt;dbl&gt;
+##  1     1 A     Amy      19
+##  2     1 A     Bob      28
+##  3     1 B     Amy       6
+##  4     1 B     Bob       5
+##  5     2 A     Amy      27
+##  6     2 A     Bob      10
+##  7     2 B     Amy       7
+##  8     2 B     Bob       6
+##  9     3 A     Amy      16
+## 10     3 A     Bob      29
+## 11     3 B     Amy       8
+## 12     3 B     Bob       7</code></pre>
 <pre class="r"><code>dat %&gt;%
-  tidyr::gather(variable, value,-(month:student)) %&gt;%
-  tidyr::unite(temp, student, variable) %&gt;%
-  tidyr::spread(temp, value)</code></pre>
-<pre><code>##   month Amy_A Amy_B Bob_A Bob_B
-## 1     1    19     6    28     5
-## 2     2    27     7    10     6
-## 3     3    16     8    29     7</code></pre>
-<p>Das geht nicht Mehr:</p>
-<p>```{ # df_w2 &lt;- Wide(df, student, c(“A”, “B”)))</p>
-<p>stp25aggregate::Long( list(A=c(“Amy_A”, “Bob_A” ), B=c(“Amy_B”,
-“Bob_B”)), df2, by = ~ month, key = “student”, key.levels= c(“Amy”,
-“Bob”))</p>
-<pre><code>
-
-### Pivot-Transpose
-
-
-
-
-```r
-dat</code></pre>
+  tidyr::gather(variable, value,-(month:student))</code></pre>
+<pre><code>##    month student variable value
+## 1      1     Amy        A    19
+## 2      2     Amy        A    27
+## 3      3     Amy        A    16
+## 4      1     Bob        A    28
+## 5      2     Bob        A    10
+## 6      3     Bob        A    29
+## 7      1     Amy        B     6
+## 8      2     Amy        B     7
+## 9      3     Amy        B     8
+## 10     1     Bob        B     5
+## 11     2     Bob        B     6
+## 12     3     Bob        B     7</code></pre>
+<pre class="r"><code># relig_income %&gt;%
+#   tidyr::pivot_longer(!religion, names_to = &quot;income&quot;, values_to = &quot;count&quot;)
+# 
+# dat %&gt;% Long(  A, B, by =  ~ month + student  )%&gt;%
+#   tidyr::unite(temp, student, variable) %&gt;%
+#   tidyr::spread(temp, value)</code></pre>
+</div>
+<div id="pivot-transpose" class="section level3">
+<h3>Pivot-Transpose</h3>
+<pre class="r"><code>dat</code></pre>
 <pre><code>##   pos x y
 ## 1   A 1 3
 ## 2   B 2 4
@@ -1800,41 +1969,44 @@ dat</code></pre>
 ## x x-axis       1       2       3
 ## y y-axis       3       4       5</code></pre>
 </div>
-</div>
-<div id="merge" class="section level2">
-<h2>Merge</h2>
-<ul>
-<li><p>Pivot-Funktionen: <em>Long(), Wide(), Dapply(), dapply2(),
-transpose2()</em></p></li>
-<li><p>Zusammenfuegen von Data Frame: <em>Merge2, Rbind2,
-combine_data_frame</em></p></li>
-</ul>
-<div id="cbind-und-rbind" class="section level3">
-<h3>cbind() und rbind()</h3>
-<pre class="r"><code>df1 = data.frame(CustomerId = c(1:6), Product = c(rep(&quot;Oven&quot;, 3), rep(&quot;Television&quot;, 3)))
-df2 = data.frame(CustomerId = c(4:7), Product = c(rep(&quot;Television&quot;, 2), rep(&quot;Air conditioner&quot;, 2)))
-df3 = data.frame(
-   CustomerId = c(4:7),
-   Product = c(rep(&quot;Television&quot;, 2), rep(&quot;Air conditioner&quot;, 2)),
-   State = c(rep(&quot;California&quot;, 2), rep(&quot;New Jersey&quot;, 2))
- )
+<div id="rbind2" class="section level3">
+<h3>Rbind2()</h3>
+<pre><code>Rbind2( ...,
+        .id = &quot;which&quot;,
+        .names = NULL,
+        .use.label = TRUE,
+        include.rownames = FALSE</code></pre>
+<pre class="r"><code>df1 &lt;- data.frame(CustomerId = c(1:6), Product = c(rep(&quot;Oven&quot;, 3), rep(&quot;Television&quot;, 3))) %&gt;% 
+  Label( Product = &quot;Produkt&quot;)
+df2 &lt;- data.frame(CustomerId = c(4:7), Product = c(rep(&quot;Television&quot;, 2), rep(&quot;Air conditioner&quot;, 2)))
+df3 &lt;- data.frame(
+  CustomerId = c(4:7),
+  Product = c(rep(&quot;Television&quot;, 2), rep(&quot;Air conditioner&quot;, 2)),
+  State = c(rep(&quot;California&quot;, 2), rep(&quot;New Jersey&quot;, 2))
+) %&gt;% 
+  Label( Product = &quot;Produkt-Kategorie&quot;, State = &quot;Bundes-Staat&quot;)
 
- Rbind2(df1, df3)</code></pre>
-<pre><code>##    which CustomerId         Product      State
-## 1    df1          1            Oven       &lt;NA&gt;
-## 2    df1          2            Oven       &lt;NA&gt;
-## 3    df1          3            Oven       &lt;NA&gt;
-## 4    df1          4      Television       &lt;NA&gt;
-## 5    df1          5      Television       &lt;NA&gt;
-## 6    df1          6      Television       &lt;NA&gt;
-## 7    df3          4      Television California
-## 8    df3          5      Television California
-## 9    df3          6 Air conditioner New Jersey
-## 10   df3          7 Air conditioner New Jersey</code></pre>
-<pre class="r"><code> #dplyr::bind_rows(df1, df2)</code></pre>
+dat1&lt;- Rbind2(df1, df2, df3)
+str(dat1)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    14 obs. of  4 variables:
+##  $ which     : Factor w/ 3 levels &quot;df1&quot;,&quot;df2&quot;,&quot;df3&quot;: 1 1 1 1 1 1 2 2 2 2 ...
+##   ..- attr(*, &quot;label&quot;)= chr &quot;which&quot;
+##  $ CustomerId: int  1 2 3 4 5 6 4 5 6 7 ...
+##   ..- attr(*, &quot;label&quot;)= chr &quot;CustomerId&quot;
+##  $ Product   : chr  &quot;Oven&quot; &quot;Oven&quot; &quot;Oven&quot; &quot;Television&quot; ...
+##   ..- attr(*, &quot;label&quot;)= chr &quot;Produkt&quot;
+##  $ State     : chr  NA NA NA NA ...
+##   ..- attr(*, &quot;label&quot;)= chr &quot;Bundes-Staat&quot;</code></pre>
+<pre class="r"><code>dat2 &lt;- dplyr::bind_rows(df1, df2, df3, .id =&quot;which&quot;)
+str(dat2)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    14 obs. of  4 variables:
+##  $ which     : chr  &quot;1&quot; &quot;1&quot; &quot;1&quot; &quot;1&quot; ...
+##  $ CustomerId: int  1 2 3 4 5 6 4 5 6 7 ...
+##  $ Product   : chr  &quot;Oven&quot; &quot;Oven&quot; &quot;Oven&quot; &quot;Television&quot; ...
+##  $ State     : chr  NA NA NA NA ...</code></pre>
 </div>
-<div id="merge-1" class="section level3">
-<h3>merge()</h3>
+<div id="merge2" class="section level3">
+<h3>Merge2</h3>
 <pre class="r"><code>n&lt;-10
 df1 &lt;- 
   data.frame(
@@ -1857,16 +2029,16 @@ df1$id &lt;- df2$id &lt;- df3$id &lt;- df4$id &lt;- paste(&quot;P&quot;, sprintf
  
 Merge2(df1, df2, df3, df4, by = &quot;id&quot;)</code></pre>
 <pre><code>##     id origin.x    N   P   C origin.y  foo1      X      Y origin.z origin.u
-## 1  P01        B 27.0 2.1 460        D  TRUE 147400 369800        B        E
-## 2  P02        E 10.5 0.9 483        B  TRUE 147000 377000        D        C
-## 3  P03        D 12.5 2.6 451        C  TRUE 146000 393300        C        E
-## 4  P04        B 25.0 2.4 427        B  TRUE 148200 384300        E        B
-## 5  P05        B 14.0 3.0 458        A  TRUE 145900 383400        A        D
-## 6  P06        A 13.0 1.4 496        B  TRUE 146800 350600        B        B
-## 7  P07        E 19.0 2.5 457        D FALSE 147600 364800        A        A
-## 8  P08        B 16.0 1.8 477        D  TRUE 146900 381000        C        D
-## 9  P09        A 18.5 4.0 471        C  TRUE 146500 382200        A        C
-## 10 P10        A 12.5 2.3 437        E  TRUE 147000 361700        E        B</code></pre>
+## 1  P01        A 14.0 2.8 465        C FALSE 145800 383200        B        C
+## 2  P02        A 17.0 3.8 484        A  TRUE 145600 382500        C        B
+## 3  P03        A 21.5 2.8 401        A FALSE 147200 398600        D        A
+## 4  P04        A 26.5 3.6 494        C  TRUE 146500 393600        D        D
+## 5  P05        E 15.0 0.4 499        C  TRUE 147100 365100        E        B
+## 6  P06        D  9.5 4.0 415        C  TRUE 147100 365500        A        A
+## 7  P07        E 25.5 3.9 500        C  TRUE 148300 391500        E        A
+## 8  P08        E 17.5 3.9 493        C  TRUE 147600 393900        E        A
+## 9  P09        C 25.0 3.9 407        D FALSE 147100 398100        B        A
+## 10 P10        D 27.0 2.5 411        A FALSE 147500 391800        A        C</code></pre>
 </div>
 <div id="cbind-listenweise" class="section level3">
 <h3>cbind listenweise</h3>
@@ -2070,12 +2242,12 @@ auto_trans(x)</code></pre>
 ## attr(,&quot;link&quot;)
 ## function(x)
 ##   log(101 - x)
-## &lt;bytecode: 0x000002a349157de8&gt;
+## &lt;bytecode: 0x00000191faad3688&gt;
 ## &lt;environment: namespace:stp25tools&gt;
 ## attr(,&quot;inverse&quot;)
 ## function(x)
 ##   101 - (exp(x))
-## &lt;bytecode: 0x000002a349155ef0&gt;
+## &lt;bytecode: 0x00000191faabade8&gt;
 ## &lt;environment: namespace:stp25tools&gt;
 ## attr(,&quot;name&quot;)
 ## [1] &quot;negative skew (max-Log)&quot;</code></pre>

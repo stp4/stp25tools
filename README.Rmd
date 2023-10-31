@@ -30,13 +30,27 @@ require(magrittr)
  
  * Vectoren transformieren: *as_numeric, as_factor, factor2, as_cut, as_logical, rev.factor,as_rev, cat_bmi*
  
-### Factor
+### Factor (factor2)
  
  
 ```{r}
 sex <- factor2(c(1,0,0,0,1,1,0), 
         male = 1, female = 0)
  sex
+```
+### reorder2
+ 
+```{r}
+ x <-
+c(
+  rep(1, 21),rep(2, 120),rep(3, 28),rep(4, 4),rep(5, 56),
+  rep(6, 2),rep(7, 92),rep(8, 42),rep(9, 74),rep(10, 20)
+)
+
+x <- factor(x, 1:10, letters[1:10])
+table(x)
+table(reorder2(x))
+table(reorder2(x, threshold = 30))
 ```
  
 ###  Numeric
@@ -100,16 +114,21 @@ ftable(xtabs(~ sex + treatment + befund, dat))
 ### Daten File Import
 
 ```{r, error=TRUE}
- file.exists("R/dummy.csv")
-#' get_data("R/dummy.csv", dec = ",", na.strings = "-", skip=1, label=1)
-#' get_data("R/dummy.xlsx", na.strings = "-")
+if( file.exists("R/dummy.csv")) {
+  
+# get_data("R/dummy.csv", dec = ",", na.strings = "-", skip=1, label=1)
+# get_data("R/dummy.xlsx", na.strings = "-")
+  
  get_data("R/dummy.xlsx")
-#' 
+ 
  x <- get_data("R/dummy.sav")
  get_label(x)[1:4]
+ }
 ```
 
 ### Daten speichern und aus Codebook rekostruieren
+
+
 
 ```{r}
  save_data(dat, "demo.xlsx", include.codebook=TRUE)
@@ -120,7 +139,25 @@ ftable(xtabs(~ sex + treatment + befund, dat))
  head(DF2)
 ```
 
-## Filter
+## Filter + Consort-Plot
+
+
+subset2: verwendet base::subset + label_data_frame
+  
+filter2: verwendet dplyr::filter + info was gefiltert wurde
+
+```{r}
+airquality2 <-
+  airquality %>% Label(Ozone = "Ozone in ppm", Temp = "Temperatur in °C")
+
+str(subset2(airquality2, Temp > 80, select = c(Ozone, Temp)))
+str(dplyr::filter(airquality2, Temp > 80))
+
+dat <- filter2(airquality2, Temp > 80)
+str(dat)
+# simple_consort_plot(dat)
+attr(dat, "filter")
+```
 
 
 ```{r}
@@ -176,13 +213,14 @@ out <- consort_plot(
 plot(out)
 ```
 
-```{r}
-
-```
 
 ## Transpose
 
 
+ * Pivot-Funktionen: *Long(), Wide(), Dapply(), dapply2(), transpose2()*
+
+ * Zusammenfuegen von Data Frame: *Merge2, Rbind2, combine_data_frame*
+ 
 
 
 ### Wide
@@ -196,51 +234,80 @@ dat <- data.frame(
 ```
 
 ```{r}
-
 dat
-
- 
-df2<- dat %>% Wide(student,  c(A, B))
-dat %>% Wide(student,  c("A", "B"))
-dat[-3] %>% Wide(student,  B)
-dat  %>% Wide(student ~ month)
-
-dat  %>% Wide(month ~ student, A)
-dat  %>% Wide(student ~ month, A)
- 
 ```
 
+
+```{r}
+
+dat %>% 
+  Wide(student,  A)
+dat %>% 
+  tidyr::pivot_wider(names_from = student, 
+                           values_from = A)
+
+#' dat %>% tidyr::pivot_wider(names_from = student, A)
+#' error Column `value` doesn't exist.
+
+dat %>% 
+  tidyr::pivot_wider(names_from = student, 
+                    values_from = A, 
+                    values_fill = 0)
+
+```
+
+
+```{r}
+# mehere values
+dat %>% tidyr::pivot_wider(names_from = student, 
+                           values_from = c(A, B))
+
+dat %>% Wide(month ~ student, A, B)
+
+
+```
+
+Formeln werden auf zwei Arten evaluiert
+
+   1. `Wide(A ~ student)`  links steht `values_from` rechts `names_from`
+   2. `Wide(month ~ student, A)` jetzt steht in der formula die ausgabe Strucktur  und `names_from` wird extra übergeben
+
+```{r}
+
+dat %>% Wide(A ~ student)
+
+dat %>% Wide(A + B ~ student)
+dat %>% Wide(A + B ~ student + month)
+# dat %>% Wide(A ~ student)
+# dat %>% Wide(A ~ student + month)
+
+dat %>% Wide(month ~ student, A)
+dat %>% Wide(month ~ student, A , B)
+```
 
 ### Long
 
 
 ```{r}
-df2
 
-df2  %>% Long(Amy_A, Amy_B, Bob_A, Bob_B, by =  ~ month)
+df2 <-  
+dat %>% Wide(student,  A, B)
+
+df2  %>% Long(A_Amy, A_Bob, B_Amy ,B_Bob, by =  ~ month) %>% 
+  tidyr::separate(variable , c('First', 'Last'))
 
 dat %>%
-  tidyr::gather(variable, value,-(month:student)) %>%
-  tidyr::unite(temp, student, variable) %>%
-  tidyr::spread(temp, value)
+  tidyr::gather(variable, value,-(month:student))
 
+# relig_income %>%
+#   tidyr::pivot_longer(!religion, names_to = "income", values_to = "count")
+# 
+# dat %>% Long(  A, B, by =  ~ month + student  )%>%
+#   tidyr::unite(temp, student, variable) %>%
+#   tidyr::spread(temp, value)
 
 ```
 
-
-Das geht nicht Mehr:
-
-```{
-#  df_w2 <- Wide(df, student, c("A", "B")))
-
- stp25aggregate::Long(
-       list(A=c("Amy_A", "Bob_A" ), 
-            B=c("Amy_B", "Bob_B")), 
-       df2,
-       by =  ~ month,
-       key = "student",
-       key.levels= c("Amy", "Bob"))
-```
 
 
 ### Pivot-Transpose
@@ -265,31 +332,39 @@ transpose2(
 ```
 
 
+### Rbind2()
 
-
-## Merge
-
- * Pivot-Funktionen: *Long(), Wide(), Dapply(), dapply2(), transpose2()*
-
- * Zusammenfuegen von Data Frame: *Merge2, Rbind2, combine_data_frame*
  
-### cbind() und rbind()
 
-```{r}
-df1 = data.frame(CustomerId = c(1:6), Product = c(rep("Oven", 3), rep("Television", 3)))
-df2 = data.frame(CustomerId = c(4:7), Product = c(rep("Television", 2), rep("Air conditioner", 2)))
-df3 = data.frame(
-   CustomerId = c(4:7),
-   Product = c(rep("Television", 2), rep("Air conditioner", 2)),
-   State = c(rep("California", 2), rep("New Jersey", 2))
- )
-
- Rbind2(df1, df3)
- #dplyr::bind_rows(df1, df2)
+```
+Rbind2( ...,
+        .id = "which",
+        .names = NULL,
+        .use.label = TRUE,
+        include.rownames = FALSE
 ```
 
 
-### merge()
+
+```{r}
+df1 <- data.frame(CustomerId = c(1:6), Product = c(rep("Oven", 3), rep("Television", 3))) %>% 
+  Label( Product = "Produkt")
+df2 <- data.frame(CustomerId = c(4:7), Product = c(rep("Television", 2), rep("Air conditioner", 2)))
+df3 <- data.frame(
+  CustomerId = c(4:7),
+  Product = c(rep("Television", 2), rep("Air conditioner", 2)),
+  State = c(rep("California", 2), rep("New Jersey", 2))
+) %>% 
+  Label( Product = "Produkt-Kategorie", State = "Bundes-Staat")
+
+dat1<- Rbind2(df1, df2, df3)
+str(dat1)
+dat2 <- dplyr::bind_rows(df1, df2, df3, .id ="which")
+str(dat2)
+```
+
+
+### Merge2
 
 ```{r}
 n<-10
