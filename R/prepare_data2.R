@@ -1,19 +1,10 @@
-# prepare_data2, print
-
-
 #' prepare_data2
 #'
 #'  Funktion wird zum Aufbereiten der Daten verwendet. Die Daten werden als
 #'  tibble::as_tibble() weitergegeben.
-#'
-#'
-#'  Tabelle.default()
-#'  errate_statistik3()
-#'  APA.formula()
-#'  corr_plot.formula()
-#'  Hmisc_rcorr() also APA_Correlation
 #'  
 #' @param ... Formula, data usw
+#' @param measure,group.class,measure.test,catTest,conTest,names_data helpers do not change
 #'
 #' @return Liste mit Namen und Daten
 #' data,
@@ -42,7 +33,6 @@
 #' prepare_data2(dat, 4:7)
 #' prepare_data2(dat, m1[1], m2, m3, m4)
 #' prepare_data2(dat, m1[1], m2, m3[4,median], m4)
-#' prepare_data2(dat, m1 , m2, m3=median, m4)
 #' prepare_data2(dat, m1, m2, m3 , m4, by =  ~ geschl)
 #' prepare_data2(dat, m1[4, median], m2, m3 , m4[5], by =  ~ geschl)
 #'
@@ -67,7 +57,8 @@ prepare_data2.formula <-
            data,
            groups = NULL,
            na.action = na.pass,
-           drop.unused.levels = FALSE) {
+           drop.unused.levels = FALSE,
+           ...) {
     
     lbl <- get_label2(data)
     fm  <- cleaup_formula(x, data, groups)
@@ -110,7 +101,7 @@ prepare_data2.data.frame <- function(data,
                                      by = "1",
                                      groups = NULL,
                                      na.action = na.pass,
-                                     drop.unused.levels=FALSE) {
+                                     drop.unused.levels = FALSE) {
   hsub <- "h__"
   hend <- "__h"
   sub_haeding <- c()
@@ -179,12 +170,7 @@ prepare_data2.data.frame <- function(data,
 }
 
 
-
-# Data --------------------------------------------------------------------
-
 # select_data
-#'
-#'model.frame
 # Formula::Formula splitet log(m1) + m2 + m3 + m4 ~ g richtig auf
 #
 #' @noRd
@@ -215,10 +201,6 @@ select_data <-   function(formula,
 #
 #' @noRd
 default_measure <- function(measure, measure.vars, measure.class) {
-    # cat(" \n in default_measure\n  ")
-  # print(measure)
-  # print(measure.vars )
-  # print(measure.class)
   if (length(measure) == 1) {
     measure <- measure.class
   }
@@ -227,19 +209,18 @@ default_measure <- function(measure, measure.vars, measure.class) {
     measure[nas] <- measure.class[nas]
   }
   
-  if( any(is.na( measure ))) 
+  if (any(is.na(measure)))
     stop("Achtung eine Variable ist doppelt!\n",
-         paste(names(measure), collapse=", "))
+         paste(names(measure), collapse = ", "))
   
   names(measure) <- measure.vars
-  measure 
+  measure
 }
 
 
 #' @noRd
 default_digits <- function(digits, 
                            measure.vars, 
-                          # measure.class,
                            measure
                            ) {
   
@@ -266,12 +247,11 @@ default_digits <- function(digits,
 }
 
 
-# Satatistics -------------------------------------------------------------
-
-
 #' @rdname prepare_data2
 #' 
 #' @examples 
+#' 
+#'\dontrun{
 #' which_test( "factor", NULL)
 #' which_test( "factor", "logical")
 #' which_test( "numeric", "factor")
@@ -287,6 +267,7 @@ default_digits <- function(digits,
 #'   numeric = "contest" ,
 #'   multi = "notest"
 #' )
+#' }
 which_test <-
   function(measure,
            group.class=NULL,
@@ -319,27 +300,7 @@ which_test <-
     rslt
   }
 
-#
-# contest <-
-#   c("contest",
-#     "wilcox",
-#     "utest",
-#     "htest",
-#     "kruskal",
-#     "ttest",
-#     "aov",
-#     "anova")
-# cattest <-  c("cattest", "chisq", "fisher", "ordtest", "binomial")
-# notest <-  c("notest")
-# ordtest <-  c("ordtest")
-# disttest <-  c("shapiro", "kstest")
-# cortest <-   c("pearson", "kendall", "spearman")
-# stattest <-   c(contest, cattest, notest, disttest)
-
-
-
-# default test methods
-#
+ 
 #' @noRd
 stp25_test_methode <- function(x,
                                search_string = c(
@@ -357,9 +318,7 @@ stp25_test_methode <- function(x,
 }
 
 
-
-# is_empty
-#
+ 
 #' @noRd
 is_empty2 <- function (x) {
   if (length(x) == 0) TRUE
@@ -373,11 +332,6 @@ is_empty2 <- function (x) {
 }
 
 
-# helpers -----------------------------------------------------------------
-
-
-# Variablen als Nummer
-#
 #' @noRd
 cleaup_names <- function(measure.vars, data) {
   measure <- makeNamesNum(measure.vars, data)
@@ -406,10 +360,10 @@ get_classes <-
 #' @description makeNamesNum: aus Nummern die Namen extrahieren
 #' @param  meAsNum  logical welche sind Zahlen
 #' @examples
-#'
-#' #  measure <- c("geschl", "1" , "3:5", 1)
-#' #  stp25tools:::makeNamesNum(measure,  data=dat)
-#'
+#' #'\dontrun{
+#'  measure <- c("geschl", "1" , "3:5", 1)
+#'  stp25tools:::makeNamesNum(measure,  data=dat)
+#'  }
 makeNamesNum <- function(measure,
                          data,
                          meAsNum = grepl("^[[:digit:]]", measure)
@@ -435,8 +389,6 @@ makeNamesNum <- function(measure,
   unique(measure_number)
 }
 
-
-# Formula -----------------------------------------------------------------
 
 # @param x A object to be tested
 #
@@ -593,12 +545,12 @@ cleaup_formula <- function(formula,
 #' @param  measurevar,groupvars  mamen als strings
 #' @examples
 #'
-#'
+#'\dontrun{
 #' make_formula("a", "b")
 #' make_formula("a", c("b","c"))
 #' make_formula("a", ~b+c)
 #' make_formula(c("a", "d"), c("b","c"))
-#' 
+#' }
 make_formula <- function(measurevar,
                          groupvars=NULL) {
   if (is.null(groupvars))
@@ -656,20 +608,21 @@ to_formula <-
   }
 
 
-
 #' @rdname prepare_data2
 #' 
 #' @description clean_dots_formula: Formel bereinigen
 #' return: clean_dots_formula: formula - Objekt
 #' 
 #' @examples
-#'
+#' 
+#'\dontrun{
 #' data <- data.frame(x = NA, y = NA, z = NA)
 #' stp25tools:::clean_dots_formula(x ~ y, data)
 #' stp25tools:::clean_dots_formula(. ~ x + y, data)
 #' stp25tools:::clean_dots_formula(x + y ~ ., data)
 #' stp25tools:::clean_dots_formula(~., data)
 #' stp25tools:::formula_split(a+b~x|y)
+#'}
 #'
 clean_dots_formula <- function(x,
                                data = NULL,
@@ -751,11 +704,6 @@ formula_split <- function(x) {
        condition = condition,
        facet_type = facet_type)
 }
-
-
-
-
-# Print -------------------------------------------------------------------
 
 
 #' @rdname prepare_data2

@@ -1,42 +1,13 @@
 #' @rdname Long
 #'
 #' @param data dataframe
-#' @param key names or formula
-#' @param ...  values_fro or erster Teil der Formula
+#' @param ...  key +  values_fro or erster Teil der Formula
 #' @param values_fill,names_sep,names_vary an tidyr::pivot_wider
 #'
 #' @return tibble
+#' @importFrom crayon bgMagenta
 #' @export
-#'
-#' @examples
 #' 
-#'   
-#' dat <- data.frame(
-#' month = rep(1:3, 2),
-#' student = factor(rep(c("Amy", "Bob"), each = 3)),
-#' A = c(19, 27, 16, 28, 10, 29),
-#' B = c(6, 7, 8, 5, 6, 7)
-#' )
-#' #dat %>% Wide(student,  A, B)
-#' # dat %>% Wide( month ~ student, value="A")
-#' dat %>% Wide(student)
-#' dat %>% Wide(student,  B)
-#' 
-#' dat %>% Wide(A ~ student)
-#' 
-#' dat %>% Wide(A + B ~ student)
-#' dat %>% Wide(A + B ~ student + month)
-#' 
-#' 
-#' dat %>% Wide(student,  A, B)
-#' 
-#' 
-#' dat %>% Wide(A ~ student)
-#' dat %>% Wide(A ~ student + month)
-#' 
-#' 
-#' dat %>% Wide(month ~ student, A)
-#' dat %>% Wide(month ~ student, A, B)
 Wide <- function(data,
                   key,
                   ...,
@@ -44,8 +15,8 @@ Wide <- function(data,
                   names_sep = "_",
                   names_vary = "fastest") {
   
-  library(crayon)
-  cat(bgMagenta('\n\n   Achtung neue Version von Wide() !!!!\n\n' )  )
+ 
+  cat(crayon::bgMagenta('\n\n   Achtung neue Version von Wide() !!!!\n\n' )  )
   
   values_from <-
     as.character(sapply(lazyeval::lazy_dots(...),
@@ -89,7 +60,7 @@ Wide <- function(data,
   }
   
   if (length(values_from) == 0) {
-    values_from <- stp25tools:::guess_value(data)
+    values_from <- guess_value(data)
   }
   # print(list(names_from = names_from,
   #            values_from = values_from))

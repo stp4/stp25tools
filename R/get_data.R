@@ -216,8 +216,6 @@ get_data <- function (file = NA,
     data <- data.frame(data)
   else NULL
   
-  
-  
   data
 }
 
@@ -245,7 +243,7 @@ cleanup_NA <-
       }
       if (force.numeric && length(lev <- levels(x))) {
         x <- factor(x)
-        if (all.is.numeric(levels(x))) {
+        if (Hmisc::all.is.numeric(levels(x))) {
           x <- as.numeric(as.character(x))
           modif <- TRUE
         }
@@ -258,9 +256,7 @@ cleanup_NA <-
   }
 
 #' @rdname get_data
-#' @description
-#' 
-#'   Read Text Lines
+#' @description  Read Text Lines
 #'
 #' @param string  character string
 #' @param na.strings 	  a character vector of strings which are to be interpreted as NA values.
@@ -278,9 +274,7 @@ read.text2 <-
             stringsAsFactors = TRUE) {
     
     if(sep == " ") string <- gsub("\t", " ", string)
-   # cat("\nsep", sep,"\n")
-  #  print(sep)
-    
+
     data <- read.table(
       zz <- textConnection(string),
       header = TRUE,
@@ -290,45 +284,6 @@ read.text2 <-
       stringsAsFactors = stringsAsFactors
     )
     close(zz)
-    data
-  }
-
-
-
-
-
-#' Helper for expand_table
-#'  
-#'   http://wiki.stdout.org/rcookbook/Manipulating%20data/Converting%20between%20data%20frames%20and%20contingency%20tables/
-#' @noRd
-#'
-expand.dft <-
-  function(x,
-           na.strings = "NA",
-           as.is = FALSE,
-           dec = ".") {
-   # Take each row in the source data frame table and replicate it using the Freq value
-    data <- sapply(1:nrow(x),
-                   function(i)
-                     x[rep(i, each = x$Freq[i]),],
-                   simplify = FALSE)
-    
-    # Take the above list and rbind it to create a single data
-    # Also subset the result to eliminate the Freq column
-    data <-
-      subset(do.call("rbind", data), select = -Freq)
-    
-    # Now apply type.convert to the character coerced factor columns
-    # to facilitate data type selection for each column
-    for (i in 1:ncol(data)) {
-      data[[i]] <-
-        type.convert(
-          as.character(data[[i]]),
-          na.strings = na.strings,
-          as.is = as.is,
-          dec = dec
-        )
-    }
     data
   }
 
@@ -344,21 +299,21 @@ expand.dft <-
 #' @return data.frame
 #'
 #' @examples
-#'
-#' dat <- expand_table("
-#' sex treatment  neg  pos
-#' f   KG          3   3
-#' f   UG          4   5
-#' m   KG          5   4
-#' m   UG          4   2
-#' ",
-#' id.vars = 1:2,
-#' value = "befund")
-#'
-#' xdat <- xtabs( ~ befund + sex + treatment, dat)
-#' Wide(as.data.frame(xdat),
-#'      befund ,
-#'      Freq)
+#' 
+#' dat <- expand_table(
+#'   data.frame(
+#'     sex = c("f", "f", "m", "m"),
+#'     treatment = c("KG", "UG", "KG" , "UG"),
+#'     neg  = c(3, 4, 5, 4),
+#'     pos = c(3, 5, 4, 2)
+#'   )
+#'   ,
+#'   id.vars = 1:2,
+#'   value = "befund"
+#' )
+#' 
+#' xtabs(~ befund + sex + treatment, dat)
+#' 
 expand_table <-
   function(data,
            id.vars,
@@ -419,7 +374,40 @@ expand_table <-
   }
 
 
-
+#' Helper for expand_table
+#'  
+#'   http://wiki.stdout.org/rcookbook/Manipulating%20data/Converting%20between%20data%20frames%20and%20contingency%20tables/
+#' @noRd
+#'
+expand.dft <-
+  function(x,
+           na.strings = "NA",
+           as.is = FALSE,
+           dec = ".") {
+   # Take each row in the source data frame table and replicate it using the Freq value
+    data <- sapply(1:nrow(x),
+                   function(i)
+                     x[rep(i, each = x$Freq[i]),],
+                   simplify = FALSE)
+    
+    # Take the above list and rbind it to create a single data
+    # Also subset the result to eliminate the Freq column
+    data <-
+      subset(do.call("rbind", data), select = -Freq)
+    
+    # Now apply type.convert to the character coerced factor columns
+    # to facilitate data type selection for each column
+    for (i in 1:ncol(data)) {
+      data[[i]] <-
+        type.convert(
+          as.character(data[[i]]),
+          na.strings = na.strings,
+          as.is = as.is,
+          dec = dec
+        )
+    }
+    data
+  }
 
 
 # cleanup_haven_factor <- function(data,
@@ -489,6 +477,40 @@ names_label_encoding <- function(data,
 }
 
 
+
+#' @noRd
+#' Split a vector into multiple columns
+#' 
+#' Stolen from reshape2
+#' 
+#' reshape2 ist ein altes packages und womoewglich bald osolet!
+#'
+#' @param string character vector or factor to split up
+#' @param pattern regular expression to split on
+#' @param names names for output columns
+#'
+#' @examples
+#' 
+#' #'\dontrun{
+#' 
+#' x <- c("a_1", "a_2", "b_2", "c_3")
+#' vars <- stp25tools:::reshape2_colsplit(x, "_", c("trt", "time"))
+#' vars
+#' str(vars)
+#' }
+#' 
+reshape2_colsplit<-
+  function (string, pattern, names) 
+  {
+    vars <- stringr::str_split_fixed(string, pattern, n = length(names))
+    df <- data.frame(plyr::alply(vars, 2, type.convert, as.is = TRUE), 
+                     stringsAsFactors = FALSE)
+    names(df) <- names
+    df
+  }
+
+
+
 # Convert_To_Factor
 # 
 # interne funktion fuer factor und cleanup
@@ -519,4 +541,18 @@ names_label_encoding <- function(data,
 #   x
 # }
 
-
+# Hmisc::all.is.numeric
+# function (x, what = c("test", "vector", "nonnum"), extras = c(".", 
+#                                                               "NA")) 
+# {
+#   what <- match.arg(what)
+#   x <- sub("[[:space:]]+$", "", x)
+#   x <- sub("^[[:space:]]+", "", x)
+#   xs <- x[x %nin% c("", extras)]
+#   if (!length(xs) || all(is.na(x))) 
+#     return(switch(what, test = FALSE, vector = x, nonnum = x[0]))
+#   isnon <- suppressWarnings(!is.na(xs) & is.na(as.numeric(xs)))
+#   isnum <- !any(isnon)
+#   switch(what, test = isnum, vector = if (isnum) suppressWarnings(as.numeric(x)) else x, 
+#          nonnum = xs[isnon])
+# }

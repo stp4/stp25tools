@@ -1,7 +1,3 @@
-# clean_names, 
-
-
-
 #' clean_names
 #' 
 #' Alternative zu janitor  
@@ -59,14 +55,14 @@ clean_names <- function(x, ...) {
 #' # clean_names(df)
 
 clean_names.data.frame <-
-  function(data,
+  function(x,
            label = TRUE,
            labels = NULL,
            cleanup.encoding = FALSE,
            from = "UTF8" , 
            to = "latin1",
            ...) {
-    nams_df <- names(data)
+    nams_df <- names(x)
     if (cleanup.encoding)
       nams_df <- iconv(nams_df, from, to)
     
@@ -80,16 +76,16 @@ clean_names.data.frame <-
       else if (length(labels) != length(nams_clean)) {
         stop(" Laenge der labels muss gleich der laenge des DF sein!")
       }
-      names(data) <- nams_clean
+      names(x) <- nams_clean
       
       if (cleanup.encoding)
         labels <- iconv(labels, from, to)
       names(labels) <- nams_clean
-      label_data_frame(data, labels)
+      label_data_frame(x, labels)
     }
     else {
-      names(data) <- nams_clean
-      data
+      names(x) <- nams_clean
+      x
     }
   }
 
@@ -106,9 +102,6 @@ clean_names.default <-
            unique = TRUE,
            abbreviate = FALSE, 
            minlength = 4,
-          #
-          #gtools::ASCIIfy("ö ä ü Ä Ö Ü  ß", 2)
-           
            replace =
              c(
                "'" = "",
@@ -166,9 +159,13 @@ clean_names.default <-
 #' @export
 #'
 paste_names <-
-  function(x, collapse = ", ") {
+  function(x, 
+           collapse = ", ",
+           ...) {
     paste0(names(x) , collapse = collapse)
   }
+
+
 #' @rdname clean_names
 #' @description 
 #' paste_names_levels:  paste names + Labels
@@ -178,13 +175,17 @@ paste_names <-
 #' @return character
 #' @export
 #'
-paste_names_levels <- function(x, abbreviate = TRUE, collapse = ", ") {
+paste_names_levels <- function(x, 
+                               abbreviate = TRUE, 
+                               collapse = ", ",
+                               ...) {
   strg <-  get_label(x)
   if (abbreviate)
     paste0(names(strg), " = '", abbreviate(as.vector(strg), 15), "'", collapse = collapse)
   else
     paste0(names(strg), " = '", abbreviate(as.vector(strg), 15), "'", collapse = collapse)
 }
+
 
 #' @rdname clean_names
 #' @description 
@@ -197,7 +198,8 @@ paste_names_levels <- function(x, abbreviate = TRUE, collapse = ", ") {
 #' @param x string
 #' @export
 #'
-cleansing_umlaute <- function(x){
+cleansing_umlaute <- function(x,
+                              ...){
   x <- gsub("\u00e4","ae", x)
   x <- gsub("\u00fc","ue", x)
   x <- gsub("\u00f6","oe", x)
@@ -214,8 +216,7 @@ cleansing_umlaute <- function(x){
 #' @rdname clean_names
 #' @description  cleansing_umlaute2: Sonderzeichen aus socisurvy
 #' @export
-cleansing_umlaute2 <-
-  function(x) {
+cleansing_umlaute2 <- function(x, ...) {
     diaeresis <- "\u00A8"
     ae <-  paste0("a", diaeresis)
     ue <-  paste0("u", diaeresis)
@@ -248,7 +249,9 @@ clean_space <- function(x) {
 
 
 #-- Functions stolen from library(report)
-scrubber <- function(text.var, rm.quote = TRUE, fix.comma = TRUE, ...){
+scrubber <- function(text.var, 
+                     rm.quote = TRUE, 
+                     fix.comma = TRUE, ...){
   x <- reducer(Trim(clean(text.var)))
   if (rm.quote) {
     x  <- gsub('\"', "", x)
@@ -275,7 +278,10 @@ unblanker <- function(x) subset(x, nchar(x)>0)
 #internal not exported
 clean <- function(text.var) sub("\\s+", " ", gsub("\r|\n|\t", " ", text.var))
 
-mgsub <- function(pattern, replacement = NULL, text.var, fixed = TRUE, ...){
+mgsub <- function(pattern, 
+                  replacement = NULL, 
+                  text.var,
+                  fixed = TRUE, ...){
   key <- data.frame(pat=pattern, rep=replacement,
                     stringsAsFactors = FALSE)
   msubs <-function(K, x, ...){
@@ -298,9 +304,13 @@ mgsub <- function(pattern, replacement = NULL, text.var, fixed = TRUE, ...){
 #' @examples 
 #' abbreviate2(c("Hallö", "Halü"))
 #' 
-abbreviate2 <- function(x,  minlength = 4)
-  abbreviate(stringi::stri_trans_general(x, "latin-ascii"),
-             minlength = 4, named = FALSE)
+abbreviate2 <- function(x, 
+                        minlength = 4)
+  abbreviate(
+    stringi::stri_trans_general(x, "latin-ascii"),
+    minlength = 4, 
+    named = FALSE
+    )
 
  
 

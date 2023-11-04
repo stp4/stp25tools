@@ -1,6 +1,3 @@
-# na_approx
-
-
 #' Replace NA by Interpolation
 #'
 #' @param x an object.
@@ -45,7 +42,6 @@ na_approx <- function(x, ...) {
 }
 
 
-#'
 #' @param fun Interpolation  zoo::na.approx(z)  zoo::na.fill(z, "extend")  or 
 #' @param min.length min length
 #'
@@ -56,7 +52,9 @@ na_approx.default <-
            fun = function(z) {
              zoo::na.approx(z, na.rm=FALSE)
            },
-           min.length = 3L) {
+           min.length = 3L,
+           ...
+           ) {
     x.na <- na.omit(x)
     if (length(x.na) < min.length | length(x.na) == 0)
       return(x)
@@ -79,9 +77,10 @@ na_approx.data.frame <- function(x, ...) {
   x
 }
 
+
 #' @rdname na_approx
 #' @export
-na_approx.matrix <- function(x) {
+na_approx.matrix <- function(x, ...) {
  rslt <-
    t(apply(x, 1, na_approx.default))
  colnames(rslt) <-colnames(x)

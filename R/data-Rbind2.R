@@ -83,7 +83,7 @@ Rbind2 <- function (...,
 # require(stp25tools)
 # require(tidyverse)
 # df1 <-
-#   data.frame(CustomerId = c(1:6), Product = c(rep("Oven", 3), rep("Television", 3))) %>%
+#   data.frame(CustomerId = c(1:6), Product = c(rep("Oven", 3), rep("Television", 3))) |>
 #   Label(Product = "Produkt")
 # df2 <-
 #   data.frame(CustomerId = c(4:7), Product = c(rep("Television", 2), rep("Air conditioner", 2)))
@@ -91,7 +91,7 @@ Rbind2 <- function (...,
 #   CustomerId = c(4:7),
 #   Product = c(rep("Television", 2), rep("Air conditioner", 2)),
 #   State = c(rep("California", 2), rep("New Jersey", 2))
-# ) %>%
+# ) |>
 #   Label(Product = "Produkt-Kategorie", State = "Bundes-Staat")
 # 
 # Rbind2(df1, df2, df3, .id = NULL, .use.label = FALSE)

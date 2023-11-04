@@ -69,7 +69,7 @@ factor2 <- function(x,
 #' X	=> a vector of the same length as x, whose subset of values for each unique level of x determines the eventual order of that level.
 #' @param decreasing an ordere logical
 #' @param last character
-#' @param threshold Anzahl an minimalen Nennungen
+#' @param threshold,threshold.na.strings Anzahl an minimalen Nennungen
 #'
 #' @export
 #'

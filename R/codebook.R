@@ -207,11 +207,7 @@ save_data <- function(x,
   if(include.codebook)
     cdb <- codebook(x)
   
-  # if (include.labels) {
-  #   lbl <- stp25tools:::get_label2(x)
-  #   x <- stp25tools::dapply2(x, as.character)
-  #   x<-rbind( lbl, x )
-  # }
+ 
   # check if file extension exists
   has.extension <- (regexpr("\\.[^\\.]*$", file) != -1)
   if (!has.extension)

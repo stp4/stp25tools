@@ -1,6 +1,6 @@
 Package: stp25tools
 Type: Package
-Title: Tools for data wrangling and statistical transformations.
+Title: Tools for data wrangling and statistical transformations
 Version: 0.2.1
 Date: 2023-10-29
 Authors@R: person("Wolfgang", "Peter", email = "w.peter@statistik-peter.at",  role = c("aut", "cre"))
@@ -11,9 +11,9 @@ LazyData: true
 RoxygenNote: 7.2.3
 Suggests: 
  stats,
+ utils,
  e1071,
- broom,  
- utils
+ broom
 Imports:
   stp25settings,
   magrittr,
@@ -23,7 +23,6 @@ Imports:
   tidyr,
   lazyeval,
   rlang,
-  stringr,
   haven,
   Formula,
   readr,  
@@ -31,5 +30,8 @@ Imports:
   readxl, 
   zoo,
   psych,
-  stringi
+  Hmisc,
+  stringi,
+  stringr,
+  crayon
 

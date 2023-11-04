@@ -684,7 +684,33 @@ table(z)
 
 ## string manipulation
 
- * String umbrechen: *wrap_string* 
+
+```
+  # NODE                     EXPLANATION
+  # --------------------------------------------------------------------------------
+  #   (?<=                     look behind to see if there is:
+  #      ---------------------------------------------------------------------------
+  #      [\s]                  any character of: whitespace (\n, \r, \t, \f, and " ")
+  #    -----------------------------------------------------------------------------
+  #   )                        end of look-behind
+  # --------------------------------------------------------------------------------
+  #   \s*                      whitespace (\n, \r, \t, \f, and " ") (0 or
+  #                            more times (matching the most amount possible))
+  # --------------------------------------------------------------------------------
+  #   |                        OR
+  # --------------------------------------------------------------------------------
+  #   ^                        the beginning of the string
+  # --------------------------------------------------------------------------------
+  #   \s+                      whitespace (\n, \r, \t, \f, and " ") (1 or more times 
+  #                            (matching the most amount possible))
+  # --------------------------------------------------------------------------------
+  #   $                        before an optional \n, and the end of the string
+```
+
+
+  
+
+ * String umbrechen:   split_string(), wrap_string(), wrap_sentence(), wrap_string_at()
  
  * Bereinigen von Data Frame und strings: *clean_names, cleansing_umlaute, cleansing_umlaute2*
 
@@ -696,12 +722,25 @@ clean_names(tibble::tibble("Öli"=1:3, "p-k"=1:3, "95%-CI"=4:6) )
 ```{r}
 cleansing_umlaute( " Öäüö? hallo")
 ```
+
+
+###wrap_string (Umbrechen)
+
+wrap_string(), wrap_factor(), wrap_data_label(), wrap_string_at(), split_string()
+
+
 ```{r}
-txt<- wrap_string(
-  "R is free   software and comes with ABSOLUTELY NO WARRANTY.
-  You are welcome to redistribute it under certain conditions.
-  ", 35, sep = "<br>")
-txt
+strg<- c("R is free   software and comes with ABSOLUTELY NO WARRANTY.",
+         "You are welcome to redistribute it under certain conditions.")
+
+wrap_string(strg, 5)
+wrap_string(factor(strg))
+wrap_factor(factor(strg))
+
+#wrap_data_label(data)
+wrap_string_at(strg, "and")
+split_string(strg, "and")
+
 ```
 
 `r txt`

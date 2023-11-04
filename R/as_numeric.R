@@ -208,22 +208,6 @@ as_logical <- function(x) {
 }
 
 
-
-
-# sjlabelled:::as_factor.data.frame
-# as_factor.data.frame <- 
-# function (x, ..., add.non.labelled = FALSE) 
-# {
-#   dots <- sapply(eval(substitute(alist(...))), deparse)
-#   .dat <- .get_dot_data(x, dots)
-#   for (i in colnames(.dat)) {
-#     x[[i]] <- to_fac_helper(.dat[[i]], add.non.labelled)
-#   }
-#   x
-# }
-
-
-
 #' @rdname as_irgenwas
 #' @description as_factor: haven_labelled zu factor
 #' @export

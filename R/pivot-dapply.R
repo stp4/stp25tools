@@ -6,7 +6,7 @@
 #' 
 #' Dapply, dapply2:  plyr::llply() + Label()
 #' 
-#' @param x Objekt
+#' @param x Objekt data.frame, formula
 #' @param ... Weitere Argumente an llply oder prepare_data2
 #' @return  data.frame
 #' @export
@@ -33,10 +33,11 @@ Dapply <- function(x, ...) {
 
 
 #' @rdname Dapply
+#' @param data  Data.frame
 #' @export
 Dapply.formula <- function(x,
                            data,
-                           fun = function(xx){as.numeric(xx)},
+                           fun = function(y) as.numeric(y),
                            stringsAsFactors = FALSE,
                            ...) {
   X <- prepare_data2(x, data)
@@ -53,51 +54,38 @@ Dapply.formula <- function(x,
 
 #' @rdname Dapply
 #' @export
-Dapply.data.frame <- function(data,
+Dapply.data.frame <- function(x,
                               ...,
-                              fun = function(x)as.numeric(x),
+                              fun = function(y) as.numeric(y),
                               stringsAsFactors = FALSE) {
-  
-  X <- prepare_data2(data, ...)
-  apply_data <- dapply2(X$data[X$measure.vars], fun)
-  
-  data[, X$measure.vars] <- apply_data
-  data
-  
+  X <- prepare_data2(x, ...)
+  apply_data <- dapply2(X$x[X$measure.vars], fun)
+  x[, X$measure.vars] <- apply_data
+  x
 }
-
 
 
 #' @rdname Dapply
 #' 
 #' @description dapply2: Copie of plyr::llply()
-#' 
-#' @param data  Data.frame
 #' @param fun   funktion function(x) as.numeric(x)
 #' @param stringsAsFactors logical: should character vectors be converted to factors?
 #' @export
 #' 
-dapply2 <- function (data,
+dapply2 <- function (x,
                      fun = function(x) as.numeric(x),
                      stringsAsFactors = FALSE,
                      ...) {
-  set_label2(dapply1(data,
-                     fun,
-                     stringsAsFactors,
-                     ...),
-             get_label2(data))
+  set_label2(
+    dapply1(x,
+            fun,
+            stringsAsFactors,
+            ...),
+    get_label2(x))
 }
 
-  # if (tibble::is_tibble(data))
-  #   set_label2(tibble::as_tibble(plyr::llply(data, fun, ...)),
-  #              get_label2(data))
-  # else
-  #   set_label2(data.frame(plyr::llply(data, fun, ...),
-  #                         stringsAsFactors = stringsAsFactors),
-  #              get_label2(data))
-  #
+ 
   
-
 #' @param data an dplyr
 #'
 #' @param fun an dplyr default = as.numeric
@@ -107,16 +95,17 @@ dapply2 <- function (data,
 #' @noRd
 #'
 dapply1 <-
-  function (data,
-            fun = function(x)
-              as.numeric(x),
+  function (x,
+            fun = function(x) as.numeric(x),
             stringsAsFactors = FALSE,
             ...) {
-    if (tibble::is_tibble(data))
-      tibble::as_tibble(plyr::llply(data, fun, ...))
+    if (tibble::is_tibble(x))
+      tibble::as_tibble(
+        plyr::llply(x, fun, ...))
     else
-      data.frame(plyr::llply(data, fun, ...),
-                 stringsAsFactors=stringsAsFactors)
+      data.frame(
+        plyr::llply(x, fun, ...),
+        stringsAsFactors=stringsAsFactors)
   }
 
  

@@ -1,6 +1,7 @@
 #' Summen-Index
 #'  
 #' Summen Index eine Summenfunktion mit der Erweiterung zum Umcodieren
+#' 
 #' @param x data.frame
 #' @param ... alles weitere
 #' @return Vektor
@@ -9,14 +10,13 @@
 Index <- function(x, ...) {
   UseMethod("Index")
 }
+
+
 Index.formula <- function(x,
                           data,
-                          # key = "variable",
-                          # value = "value",
                           ...) {
-  Index.data.frame(data[ all.vars(x) ])
+  Index.data.frame(data[all.vars(x)])
 }
-
 
 
 #' @param re.code revers code logical
@@ -53,7 +53,7 @@ Index.data.frame <- function(x,
     } else {
       cat(
         "\n",
-        "Falsches Datenformat (Numeric oder Faktor ist erlaubt)",
+        "Falsches Datenformat (Numeric oder Faktor ist erlaubt)!",
         "\n",
         apply(x, 2, function(objekt)
           class(objekt)),
@@ -69,7 +69,7 @@ Index.data.frame <- function(x,
     print(head(x))
   } else if( re.code ) {
     
-    cat("\n", "Prüfe keys mit psych" , "\n") 
+    cat("\n", "Pruefe keys mit psych" , "\n") 
     alp_check <-
       psych::alpha(x, check.keys = TRUE, warnings = FALSE)
     keys <- unlist(alp_check$keys)
@@ -79,39 +79,38 @@ Index.data.frame <- function(x,
       cat("\n", "Umcodieren mit psych" , "\n")  
       x <- Umcodieren(x, keys, max.level, min.level)
     }
-
-   
   }
+  
   index <- switch(
     fun,
     mean = round(rowMeans(x, na.rm = na.rm), digits),
     sum =  round(rowSums(x, na.rm = na.rm), digits),
     rep(NA, nrow(x))
   )
+  
   index
 }
 
 
 #' @rdname Index
 #' @export
-Index.default <- function( ...,
-                           re.code = FALSE,
-                           fun = "mean",
-                           na.rm = TRUE,
-                           digits = 4,
-                           max.level = NA,
-                           min.level = NA ) {
-  
-  
-  dots<-  stp25tools::fix_to_df(list(...))
-  Index.data.frame(dots,   
-                   re.code=re.code,
-                   fun=fun,
-                   na.rm=na.rm,
-                   digits=digits,
-                   max.level=max.level,
-                   min.level=min.level )
-  
+Index.default <- function(...,
+                          re.code = FALSE,
+                          fun = "mean",
+                          na.rm = TRUE,
+                          digits = 4,
+                          max.level = NA,
+                          min.level = NA) {
+  dots <-  stp25tools::fix_to_df(list(...))
+  Index.data.frame(
+    dots,
+    re.code = re.code,
+    fun = fun,
+    na.rm = na.rm,
+    digits = digits,
+    max.level = max.level,
+    min.level = min.level
+  )
   
 }
 
@@ -126,18 +125,19 @@ Sum2 <- function(...,
                  max.level = NA,
                  min.level = NA) {
   dat <- stp25tools::fix_to_df(list(...))
-  Index(dat, re.code =re.code, 
-        fun =fun,
-        na.rm =na.rm,
-        digits=digits,
-        max.level=max.level,
-        min.level=min.level)
-  
+  Index(
+    dat,
+    re.code = re.code,
+    fun = fun,
+    na.rm = na.rm,
+    digits = digits,
+    max.level = max.level,
+    min.level = min.level
+  )
 }
 
 
-#' Umcodieren
-#'
+
 #' @noRd
 Umcodieren <- function(x,
                        re.code,
@@ -159,63 +159,3 @@ Umcodieren <- function(x,
 }
 
 
-
-# Transformieren zu numeric
-#
-# @noRd
-#transform_to_numeric2 <- function(data, data_range) {
-#   #data2<- na.omit(data)
-#   lvls <- get_label(data)
-#   
-#   objects <-
-#     sapply(data, function(x)
-#       if (is.factor(x))
-#         "factor"
-#       else if (is.numeric(x))
-#         "numeric"
-#       else
-#         "unknown")
-#   if (all(objects == "numeric"))
-#     data_range <- range(data, na.rm = T)
-#   else if (all(objects == "factor")) {
-#     data <- data.frame(sapply(data, as.numeric))
-#     data_range <- range(data, na.rm = T)
-#   }
-#   else {
-#     cat("\n",
-#         "Falsches Datenformat (Numeric oder Faktor ist erlaubt)",
-#         "\n")
-#     # print(objects)
-#     data <- sapply(data, as.numeric)
-#     data_range <- range(data, na.rm = T)
-#   }
-#   
-#   list(data = data,
-#        range = data_range,
-#        labels = lvls)
-#   
-# }
-
-# head(DF[Cs(erfahrung.1,
-#            erfahrung.2,
-#            erfahrung.3,
-#            erfahrung.4)])
-# Index(DF[Cs(erfahrung.1,
-#             erfahrung.2,
-#             erfahrung.3,
-#             erfahrung.4)])
-# DF$erfahrung.5 <- rev( DF$erfahrung.4)
-# Index(DF,
-#       erfahrung.1,
-#       erfahrung.2,
-#       erfahrung.3,
-#       erfahrung.5,
-#       re.code=TRUE)
-# 
-# DF2<- DF |> mutate(erfahrung=Index(
-#   erfahrung.1,
-#   erfahrung.2,
-#   erfahrung.3,
-#   erfahrung.5,
-#   re.code=TRUE))
-# DF2$erfahrung

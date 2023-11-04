@@ -132,9 +132,7 @@ fix_to_df.efflist <-
    fix_to_df.eff <-
    function(...) {
      
-     stop("Benutze bitte die Funftion \n stp25stat:::tbll_extract_eff(..., include.format = FALSE)")
-     
-  #   stp25stat:::tbll_extract_eff(..., include.format = FALSE)
+     stop("Benutze bitte die Funktion \n tbll_extract_eff(..., include.format = FALSE)")
   }
 
 #' @rdname fix_to_df

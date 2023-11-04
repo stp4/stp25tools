@@ -59,7 +59,7 @@ add_emty_col <- function (x,  df = "hallo welt", na_value = NA)
 }
 
 
-#' Orginal  tibble:::rbind_at
+#' Orginal  tibble (rbind_at)
 #'
 #' @noRd
 #'

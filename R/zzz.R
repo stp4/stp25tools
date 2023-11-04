@@ -16,9 +16,9 @@
 #' @importFrom tools file_ext
 #' @importFrom stp25settings get_opt
 #' @importFrom magrittr %>%
-
-
- 
+#' @importFrom stats as.formula formula na.exclude na.omit na.pass relevel reorder update
+#' @importFrom utils head read.table type.convert
+#' @importFrom Hmisc all.is.numeric
  
  
  
@@ -49,37 +49,13 @@ stp25_stat_methode <- function(x,
 
 
 
-# reshape2 ist ein altes packages und womöglich bald osolet
+ 
 
 
-#' Split a vector into multiple columns
-#' 
-#' Stolen from reshape2
-#'
-#' @param string character vector or factor to split up
-#' @param pattern regular expression to split on
-#' @param names names for output columns
-#'
-#' @examples
-#' x <- c("a_1", "a_2", "b_2", "c_3")
-#' vars <- stp25tools:::reshape2_colsplit(x, "_", c("trt", "time"))
-#' vars
-#' str(vars)
-reshape2_colsplit<-
-function (string, pattern, names) 
-{
-  vars <- stringr::str_split_fixed(string, pattern, n = length(names))
-  df <- data.frame(plyr::alply(vars, 2, type.convert, as.is = TRUE), 
-                   stringsAsFactors = FALSE)
-  names(df) <- names
-  df
-}
-
-#reshape2:::guess_value
+ 
 guess_value <- function (df){
   if ("value" %in% names(df))
     return("value")
-  
   last <- names(df)[ncol(df)]
   message("Using ", last, " as value column: use value to override.")
   last
