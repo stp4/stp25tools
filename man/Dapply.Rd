@@ -14,19 +14,11 @@
 \usage{
 Dapply(x, ...)
 
-\method{Dapply}{formula}(
-  x,
-  data,
-  fun = function(xx) {
-     as.numeric(xx)
- },
-  stringsAsFactors = FALSE,
-  ...
-)
+\method{Dapply}{formula}(x, data, fun = function(y) as.numeric(y), stringsAsFactors = FALSE, ...)
 
-\method{Dapply}{data.frame}(data, ..., fun = function(x) as.numeric(x), stringsAsFactors = FALSE)
+\method{Dapply}{data.frame}(x, ..., fun = function(y) as.numeric(y), stringsAsFactors = FALSE)
 
-dapply2(data, fun = function(x) as.numeric(x), stringsAsFactors = FALSE, ...)
+dapply2(x, fun = function(x) as.numeric(x), stringsAsFactors = FALSE, ...)
 
 transpose2(x, ...)
 

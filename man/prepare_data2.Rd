@@ -4,6 +4,11 @@
 \alias{prepare_data2}
 \alias{prepare_data2.formula}
 \alias{prepare_data2.data.frame}
+\alias{which_test}
+\alias{makeNamesNum}
+\alias{make_formula}
+\alias{clean_dots_formula}
+\alias{print.stp25data}
 \title{prepare_data2}
 \usage{
 prepare_data2(...)
@@ -13,7 +18,8 @@ prepare_data2(...)
   data,
   groups = NULL,
   na.action = na.pass,
-  drop.unused.levels = FALSE
+  drop.unused.levels = FALSE,
+  ...
 )
 
 \method{prepare_data2}{data.frame}(
@@ -24,6 +30,22 @@ prepare_data2(...)
   na.action = na.pass,
   drop.unused.levels = FALSE
 )
+
+which_test(
+  measure,
+  group.class = NULL,
+  measure.test = NULL,
+  catTest = c("factor", "freq", "logical", "multi", "ratio"),
+  conTest = c("numeric", "integer", "mean", "median")
+)
+
+makeNamesNum(measure, data, meAsNum = grepl("^[[:digit:]]", measure))
+
+make_formula(measurevar, groupvars = NULL)
+
+clean_dots_formula(x, data = NULL, names_data = names(data))
+
+\method{print}{stp25data}(x, ...)
 }
 \arguments{
 \item{...}{Namen oder Nummern (y-Variablen))}
@@ -39,6 +61,12 @@ prepare_data2(...)
 \item{drop.unused.levels}{an factor}
 
 \item{by}{x-Variablen}
+
+\item{measure, group.class, measure.test, catTest, conTest, names_data}{helpers do not change}
+
+\item{meAsNum}{logical welche sind Zahlen}
+
+\item{measurevar, groupvars}{mamen als strings}
 }
 \value{
 Liste mit Namen und Daten
@@ -59,13 +87,14 @@ digits
 \description{
 Funktion wird zum Aufbereiten der Daten verwendet. Die Daten werden als
  tibble::as_tibble() weitergegeben.
-}
-\details{
-Tabelle.default()
- errate_statistik3()
- APA.formula()
- corr_plot.formula()
- Hmisc_rcorr() also APA_Correlation
+
+makeNamesNum: aus Nummern die Namen extrahieren
+
+make_formula: Formel erstellen in \code{berechne_all(...)} verwendet. 
+Hier wird \code{cbind(a,b,c)~g} ausgegebeb.
+
+clean_dots_formula: Formel bereinigen
+return: clean_dots_formula: formula - Objekt
 }
 \examples{
 
@@ -79,9 +108,47 @@ prepare_data2(dat, m1, m2, m3, m4)
 prepare_data2(dat, 4:7)
 prepare_data2(dat, m1[1], m2, m3, m4)
 prepare_data2(dat, m1[1], m2, m3[4,median], m4)
-prepare_data2(dat, m1 , m2, m3=median, m4)
 prepare_data2(dat, m1, m2, m3 , m4, by =  ~ geschl)
 prepare_data2(dat, m1[4, median], m2, m3 , m4[5], by =  ~ geschl)
 
+
+
+\dontrun{
+which_test( "factor", NULL)
+which_test( "factor", "logical")
+which_test( "numeric", "factor")
+
+which_test(c("median", "mean", "logical", "numeric", "multi"),
+"factor",
+c(NA, "ttest", NA, NA, NA))
+
+c(
+  median = "contest" ,
+  mean = "ttest",
+  logical = "cattest" ,
+  numeric = "contest" ,
+  multi = "notest"
+)
+}
+#'\dontrun{
+ measure <- c("geschl", "1" , "3:5", 1)
+ stp25tools:::makeNamesNum(measure,  data=dat)
+ }
+
+\dontrun{
+make_formula("a", "b")
+make_formula("a", c("b","c"))
+make_formula("a", ~b+c)
+make_formula(c("a", "d"), c("b","c"))
+}
+
+\dontrun{
+data <- data.frame(x = NA, y = NA, z = NA)
+stp25tools:::clean_dots_formula(x ~ y, data)
+stp25tools:::clean_dots_formula(. ~ x + y, data)
+stp25tools:::clean_dots_formula(x + y ~ ., data)
+stp25tools:::clean_dots_formula(~., data)
+stp25tools:::formula_split(a+b~x|y)
+}
 
 }

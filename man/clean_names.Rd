@@ -5,6 +5,7 @@
 \alias{clean_names.data.frame}
 \alias{clean_names.default}
 \alias{paste_names}
+\alias{paste_names_levels}
 \alias{cleansing_umlaute}
 \alias{cleansing_umlaute2}
 \alias{abbreviate2}
@@ -13,7 +14,7 @@
 clean_names(x, ...)
 
 \method{clean_names}{data.frame}(
-  data,
+  x,
   label = TRUE,
   labels = NULL,
   cleanup.encoding = FALSE,
@@ -34,11 +35,13 @@ clean_names(x, ...)
   ...
 )
 
-paste_names(x, collapse = ", ")
+paste_names(x, collapse = ", ", ...)
 
-cleansing_umlaute(x)
+paste_names_levels(x, abbreviate = TRUE, collapse = ", ", ...)
 
-cleansing_umlaute2(x)
+cleansing_umlaute(x, ...)
+
+cleansing_umlaute2(x, ...)
 
 abbreviate2(x, minlength = 4)
 }
@@ -46,8 +49,6 @@ abbreviate2(x, minlength = 4)
 \item{x}{string}
 
 \item{...}{alles}
-
-\item{data}{data.frame oder character}
 
 \item{label, labels}{label}
 
@@ -62,9 +63,13 @@ abbreviate2(x, minlength = 4)
 \item{replace}{named character string}
 
 \item{collapse}{an  character string to separate the results ", "}
+
+\item{data}{data.frame oder character}
 }
 \value{
 die selbe Klasse wie der Input
+
+character
 
 character
 }
@@ -76,6 +81,8 @@ clean_names(): Input data.frame  output ist ein
 data.frame mit bereinigten namen.
 
 paste_names:  paste names
+
+paste_names_levels:  paste names + Labels
 
 cleansing_umlaute:
 

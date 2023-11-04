@@ -15,18 +15,29 @@ factor2(
   nmax = NA
 )
 
-reorder2(x, X, ..., decreasing = TRUE, last = NULL)
+reorder2(
+  x,
+  X,
+  ...,
+  decreasing = TRUE,
+  last = NULL,
+  threshold = NULL,
+  threshold.na.strings = "Other"
+)
 }
 \arguments{
 \item{x}{a vector of data,}
 
 \item{levels, labels, exclude, ordered, nmax}{an die Funktion factor}
 
-\item{X, ...}{an reorder}
+\item{X, ...}{an reorder  x => an atomic vector, usually a factor
+X    => a vector of the same length as x, whose subset of values for each unique level of x determines the eventual order of that level.}
 
 \item{decreasing}{an ordere logical}
 
 \item{last}{character}
+
+\item{threshold, threshold.na.strings}{Anzahl an minimalen Nennungen}
 }
 \value{
 factor
@@ -56,14 +67,26 @@ table(reorder2(x$sex, last = "other"))
 
 #' lattice::barchart(rev(reorder2(x$sex, last = "other")))
 
-# dat<-as.data.frame(table(x$sex)) 
-# lattice::barchart( 
-#   reorder2(Var1, Freq, last="other") ~Freq, 
-#   dat, 
+# dat<-as.data.frame(table(x$sex))
+# lattice::barchart(
+#   reorder2(Var1, Freq, last="other") ~Freq,
+#   dat,
 #   origin =0)
-# 
+#
 # with(
 #   dat,
 #   reorder2(Var1, Freq, last="other"))
 #'
+
+ x <-
+c(
+  rep(1, 21),rep(2, 120),rep(3, 28),rep(4, 4),rep(5, 56),
+  rep(6, 2),rep(7, 92),rep(8, 42),rep(9, 74),rep(10, 20)
+)
+
+x <- factor(x, 1:10, letters[1:10])
+table(x)
+table(reorder2(x))
+table(reorder2(x, threshold = 30))
+
 }

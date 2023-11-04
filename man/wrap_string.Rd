@@ -5,7 +5,8 @@
 \alias{wrap_string.character}
 \alias{wrap_string.factor}
 \alias{wrap_string.data.frame}
-\alias{wrap_sentence}
+\alias{wrap_factor}
+\alias{wrap_data_label}
 \alias{wrap_string_at}
 \alias{wrap_string_at.character}
 \alias{wrap_string_at.factor}
@@ -23,7 +24,8 @@ wrap_string(x, ...)
   pattern = NULL,
   replacement = NULL,
   max.lines = NULL,
-  max.lines.char = " ..."
+  max.lines.char = " ...",
+  ...
 )
 
 \method{wrap_string}{factor}(
@@ -34,37 +36,52 @@ wrap_string(x, ...)
   replacement = " ",
   max.lines = NULL,
   max.lines.char = "...",
-  lvl = levels(x)
+  lvl = levels(x),
+  ...
 )
 
-\method{wrap_string}{data.frame}(
+\method{wrap_string}{data.frame}(x, ...)
+
+wrap_factor(
   x,
   width = 20,
   sep = "\\n",
   pattern = "_",
   replacement = " ",
   max.lines = NULL,
-  max.lines.char = "..."
+  max.lines.char = "...",
+  lvl = levels(x),
+  ...
 )
 
-wrap_sentence(x, ...)
+wrap_data_label(
+  x,
+  width = 20,
+  sep = "\\n",
+  pattern = "_",
+  replacement = " ",
+  max.lines = NULL,
+  max.lines.char = "...",
+  ...
+)
 
 wrap_string_at(x, ...)
 
-\method{wrap_string_at}{character}(x, pattern, replacement = paste0("\\n", pattern))
+\method{wrap_string_at}{character}(x, pattern, replacement = paste0("\\n", pattern), ...)
 
 \method{wrap_string_at}{factor}(
   x,
   pattern,
   replacement = paste0("\\n", pattern),
-  lvl = levels(x)
+  lvl = levels(x),
+  ...
 )
 
 split_string(x, ...)
 
-\method{split_string}{character}(x, pattern, pos = 1)
+\method{split_string}{character}(x, pattern, pos = 1, ...)
 
-\method{split_string}{factor}(x, pattern, pos = 1, lvl = levels(x))
+\method{split_string}{factor}(x, pattern, pos = 1, lvl = levels(x), ...)
 }
 \arguments{
 \item{x}{data.frame oder String}
@@ -84,13 +101,17 @@ split_string(x, ...)
 \item{pos}{integer Position}
 }
 \value{
+wrap_string: string
+
 character
 
 factor
 
-data.frame
-
 character (Labels)
+
+wrap_factor(): factor
+
+wrap_data: data.frame
 
 character
 
@@ -101,26 +122,25 @@ character
 factor
 }
 \description{
-Kopie von  str_wrap  wobei die Labels mitupData2 ergaenzt werden wenn ein 
-Data.Frame-Objekt uebergeben wird.
+wrap_string(), wrap_factor(), wrap_data_label(),   wrap_string_at(), split_string()
 
 wrap_sentence: Kopie von  str_wrap ruckgabe der Labels
 }
+\details{
+Kopie von  str_wrap  wobei die Labels mitupData2 ergaenzt werden wenn ein
+Data.Frame-Objekt uebergeben wird.
+}
 \examples{
 
-wrap_string(
-  "R is free   software and comes with ABSOLUTELY NO WARRANTY.
-  You are welcome to redistribute it under certain conditions.
-  ", 5
-)
+strg<- c("R is free   software and comes with ABSOLUTELY NO WARRANTY.",
+         "You are welcome to redistribute it under certain conditions.")
 
+wrap_string(strg, 5)
+wrap_string(factor(strg))
+wrap_factor(factor(strg))
 
-
-# example code
-  
-1+1
-# x <- c("Potassium (mg/l)", "Calcium (mg/l)","Adjusted CoQ10 (µmol/mmol Chol)")
-# wrap_string_at(x, "\\(")
-# wrap_string_at(factor(x), "\\(")
+#wrap_data_label(data)
+wrap_string_at(strg, "and")
+split_string(strg, "and")
 
 }

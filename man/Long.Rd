@@ -5,8 +5,6 @@
 \alias{Long.formula}
 \alias{Long.data.frame}
 \alias{Wide}
-\alias{Wide.formula}
-\alias{Wide.data.frame}
 \title{Long und Wide}
 \usage{
 Long(x, ...)
@@ -14,7 +12,7 @@ Long(x, ...)
 \method{Long}{formula}(x, data, key = "variable", value = "value", use.label = TRUE, ...)
 
 \method{Long}{data.frame}(
-  data,
+  x,
   ...,
   by = NULL,
   key = "variable",
@@ -23,34 +21,37 @@ Long(x, ...)
   use.label = TRUE
 )
 
-Wide(...)
-
-\method{Wide}{formula}(x, data, value)
-
-\method{Wide}{data.frame}(data, key, value)
+Wide(
+  data,
+  key,
+  ...,
+  values_fill = NULL,
+  names_sep = "_",
+  names_vary = "fastest"
+)
 }
 \arguments{
 \item{x}{data.frame oder formula}
 
-\item{...}{weitere Argument}
+\item{...}{key +  values_fro or erster Teil der Formula}
 
-\item{data}{data}
+\item{data}{dataframe}
 
 \item{key, value}{Namen fuer die Ausgabe}
 
 \item{use.label}{attribut label verwenden}
 
 \item{by, id.vars}{Items}
+
+\item{values_fill, names_sep, names_vary}{an tidyr::pivot_wider}
 }
 \value{
 data.frame
+
+tibble
 }
 \description{
 Erweiterung von tidyr::pivot_longer tidyr::pivot_wider
-
-Wide  entspricht tidyr::spread()
-
-Quelle: https://community.rstudio.com/t/spread-with-multiple-value-columns/5378
 }
 \examples{
 
@@ -59,15 +60,16 @@ student=rep(c("Amy", "Bob"), each=3),
 A=c(9, 7, 6, 8, 6, 9),
 B=c(6, 7, 8, 5, 6, 7))
 
-df2<-df |> Wide(student, c(A, B))
+df2<-df |> Wide(student, A, B)
 
 
 
 df[-4] |> tidyr::spread(student, A)
 df[-4] |> Wide(student, A)
 
+df2
+df2  |> Long( A_Amy, A_Bob ,B_Amy, B_Bob, by=~month)
 
-df2  |> Long( Amy_A, Amy_B, Bob_A, Bob_B, by=~month)
 
 
 
@@ -76,25 +78,34 @@ df |>
   tidyr::gather(variable, value, -(month:student)) |>
   tidyr::unite(temp, student, variable) |>
   tidyr::spread(temp, value)
-
-  Long( .~ month, df2)
   
-
-#  suppressPackageStartupMessages(library(tidyverse))
-
+ # Wide 
+ 
 dat <- data.frame(
-  month = rep(1:3, 2),
-  student = factor(rep(c("Amy", "Bob"), each = 3)),
-  A = c(9, 7, 6, 8, 6, 9),
-  B = c(6, 7, 8, 5, 6, 7)
+month = rep(1:3, 2),
+student = factor(rep(c("Amy", "Bob"), each = 3)),
+A = c(19, 27, 16, 28, 10, 29),
+B = c(6, 7, 8, 5, 6, 7)
 )
+#dat |> Wide(student,  A, B)
+# dat |> Wide( month ~ student, value="A")
+dat |> Wide(student)
+dat |> Wide(student,  B)
 
-dat |> Wide(student,  c(A, B))
-dat |> Wide(student,  c("A", "B"))
-dat[-3] |> Wide(student,  B)
-dat  |> Wide(student ~ month)
- #dat[-3] |> reshape2::dcast(month ~ student)
-dat  |> Wide(month ~ student, A)
-dat  |> Wide(student ~ month, A)
+dat |> Wide(A ~ student)
+
+dat |> Wide(A + B ~ student)
+dat |> Wide(A + B ~ student + month)
+
+
+dat |> Wide(student,  A, B)
+
+
+dat |> Wide(A ~ student)
+dat |> Wide(A ~ student + month)
+
+
+dat |> Wide(month ~ student, A)
+dat |> Wide(month ~ student, A, B)
 
 }

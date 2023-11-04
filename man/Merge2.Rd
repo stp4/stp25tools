@@ -58,17 +58,29 @@ data.frame(which, ...)
 data.frame
 }
 \description{
-Rbind2: dplyr::bind_rows()
+Rbind2: dplyr::bind_rows() mit labels + name der Daten
 
 Combine more then two Data Frames  Objects by Columns
 }
 \examples{
 
 
-df1 = data.frame(CustomerId = c(1:6), 
+# require(plyr)
+# require(stp25tools)
+
+df1 <- data.frame(a=1, b=2)
+df2 <- data.frame(a=2, c=3, d=5)
+
+
+
+do.call(plyr::rbind.fill, list(df1, df2))
+Rbind2(df1, df2)
+
+
+df1 = data.frame(CustomerId = c(1:6),
 Product = c(rep("Oven", 3), rep("Television", 3)))
 
-df2 = data.frame(CustomerId = c(4:7), 
+df2 = data.frame(CustomerId = c(4:7),
 Product = c(rep("Television", 2), rep("Air conditioner", 2)))
 
 df3 = data.frame(

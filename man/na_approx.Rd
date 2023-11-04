@@ -14,12 +14,13 @@ na_approx(x, ...)
   fun = function(z) {
      zoo::na.approx(z, na.rm = FALSE)
  },
-  min.length = 3L
+  min.length = 3L,
+  ...
 )
 
 \method{na_approx}{data.frame}(x, ...)
 
-\method{na_approx}{matrix}(x)
+\method{na_approx}{matrix}(x, ...)
 }
 \arguments{
 \item{x}{an object.}
@@ -50,5 +51,21 @@ dat <- data.frame(
 na_approx(dat$z)
 na_approx(dat)
 na_approx(as.matrix(dat))
+
+
+dat <- data.frame(
+time = c(0, 2, 6, 12, 24, 48, 3 * 24),
+temperature = c(20, 24, 26, NA, 29, 30, 30.2)
+)
+
+rst <- with(dat,
+            approx(time,
+                   temperature,
+                   xout = time[is.na(temperature)]))
+dat$temperature[which(dat$time ==   rst$x)] <-  rst$y
+
+
+with(dat, plot(temperature~time))
+dat
 
 }
