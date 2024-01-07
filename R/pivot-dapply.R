@@ -58,8 +58,15 @@ Dapply.data.frame <- function(x,
                               ...,
                               fun = function(y) as.numeric(y),
                               stringsAsFactors = FALSE) {
+  cat("\n in Dapply.data.frame\n")
+ # print(head(x))
   X <- prepare_data2(x, ...)
+  cat("\n input: \n")
+  print(X$x[X$measure.vars])
+  
   apply_data <- dapply2(X$x[X$measure.vars], fun)
+  cat("\n apply_data: \n")
+  print(head(  apply_data  ))
   x[, X$measure.vars] <- apply_data
   x
 }
@@ -99,6 +106,11 @@ dapply1 <-
             fun = function(x) as.numeric(x),
             stringsAsFactors = FALSE,
             ...) {
+    
+    cat("\nin dapply1:\n")
+    cat( "\ndas habe ich bekommen...\n")
+    print(head(x))
+    cat("\n\n")
     if (tibble::is_tibble(x))
       tibble::as_tibble(
         plyr::llply(x, fun, ...))
