@@ -126,6 +126,8 @@ use_codebook <-
         old <- data[[codebook[[names]][i]]]
         if (is.character(old))  {
           cat("\n", codebook[[names]][i] , ": character -> factor")
+          
+          
           data[[codebook[[names]][i]]] <- factor(old, fct)
         }
         else if (is.factor(old)) {
@@ -135,6 +137,19 @@ use_codebook <-
          }
           else{
           cat("\n", codebook[[names]][i] , ": factor -> factor")
+            
+            if(nlevels(old) != length(fct) ){
+              
+              cat("\n\nFehler!!\n\n Old: ", nlevels(old), "New: ", length(fct),"\n")
+              cat("\n Old: \n")
+              
+              print(levels(old))
+              cat("\n New: \n")
+              
+              print(fct)
+              cat("\n")
+            }
+            
           data[[codebook[[names]][i]]] <- 
             factor(as.numeric(old), seq_len(nlevels(old)), fct)
           }
