@@ -114,7 +114,7 @@ wrap_string.factor  <- function(x,
 }
 
 #' @rdname wrap_string
-#' @description wrap_sentence: Kopie von  str_wrap ruckgabe der Labels
+#' @description wrap_string: Kopie von  str_wrap ruckgabe der Labels
 #' @export
 #' @return character (Labels)
 wrap_string.data.frame <- function(x,
