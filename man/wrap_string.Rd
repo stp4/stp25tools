@@ -124,7 +124,7 @@ factor
 \description{
 wrap_string(), wrap_factor(), wrap_data_label(),   wrap_string_at(), split_string()
 
-wrap_sentence: Kopie von  str_wrap ruckgabe der Labels
+wrap_string: Kopie von  str_wrap ruckgabe der Labels
 }
 \details{
 Kopie von  str_wrap  wobei die Labels mitupData2 ergaenzt werden wenn ein

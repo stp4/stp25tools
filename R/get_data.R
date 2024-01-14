@@ -290,7 +290,6 @@ read.text2 <-
 
 #' Tabel To Expand Data Frame
 #'
-#' @noRd
 #' @param data data.frame
 #' @param id.vars idetifier
 #' @param value name of value
@@ -314,6 +313,7 @@ read.text2 <-
 #' 
 #' xtabs(~ befund + sex + treatment, dat)
 #' 
+#' @noRd 
 expand_table <-
   function(data,
            id.vars,
@@ -376,9 +376,8 @@ expand_table <-
 
 #' Helper for expand_table
 #'  
-#'   http://wiki.stdout.org/rcookbook/Manipulating%20data/Converting%20between%20data%20frames%20and%20contingency%20tables/
+#' http://wiki.stdout.org/rcookbook/Manipulating%20data/Converting%20between%20data%20frames%20and%20contingency%20tables/
 #' @noRd
-#'
 expand.dft <-
   function(x,
            na.strings = "NA",
@@ -432,8 +431,8 @@ expand.dft <-
 # }
 
 
+
 #' @noRd
-#'
 character_encoding <- function(data,
                                from = "UTF8",
                                to = "latin1") {
@@ -447,8 +446,9 @@ character_encoding <- function(data,
   data
 }
 
+
+
 #' @noRd
-#'
 factor_levels_encoding <- function(data,
                                    from = "UTF8",
                                    to = "latin1") {
@@ -462,8 +462,9 @@ factor_levels_encoding <- function(data,
   data
 }
 
+
+
 #' @noRd
-#'
 names_label_encoding <- function(data,
                                  from = "UTF8",
                                  to = "latin1") {
@@ -478,7 +479,7 @@ names_label_encoding <- function(data,
 
 
 
-#' @noRd
+
 #' Split a vector into multiple columns
 #' 
 #' Stolen from reshape2
@@ -499,6 +500,7 @@ names_label_encoding <- function(data,
 #' str(vars)
 #' }
 #' 
+#' @noRd
 reshape2_colsplit<-
   function (string, pattern, names) 
   {
