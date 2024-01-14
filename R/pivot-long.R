@@ -71,25 +71,28 @@ Long <- function(x, ...) {
 }
 
 
-
 #' @rdname Long
 #' @export
 Long.formula <- function(x,
                          data,
                          key = "variable",
                          value = "value",
-                         use.label=TRUE,
+                         use.label = TRUE,
                          ...) {
   x <- clean_dots_formula(x, names_data = names(data))
   rhs <- all.vars(x[-3])
   lhs <- all.vars(x[-2])
-  
   data <- data[c(rhs, lhs)]
   
-
-  
-  if (use.label)
+  if (use.label) {
     lvl <-  get_label2(data[rhs])
+    if (length(unique(lvl)) != length(lvl)) {
+      cat("\n\nLong.formula: \n")
+      print(lvl)
+      cat("\n\n")
+      stop("Die Labels sind nicht eindeutig!\n")
+    }
+  }
   else {
     lvl <- rhs
     names(lvl) <- rhs
@@ -110,6 +113,7 @@ Long.formula <- function(x,
   rstl
 }
 
+
 #' @rdname Long
 #' @export
 Long.data.frame <- function(x,
@@ -124,34 +128,42 @@ Long.data.frame <- function(x,
       as.character(y[1])
     })
   
-  if(length(measure.vars)==0){ 
-    measure.vars  <- 
+  if(length(measure.vars)==0){
+    measure.vars <-
       if(length(id.vars)==0) names(x)  else names(x[-id.vars])
     }
   else {
     if (length(measure.vars) == 1 & grepl('~', measure.vars[1])) {
-      return(Long.formula(formula(measure.vars[1]), x,  key, value))
+      return(Long.formula(formula(measure.vars[1]), x, key, value))
     }
     else {
       measure.vars <- cleaup_names(measure.vars, x)
     }
-       
     x <- x[c(measure.vars, id.vars)]
-    
     }
   
   if( length(unique(measure.vars)) != length(measure.vars)) 
-    stop(" In Long.data.frame sind die Variablen-Namen (measure.vars) doppelt!")
-  if (use.label)
+    stop("In Long.data.frame sind die Variablen-Namen (measure.vars) doppelt!\n")
+  
+  if (use.label) {
     lvl <- get_label2(x[measure.vars])
+    if (length(unique(lvl)) != length(lvl)) {
+      cat("\n\n Long.data.frame: \n")
+      print(lvl)
+      cat("\n\n")
+      stop("In Long.data.frame sind die Labels (get_label2) doppelt!\n")
+    }
+  }
   else {
     lvl <- measure.vars
     names(lvl) <- measure.vars
   }
+  
   rstl <-
     tidyr::pivot_longer(x, 
                         cols = measure.vars,
-                        names_to = key, values_to =value)
+                        names_to = key, 
+                        values_to = value)
   
   rstl[[key]] <- factor(rstl[[key]], names(lvl), lvl)
   
