@@ -10,7 +10,7 @@
 
 
 
-<meta name="date" content="2023-10-29" />
+<meta name="date" content="2024-03-17" />
 
 <title>stp25tools</title>
 
@@ -1479,7 +1479,7 @@ border-radius: 0px;
 
 
 <h1 class="title toc-ignore">stp25tools</h1>
-<h4 class="date">2023-10-29</h4>
+<h4 class="date">2024-03-17</h4>
 
 </div>
 
@@ -2029,16 +2029,16 @@ df1$id &lt;- df2$id &lt;- df3$id &lt;- df4$id &lt;- paste(&quot;P&quot;, sprintf
  
 Merge2(df1, df2, df3, df4, by = &quot;id&quot;)</code></pre>
 <pre><code>##     id origin.x    N   P   C origin.y  foo1      X      Y origin.z origin.u
-## 1  P01        A 14.0 2.8 465        C FALSE 145800 383200        B        C
-## 2  P02        A 17.0 3.8 484        A  TRUE 145600 382500        C        B
-## 3  P03        A 21.5 2.8 401        A FALSE 147200 398600        D        A
-## 4  P04        A 26.5 3.6 494        C  TRUE 146500 393600        D        D
-## 5  P05        E 15.0 0.4 499        C  TRUE 147100 365100        E        B
-## 6  P06        D  9.5 4.0 415        C  TRUE 147100 365500        A        A
-## 7  P07        E 25.5 3.9 500        C  TRUE 148300 391500        E        A
-## 8  P08        E 17.5 3.9 493        C  TRUE 147600 393900        E        A
-## 9  P09        C 25.0 3.9 407        D FALSE 147100 398100        B        A
-## 10 P10        D 27.0 2.5 411        A FALSE 147500 391800        A        C</code></pre>
+## 1  P01        A 11.0 0.4 494        C FALSE 146300 378300        C        A
+## 2  P02        D 23.5 4.0 438        A FALSE 148100 385200        E        D
+## 3  P03        A 22.5 2.2 438        D FALSE 147100 394800        D        E
+## 4  P04        E 10.0 3.2 464        C  TRUE 146800 368500        B        C
+## 5  P05        B 22.5 4.0 485        B  TRUE 147100 358700        B        A
+## 6  P06        C 27.0 1.2 407        D FALSE 147700 378700        D        D
+## 7  P07        B 15.0 1.9 439        B  TRUE 148200 357400        D        D
+## 8  P08        A 14.0 2.8 446        C FALSE 146000 392100        B        B
+## 9  P09        E 12.5 2.2 475        A FALSE 147600 367100        E        E
+## 10 P10        A 12.5 3.7 417        A FALSE 147400 391800        B        D</code></pre>
 </div>
 <div id="cbind-listenweise" class="section level3">
 <h3>cbind listenweise</h3>
@@ -2242,12 +2242,12 @@ auto_trans(x)</code></pre>
 ## attr(,&quot;link&quot;)
 ## function(x)
 ##   log(101 - x)
-## &lt;bytecode: 0x00000191faad3688&gt;
+## &lt;bytecode: 0x000002a33d25f120&gt;
 ## &lt;environment: namespace:stp25tools&gt;
 ## attr(,&quot;inverse&quot;)
 ## function(x)
 ##   101 - (exp(x))
-## &lt;bytecode: 0x00000191faabade8&gt;
+## &lt;bytecode: 0x000002a33d2603f0&gt;
 ## &lt;environment: namespace:stp25tools&gt;
 ## attr(,&quot;name&quot;)
 ## [1] &quot;negative skew (max-Log)&quot;</code></pre>
@@ -2367,9 +2367,9 @@ rslt &lt;-
 ## 7].</code></pre>
 <pre class="r"><code>stp25stat2::Tbll_desc(rslt)</code></pre>
 <pre><code>## 
-## Hallo Wolfgang!
+## Hi Wolfgang!
 ## 
-## Ich wünsche dir einen guten und erfolgreichen Arbeitstag.</code></pre>
+## I wish you a good and successful working day.</code></pre>
 <pre><code>## # A tibble: 8 × 3
 ##   Item                         n     m      
 ## * &lt;chr&gt;                        &lt;chr&gt; &lt;chr&gt;  
@@ -2409,8 +2409,28 @@ table(z)</code></pre>
 </div>
 <div id="string-manipulation" class="section level2">
 <h2>string manipulation</h2>
+<pre><code>  # NODE                     EXPLANATION
+  # --------------------------------------------------------------------------------
+  #   (?&lt;=                     look behind to see if there is:
+  #      ---------------------------------------------------------------------------
+  #      [\s]                  any character of: whitespace (\n, \r, \t, \f, and &quot; &quot;)
+  #    -----------------------------------------------------------------------------
+  #   )                        end of look-behind
+  # --------------------------------------------------------------------------------
+  #   \s*                      whitespace (\n, \r, \t, \f, and &quot; &quot;) (0 or
+  #                            more times (matching the most amount possible))
+  # --------------------------------------------------------------------------------
+  #   |                        OR
+  # --------------------------------------------------------------------------------
+  #   ^                        the beginning of the string
+  # --------------------------------------------------------------------------------
+  #   \s+                      whitespace (\n, \r, \t, \f, and &quot; &quot;) (1 or more times 
+  #                            (matching the most amount possible))
+  # --------------------------------------------------------------------------------
+  #   $                        before an optional \n, and the end of the string</code></pre>
 <ul>
-<li><p>String umbrechen: <em>wrap_string</em></p></li>
+<li><p>String umbrechen: split_string(), wrap_string(), wrap_sentence(),
+wrap_string_at()</p></li>
 <li><p>Bereinigen von Data Frame und strings: <em>clean_names,
 cleansing_umlaute, cleansing_umlaute2</em></p></li>
 </ul>
@@ -2423,14 +2443,29 @@ cleansing_umlaute, cleansing_umlaute2</em></p></li>
 ## 3     3     3          6</code></pre>
 <pre class="r"><code>cleansing_umlaute( &quot; Öäüö? hallo&quot;)</code></pre>
 <pre><code>## [1] &quot;_Oeaeueoe?_hallo&quot;</code></pre>
-<pre class="r"><code>txt&lt;- wrap_string(
-  &quot;R is free   software and comes with ABSOLUTELY NO WARRANTY.
-  You are welcome to redistribute it under certain conditions.
-  &quot;, 35, sep = &quot;&lt;br&gt;&quot;)
-txt</code></pre>
-<pre><code>## [1] &quot;R is free software and comes with&lt;br&gt;ABSOLUTELY NO WARRANTY. You are&lt;br&gt;welcome to redistribute it under&lt;br&gt;certain conditions.&quot;</code></pre>
-<p>R is free software and comes with<br>ABSOLUTELY NO WARRANTY. You
-are<br>welcome to redistribute it under<br>certain conditions.</p>
+<p>###wrap_string (Umbrechen)</p>
+<p>wrap_string(), wrap_factor(), wrap_data_label(), wrap_string_at(),
+split_string()</p>
+<pre class="r"><code>strg&lt;- c(&quot;R is free   software and comes with ABSOLUTELY NO WARRANTY.&quot;,
+         &quot;You are welcome to redistribute it under certain conditions.&quot;)
+
+wrap_string(strg, 5)</code></pre>
+<pre><code>## [1] &quot;R is\nfree\nsoftware\nand\ncomes\nwith\nABSOLUTELY\nNO\nWARRANTY.&quot;   
+## [2] &quot;You\nare\nwelcome\nto\nredistribute\nit\nunder\ncertain\nconditions.&quot;</code></pre>
+<pre class="r"><code>wrap_string(factor(strg))</code></pre>
+<pre><code>## [1] &quot;R is free software\nand comes with\nABSOLUTELY NO\nWARRANTY.&quot;   
+## [2] &quot;You are welcome\nto redistribute\nit under certain\nconditions.&quot;</code></pre>
+<pre class="r"><code>wrap_factor(factor(strg))</code></pre>
+<pre><code>## [1] R is free software\nand comes with\nABSOLUTELY NO\nWARRANTY.   
+## [2] You are welcome\nto redistribute\nit under certain\nconditions.
+## 2 Levels: R is free software\nand comes with\nABSOLUTELY NO\nWARRANTY. ...</code></pre>
+<pre class="r"><code>#wrap_data_label(data)
+wrap_string_at(strg, &quot;and&quot;)</code></pre>
+<pre><code>## [1] &quot;R is free   software \nand comes with ABSOLUTELY NO WARRANTY.&quot;
+## [2] &quot;You are welcome to redistribute it under certain conditions.&quot;</code></pre>
+<pre class="r"><code>split_string(strg, &quot;and&quot;)</code></pre>
+<pre><code>## [1] &quot;R is free   software&quot;                                        
+## [2] &quot;You are welcome to redistribute it under certain conditions.&quot;</code></pre>
 <pre class="r"><code>animals &lt;- c(&quot;cat&quot;, &quot;dog&quot;, &quot;mouse&quot;, &quot;elephant&quot;)
 stringr::str_flatten_comma(animals, last = &quot; and &quot;)</code></pre>
 <pre><code>## [1] &quot;cat, dog, mouse and elephant&quot;</code></pre>
