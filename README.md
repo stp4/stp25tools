@@ -1,52 +1,100 @@
 stp25tools
 ================
+2024-03-18
+
+<!-- output: -->
+<!--   html_document: -->
+<!--     toc: true -->
+<!--     toc_float: true -->
+<!-- github_document -->
+
+The stp25tools package provides tools for data wrangling and statistical
+transformations.
+
+![](https://lifecycle.r-lib.org/reference/figures/lifecycle-experimental.svg)
+
+## Funktionen
+
+- Pivot-Functions: *Long(), Wide(), Dapply(), dapply2(), transpose2()*
+
+- Merging `data.frame`: *Merge2, Rbind2, combine_data_frame*
+
+- Convert object to `data.frame`: *fix_to_df, fix_to_tibble, list_to_df*
+
+- Create vectors for accessing `data frames`: *Cs, XLS, paste_names*
+
+- Wrap string: *wrap_string*
+
+- Add element to vector or lists: *add_to, add_row_df*
+
+- Internal function in stp25stat2 used to prepare data with formula:
+  *prepare_data2, print*
+
+- Transform vectors: *as_numeric, as_factor, factor2, as_cut,
+  as_logical, rev.factor,as_rev, cat_bmi*
+
+- Import data: *get_data*
+
+- Add and transform missing data: *na_approx, auto_trans*
+
+- Managing labels: *Label, delet_label, get_label, set_label*
+
+- Cleaning Data Frame and strings: *clean_names, cleansing_umlaute,
+  cleansing_umlaute2*
+
+- Calculation operations: *auc_trapezoid*
 
 <!-- Attaching package: ‘stp25tools’ -->
 <!-- The following objects are masked from ‘package:stp25aggregate’: -->
 <!--     get_label, Label, set_label, wrap_label, XLS -->
 
-## Funktionen
+## Transform vectors
 
-- Pivot-Funktionen: *Long(), Wide(), Dapply(), dapply2(), transpose2()*
-
-- Zusammenfuegen von Data Frame: *Merge2, Rbind2, combine_data_frame*
-
-- Objekt in Data Frame umwandeln: *fix_to_df, fix_to_tibble, list_to_df*
-
-- Vectoren fuer den Zugriff auf Data Frame erstellen: *Cs, XLS,
-  paste_names*
-
-- String umbrechen: *wrap_string*
-
-- Element zu Vectoren oder Listen hinzufuegen: *add_to, add_row_df*
-
-- Intern Daten mit Formel aufbereiten: *prepare_data2, print*
-
-- Vectoren transformieren: *as_numeric, as_factor, factor2, as_cut,
-  as_logical, rev.factor,as_rev, cat_bmi*
-
-- Daten importieren: *get_data*
-
-- Fehlende Daten ergänzen und transformieren: *na_approx, auto_trans*
-
-- Label verwalten: *Label, delet_label, get_label, set_label*
-
-- Bereinigen von Data Frame und strings: *clean_names,
-  cleansing_umlaute, cleansing_umlaute2*
-
-- Rechen operationen: *auc_trapezoid*
-
-## Factor
+### Factor (factor2)
 
 ``` r
-factor2(c(1,0,0,0,1,1,0), 
+sex <- factor2(c(1,0,0,0,1,1,0), 
         male = 1, female = 0)
+ sex
 ```
 
     ## [1] male   female female female male   male   female
     ## Levels: male female
 
-## Numeric
+### reorder2
+
+``` r
+ x <-
+c(
+  rep(1, 21),rep(2, 120),rep(3, 28),rep(4, 4),rep(5, 56),
+  rep(6, 2),rep(7, 92),rep(8, 42),rep(9, 74),rep(10, 20)
+)
+
+x <- factor(x, 1:10, letters[1:10])
+table(x)
+```
+
+    ## x
+    ##   a   b   c   d   e   f   g   h   i   j 
+    ##  21 120  28   4  56   2  92  42  74  20
+
+``` r
+table(reorder2(x))
+```
+
+    ## 
+    ##   b   g   i   e   h   c   a   j   d   f 
+    ## 120  92  74  56  42  28  21  20   4   2
+
+``` r
+table(reorder2(x, threshold = 30))
+```
+
+    ## 
+    ##     b     g     i     e     h Other 
+    ##   120    92    74    56    42    75
+
+### Numeric
 
 ``` r
 x <-
@@ -81,7 +129,15 @@ cbind(
 
 ## Get Data
 
-### Direkter Import aus Text
+Works internally with the following functions:
+
+- Excel-File xlsx: `readxl::read_excel(file, sheet, skip, range)`
+- CSV-File:
+  `read.table(file, header, sep, quote, dec, na.strings, skip, fill, comment.char)`
+- SPSS-DATA sav: `haven::read_sav(file, encoding,  user_na)`
+- Text-file: `read.text2(file, dec)`
+
+### Direct import from text
 
 ``` r
 dat <-
@@ -89,7 +145,9 @@ dat <-
 sex treatment control
 m  2 3
 f  3 4
-", tabel_expand = TRUE,id.vars = 1)
+", 
+tabel_expand = TRUE,
+id.vars = 1)
 
 xtabs(~ sex + value, dat)
 ```
@@ -123,39 +181,22 @@ ftable(xtabs(~ sex + treatment + befund, dat))
     ## m   KG                 5   4
     ##     UG                 4   2
 
-### Daten File Import
+### Data File Import
 
 ``` r
- file.exists("R/dummy.csv")
-```
-
-    ## [1] TRUE
-
-``` r
-#' get_data("R/dummy.csv", dec = ",", na.strings = "-", skip=1, label=1)
-#' get_data("R/dummy.xlsx", na.strings = "-")
+if( file.exists("R/dummy.csv")) {
+  
+# get_data("R/dummy.csv", dec = ",", na.strings = "-", skip=1, label=1)
+# get_data("R/dummy.xlsx", na.strings = "-")
+  
  get_data("R/dummy.xlsx")
-```
-
-    ## # A tibble: 5 × 5
-    ##      id group.student x         y     z
-    ##   <dbl> <chr>         <chr> <dbl> <dbl>
-    ## 1     1 A             1      4.3   59.4
-    ## 2     2 B             4      3.24  47.3
-    ## 3     3 C             8      4.02  32.2
-    ## 4     4 D             -      1.25  NA  
-    ## 5     5 E             9      1.23  36.4
-
-``` r
-#' 
+ 
  x <- get_data("R/dummy.sav")
  get_label(x)[1:4]
+ }
 ```
 
-    ##               lfdn      external.lfdn             tester           dispcode 
-    ##           "number"    "external lfdn"           "tester" "disposition code"
-
-### Daten speichern und aus Codebook rekostruieren
+### Save data and reconstruct from codebook
 
 ``` r
  save_data(dat, "demo.xlsx", include.codebook=TRUE)
@@ -208,7 +249,142 @@ ftable(xtabs(~ sex + treatment + befund, dat))
     ## 5 f     UG        f+UG  neg   
     ## 6 f     UG        f+UG  neg
 
+### Filter + Consort-Plot
+
+Works internally with the following functions:
+
+- subset2: `base::subset` + label_data_frame
+- filter2: `dplyr::filter` + info what was filtered
+
+``` r
+airquality2 <-
+  airquality |> Label(Ozone = "Ozone in ppm", Temp = "Temperatur in °C")
+
+str(subset2(airquality2, Temp > 80, select = c(Ozone, Temp)))
+```
+
+    ## 'data.frame':    68 obs. of  2 variables:
+    ##  $ Ozone: int  45 NA NA 29 NA 71 39 NA NA 23 ...
+    ##   ..- attr(*, "label")= chr "Ozone in ppm"
+    ##  $ Temp : int  81 84 85 82 87 90 87 93 92 82 ...
+    ##   ..- attr(*, "label")= chr "Temperatur in °C"
+
+``` r
+str(dplyr::filter(airquality2, Temp > 80))
+```
+
+    ## 'data.frame':    68 obs. of  6 variables:
+    ##  $ Ozone  : int  45 NA NA 29 NA 71 39 NA NA 23 ...
+    ##   ..- attr(*, "label")= chr "Ozone in ppm"
+    ##  $ Solar.R: int  252 186 220 127 273 291 323 259 250 148 ...
+    ##  $ Wind   : num  14.9 9.2 8.6 9.7 6.9 13.8 11.5 10.9 9.2 8 ...
+    ##  $ Temp   : int  81 84 85 82 87 90 87 93 92 82 ...
+    ##   ..- attr(*, "label")= chr "Temperatur in °C"
+    ##  $ Month  : int  5 6 6 6 6 6 6 6 6 6 ...
+    ##  $ Day    : int  29 4 5 7 8 9 10 11 12 13 ...
+
+``` r
+dat <- filter2(airquality2, Temp > 80)
+str(dat)
+```
+
+    ## 'data.frame':    68 obs. of  6 variables:
+    ##  $ Ozone  : int  45 NA NA 29 NA 71 39 NA NA 23 ...
+    ##   ..- attr(*, "label")= chr "Ozone in ppm"
+    ##  $ Solar.R: int  252 186 220 127 273 291 323 259 250 148 ...
+    ##  $ Wind   : num  14.9 9.2 8.6 9.7 6.9 13.8 11.5 10.9 9.2 8 ...
+    ##  $ Temp   : int  81 84 85 82 87 90 87 93 92 82 ...
+    ##   ..- attr(*, "label")= chr "Temperatur in °C"
+    ##  $ Month  : int  5 6 6 6 6 6 6 6 6 6 ...
+    ##  $ Day    : int  29 4 5 7 8 9 10 11 12 13 ...
+    ##  - attr(*, "filter")= attritin [2 × 6] (S3: attrition/tbl_df/tbl/data.frame)
+    ##   ..$ Criteria     : chr [1:2] "Total cohort size" "1. Filter"
+    ##   ..$ Condition    : chr [1:2] "none" "Temp > 80"
+    ##   ..$ Remaining.N  : int [1:2] 153 68
+    ##   ..$ Remaining.prc: num [1:2] 100 44.4
+    ##   ..$ Excluded.N   : int [1:2] 0 85
+    ##   ..$ Excluded.prc : num [1:2] 0 55.6
+
+``` r
+# simple_consort_plot(dat)
+attr(dat, "filter")
+```
+
+    ## # A tibble: 2 × 6
+    ##   Criteria          Condition Remaining.N Remaining.prc Excluded.N Excluded.prc
+    ##   <chr>             <chr>           <int>         <dbl>      <int>        <dbl>
+    ## 1 Total cohort size none              153         100            0          0  
+    ## 2 1. Filter         Temp > 80          68          44.4         85         55.6
+
+``` r
+#require(stp25stat2)
+#require(stp25tools)
+
+data(DFdummy, package = "stp25data")
+
+DF1 <- DFdummy |> 
+  filter2(study.agreement)
+
+attr(DF1, "filter")
+```
+
+    ## # A tibble: 2 × 6
+    ##   Criteria          Condition  Remaining.N Remaining.prc Excluded.N Excluded.prc
+    ##   <chr>             <chr>            <int>         <dbl>      <int>        <dbl>
+    ## 1 Total cohort size none               441         100            0          0  
+    ## 2 1. Filter         study.agr…         324          73.5        117         26.5
+
+``` r
+DF2 <- DF1 |> filter2(
+  st.p.sars.cov2 == "nein",
+  !is.na(spike.igg.3.impfung),
+  !is.na(MPN)
+
+)
+
+DF3 <- DF2 |> filter2(
+  study.agreement,
+  sero.negativ.after.dose.2,
+  !is.na(spike.igg.3.impfung),
+  !is.na(spike.igg.4.impfung),
+  spike.igg.3.impfung == "<7.1 BAU/ml"
+)
+```
+
+``` r
+require(consort)
+```
+
+    ## Loading required package: consort
+
+``` r
+dat <- prepare_consort(DF1, DF2, DF3)
+out <- consort_plot(
+  data = dat,
+  orders = c(
+    Trial.Nr   = "Population",
+    Condition.1           = "Excluded",
+    Trial.Nr     = "Allocated \nDeskriptive Analyse",
+    Condition.2    =    "Fehlende Daten",
+    Trial.Nr = "Regressionsanalyse",
+    Condition.3    = "Not evaluable for the final analysis",
+    Trial.Nr = "Final Analysis"
+  ),
+  side_box = c("Condition.1", "Condition.2", "Condition.3"),
+  cex = 0.9
+)
+
+
+
+plot(out)
+```
+
+![](README_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+
 ## Transpose
+
+This is an extension of `tidyr::pivot_longer` and `tidyr::pivot_wider`,
+with added functionality using formulas.
 
 ### Wide
 
@@ -225,43 +401,155 @@ dat
     ## 6     3     Bob 29 7
 
 ``` r
-df2<- dat %>% Wide(student,  c(A, B))
-dat %>% Wide(student,  c("A", "B"))
+dat |> 
+  Wide(student,  A)
+```
+
+    ## 
+    ## 
+    ##    Achtung neue Version von Wide() !!!!
+
+    ## # A tibble: 6 × 4
+    ##   month     B   Amy   Bob
+    ##   <int> <dbl> <dbl> <dbl>
+    ## 1     1     6    19    NA
+    ## 2     2     7    27    NA
+    ## 3     3     8    16    NA
+    ## 4     1     5    NA    28
+    ## 5     2     6    NA    10
+    ## 6     3     7    NA    29
+
+``` r
+dat |> 
+  tidyr::pivot_wider(names_from = student, 
+                           values_from = A)
+```
+
+    ## # A tibble: 6 × 4
+    ##   month     B   Amy   Bob
+    ##   <int> <dbl> <dbl> <dbl>
+    ## 1     1     6    19    NA
+    ## 2     2     7    27    NA
+    ## 3     3     8    16    NA
+    ## 4     1     5    NA    28
+    ## 5     2     6    NA    10
+    ## 6     3     7    NA    29
+
+``` r
+#' dat |> tidyr::pivot_wider(names_from = student, A)
+#' error Column `value` doesn't exist.
+
+dat |> 
+  tidyr::pivot_wider(names_from = student, 
+                    values_from = A, 
+                    values_fill = 0)
+```
+
+    ## # A tibble: 6 × 4
+    ##   month     B   Amy   Bob
+    ##   <int> <dbl> <dbl> <dbl>
+    ## 1     1     6    19     0
+    ## 2     2     7    27     0
+    ## 3     3     8    16     0
+    ## 4     1     5     0    28
+    ## 5     2     6     0    10
+    ## 6     3     7     0    29
+
+``` r
+# mehere values
+dat |> tidyr::pivot_wider(names_from = student, 
+                           values_from = c(A, B))
 ```
 
     ## # A tibble: 3 × 5
-    ##   month Amy_A Bob_A Amy_B Bob_B
+    ##   month A_Amy A_Bob B_Amy B_Bob
     ##   <int> <dbl> <dbl> <dbl> <dbl>
     ## 1     1    19    28     6     5
     ## 2     2    27    10     7     6
     ## 3     3    16    29     8     7
 
 ``` r
-dat[-3] %>% Wide(student,  B)
+dat |> Wide(month ~ student, A, B)
 ```
 
-    ## # A tibble: 3 × 3
-    ##   month   Amy   Bob
-    ##   <int> <dbl> <dbl>
-    ## 1     1     6     5
-    ## 2     2     7     6
-    ## 3     3     8     7
+    ## 
+    ## 
+    ##    Achtung neue Version von Wide() !!!!
+
+    ## # A tibble: 6 × 4
+    ##   which month   Amy   Bob
+    ##   <fct> <int> <dbl> <dbl>
+    ## 1 A         1    19    28
+    ## 2 A         2    27    10
+    ## 3 A         3    16    29
+    ## 4 B         1     6     5
+    ## 5 B         2     7     6
+    ## 6 B         3     8     7
+
+Formulas are evaluated in two ways
+
+1.  `Wide(A ~ student)` on the left `values_from` on the right
+    `names_from`
+2.  `Wide(month ~ student, A)` now the output structure and is in the
+    formula `names_from` will be handed over separately
 
 ``` r
-dat  %>% Wide(student ~ month)
+dat |> Wide(A ~ student)
 ```
 
-    ## Using B as value column: use value to override.
+    ## 
+    ## 
+    ##    Achtung neue Version von Wide() !!!!
 
-    ## # A tibble: 2 × 4
-    ##   student   `1`   `2`   `3`
-    ##   <chr>   <dbl> <dbl> <dbl>
-    ## 1 Amy         6     7     8
-    ## 2 Bob         5     6     7
+    ## # A tibble: 6 × 4
+    ##   month     B   Amy   Bob
+    ##   <int> <dbl> <dbl> <dbl>
+    ## 1     1     6    19    NA
+    ## 2     2     7    27    NA
+    ## 3     3     8    16    NA
+    ## 4     1     5    NA    28
+    ## 5     2     6    NA    10
+    ## 6     3     7    NA    29
 
 ``` r
-dat  %>% Wide(month ~ student, A)
+dat |> Wide(A + B ~ student)
 ```
+
+    ## 
+    ## 
+    ##    Achtung neue Version von Wide() !!!!
+
+    ## # A tibble: 3 × 5
+    ##   month A_Amy A_Bob B_Amy B_Bob
+    ##   <int> <dbl> <dbl> <dbl> <dbl>
+    ## 1     1    19    28     6     5
+    ## 2     2    27    10     7     6
+    ## 3     3    16    29     8     7
+
+``` r
+dat |> Wide(A + B ~ student + month)
+```
+
+    ## 
+    ## 
+    ##    Achtung neue Version von Wide() !!!!
+
+    ## # A tibble: 1 × 12
+    ##   A_Amy_1 A_Amy_2 A_Amy_3 A_Bob_1 A_Bob_2 A_Bob_3 B_Amy_1 B_Amy_2 B_Amy_3
+    ##     <dbl>   <dbl>   <dbl>   <dbl>   <dbl>   <dbl>   <dbl>   <dbl>   <dbl>
+    ## 1      19      27      16      28      10      29       6       7       8
+    ## # ℹ 3 more variables: B_Bob_1 <dbl>, B_Bob_2 <dbl>, B_Bob_3 <dbl>
+
+``` r
+# dat |> Wide(A ~ student)
+# dat |> Wide(A ~ student + month)
+
+dat |> Wide(month ~ student, A)
+```
+
+    ## 
+    ## 
+    ##    Achtung neue Version von Wide() !!!!
 
     ## # A tibble: 3 × 3
     ##   month   Amy   Bob
@@ -271,72 +559,81 @@ dat  %>% Wide(month ~ student, A)
     ## 3     3    16    29
 
 ``` r
-dat  %>% Wide(student ~ month, A)
+dat |> Wide(month ~ student, A , B)
 ```
 
-    ## # A tibble: 2 × 4
-    ##   student   `1`   `2`   `3`
-    ##   <chr>   <dbl> <dbl> <dbl>
-    ## 1 Amy        19    27    16
-    ## 2 Bob        28    10    29
+    ## 
+    ## 
+    ##    Achtung neue Version von Wide() !!!!
+
+    ## # A tibble: 6 × 4
+    ##   which month   Amy   Bob
+    ##   <fct> <int> <dbl> <dbl>
+    ## 1 A         1    19    28
+    ## 2 A         2    27    10
+    ## 3 A         3    16    29
+    ## 4 B         1     6     5
+    ## 5 B         2     7     6
+    ## 6 B         3     8     7
 
 ### Long
 
 ``` r
-df2
+df2 <-  
+dat |> Wide(student,  A, B)
 ```
 
-    ## # A tibble: 3 × 5
-    ##   month Amy_A Bob_A Amy_B Bob_B
-    ##   <int> <dbl> <dbl> <dbl> <dbl>
-    ## 1     1    19    28     6     5
-    ## 2     2    27    10     7     6
-    ## 3     3    16    29     8     7
+    ## 
+    ## 
+    ##    Achtung neue Version von Wide() !!!!
 
 ``` r
-df2  %>% Long(Amy_A, Amy_B, Bob_A, Bob_B, by =  ~ month)
+df2  |> Long(A_Amy, A_Bob, B_Amy ,B_Bob, by =  ~ month) |> 
+  tidyr::separate(variable , c('First', 'Last'))
 ```
 
-    ## # A tibble: 12 × 3
-    ##    month variable value
-    ##    <int> <fct>    <dbl>
-    ##  1     1 Amy_A       19
-    ##  2     1 Amy_B        6
-    ##  3     1 Bob_A       28
-    ##  4     1 Bob_B        5
-    ##  5     2 Amy_A       27
-    ##  6     2 Amy_B        7
-    ##  7     2 Bob_A       10
-    ##  8     2 Bob_B        6
-    ##  9     3 Amy_A       16
-    ## 10     3 Amy_B        8
-    ## 11     3 Bob_A       29
-    ## 12     3 Bob_B        7
+    ## # A tibble: 12 × 4
+    ##    month First Last  value
+    ##    <int> <chr> <chr> <dbl>
+    ##  1     1 A     Amy      19
+    ##  2     1 A     Bob      28
+    ##  3     1 B     Amy       6
+    ##  4     1 B     Bob       5
+    ##  5     2 A     Amy      27
+    ##  6     2 A     Bob      10
+    ##  7     2 B     Amy       7
+    ##  8     2 B     Bob       6
+    ##  9     3 A     Amy      16
+    ## 10     3 A     Bob      29
+    ## 11     3 B     Amy       8
+    ## 12     3 B     Bob       7
 
 ``` r
-dat %>%
-  tidyr::gather(variable, value,-(month:student)) %>%
-  tidyr::unite(temp, student, variable) %>%
-  tidyr::spread(temp, value)
+dat |>
+  tidyr::gather(variable, value,-(month:student))
 ```
 
-    ##   month Amy_A Amy_B Bob_A Bob_B
-    ## 1     1    19     6    28     5
-    ## 2     2    27     7    10     6
-    ## 3     3    16     8    29     7
+    ##    month student variable value
+    ## 1      1     Amy        A    19
+    ## 2      2     Amy        A    27
+    ## 3      3     Amy        A    16
+    ## 4      1     Bob        A    28
+    ## 5      2     Bob        A    10
+    ## 6      3     Bob        A    29
+    ## 7      1     Amy        B     6
+    ## 8      2     Amy        B     7
+    ## 9      3     Amy        B     8
+    ## 10     1     Bob        B     5
+    ## 11     2     Bob        B     6
+    ## 12     3     Bob        B     7
 
-Das geht nicht Mehr:
-
-``` {
-#  df_w2 <- Wide(df, student, c("A", "B")))
-
- stp25aggregate::Long(
-       list(A=c("Amy_A", "Bob_A" ), 
-            B=c("Amy_B", "Bob_B")), 
-       df2,
-       by =  ~ month,
-       key = "student",
-       key.levels= c("Amy", "Bob"))
+``` r
+# relig_income |>
+#   tidyr::pivot_longer(!religion, names_to = "income", values_to = "count")
+# 
+# dat |> Long(  A, B, by =  ~ month + student  )|>
+#   tidyr::unite(temp, student, variable) |>
+#   tidyr::spread(temp, value)
 ```
 
 ### Pivot-Transpose
@@ -371,9 +668,133 @@ transpose2(
     ## x x-axis       1       2       3
     ## y y-axis       3       4       5
 
-## add_to
+### Rbind2()
 
-Element zu Liste hinzufügen.
+    Rbind2( ...,
+            .id = "which",
+            .names = NULL,
+            .use.label = TRUE,
+            include.rownames = FALSE
+
+``` r
+df1 <- data.frame(CustomerId = c(1:6), Product = c(rep("Oven", 3), rep("Television", 3))) |> 
+  Label( Product = "Produkt")
+df2 <- data.frame(CustomerId = c(4:7), Product = c(rep("Television", 2), rep("Air conditioner", 2)))
+df3 <- data.frame(
+  CustomerId = c(4:7),
+  Product = c(rep("Television", 2), rep("Air conditioner", 2)),
+  State = c(rep("California", 2), rep("New Jersey", 2))
+) |> 
+  Label( Product = "Produkt-Kategorie", State = "Bundes-Staat")
+
+dat1<- Rbind2(df1, df2, df3)
+str(dat1)
+```
+
+    ## 'data.frame':    14 obs. of  4 variables:
+    ##  $ which     : Factor w/ 3 levels "df1","df2","df3": 1 1 1 1 1 1 2 2 2 2 ...
+    ##   ..- attr(*, "label")= chr "which"
+    ##  $ CustomerId: int  1 2 3 4 5 6 4 5 6 7 ...
+    ##   ..- attr(*, "label")= chr "CustomerId"
+    ##  $ Product   : chr  "Oven" "Oven" "Oven" "Television" ...
+    ##   ..- attr(*, "label")= chr "Produkt"
+    ##  $ State     : chr  NA NA NA NA ...
+    ##   ..- attr(*, "label")= chr "Bundes-Staat"
+
+``` r
+dat2 <- dplyr::bind_rows(df1, df2, df3, .id ="which")
+str(dat2)
+```
+
+    ## 'data.frame':    14 obs. of  4 variables:
+    ##  $ which     : chr  "1" "1" "1" "1" ...
+    ##  $ CustomerId: int  1 2 3 4 5 6 4 5 6 7 ...
+    ##  $ Product   : chr  "Oven" "Oven" "Oven" "Television" ...
+    ##  $ State     : chr  NA NA NA NA ...
+
+### Merge2
+
+``` r
+n<-10
+df1 <- 
+  data.frame(
+  origin = sample(c("A", "B", "C", "D", "E"), n, replace = T),
+  N = sample(seq(9, 27, 0.5), n, replace = T),
+  P = sample(seq(0.3, 4, 0.1), n, replace = T),
+  C = sample(seq(400, 500, 1), n, replace = T))
+df2 <-
+  data.frame(
+    origin = sample(c("A", "B", "C", "D", "E"), n, replace = T),
+    foo1 = sample(c(T, F), n, replace = T),
+    X = sample(seq(145600, 148300, 100), n, replace = T),
+    Y = sample(seq(349800, 398600, 100), n, replace = T))
+df3 <-
+  data.frame(origin = sample(c("A", "B", "C", "D", "E"), n, replace = T))
+df4 <-
+  data.frame(origin = sample(c("A", "B", "C", "D", "E"), n, replace = T))
+
+df1$id <- df2$id <- df3$id <- df4$id <- paste("P", sprintf("%02d", c(1:n)), sep = "")  
+ 
+Merge2(df1, df2, df3, df4, by = "id")
+```
+
+    ##     id origin.x    N   P   C origin.y  foo1      X      Y origin.z origin.u
+    ## 1  P01        A 21.0 3.3 454        C FALSE 146500 362400        C        A
+    ## 2  P02        D 17.0 1.9 498        E FALSE 146500 377600        A        C
+    ## 3  P03        D 21.5 0.5 460        E FALSE 145600 359000        C        C
+    ## 4  P04        A 10.5 3.2 446        E  TRUE 146100 349800        A        D
+    ## 5  P05        E 16.5 3.4 442        E  TRUE 146500 360500        C        C
+    ## 6  P06        D 20.5 1.1 449        E  TRUE 148200 357200        D        A
+    ## 7  P07        E 16.5 3.9 449        A FALSE 145600 376200        D        D
+    ## 8  P08        C 15.5 2.5 437        C FALSE 147100 372800        D        D
+    ## 9  P09        E 20.0 1.8 420        B  TRUE 146500 360000        D        A
+    ## 10 P10        D 12.0 0.7 438        B  TRUE 145900 358800        D        D
+
+### cbind listenweise
+
+``` r
+#' cbind data.frame aber listenweise
+m <- data.frame(
+  Item = 1:3,
+  a = (1:3),
+  b = (1:3) * 2,
+  c = (1:3) * 3
+)
+sd <- data.frame(
+  Item = (1:3),
+  a = (1:3) * 4,
+  b = (1:3) * 5,
+  c = (1:3) * 6
+)
+combine_data_frame(m, sd)
+```
+
+    ##   Item a_m a_sd b_m b_sd c_m c_sd
+    ## 1    1   1    4   2    5   3    6
+    ## 2    2   2    8   4   10   6   12
+    ## 3    3   3   12   6   15   9   18
+
+``` r
+combine_data_frame(m, sd, by = NULL)
+```
+
+    ##   Item_m Item_sd a_m a_sd b_m b_sd c_m c_sd
+    ## 1      1       1   1    4   2    5   3    6
+    ## 2      2       2   2    8   4   10   6   12
+    ## 3      3       3   3   12   6   15   9   18
+
+## data.frame manipulation
+
+This group includes functions for converting objects into data frames
+(`fix_to_df`, `fix_to_tibble`, `list_to_df`), adding elements to vectors
+or lists (`add_to`, `add_row_df`), adding and transforming missing data
+(`na_approx`, `auto_trans`), managing labels (`Label`, `delete_label`,
+`get_label`, `set_label`) and performing arithmetic operations
+(`auc_trapezoid`).
+
+### add_to
+
+Add item to list.
 
 ``` r
 add_to(list(a = 1:3, b = LETTERS[1:5]),
@@ -392,7 +813,7 @@ add_to(list(a = 1:3, b = LETTERS[1:5]),
     ## $d
     ## [1] 2
 
-Element zu Data-Frame hinzufügen.
+Add element to data frame.
 
 ``` r
 df <-   data.frame(
@@ -473,107 +894,7 @@ add_to(df, data.frame(  Source = c("G", "H"),
     ## 5      G 5 NA
     ## 6      H 6 NA
 
-## cbind() und rbind()
-
-``` r
-df1 = data.frame(CustomerId = c(1:6), Product = c(rep("Oven", 3), rep("Television", 3)))
-df2 = data.frame(CustomerId = c(4:7), Product = c(rep("Television", 2), rep("Air conditioner", 2)))
-df3 = data.frame(
-   CustomerId = c(4:7),
-   Product = c(rep("Television", 2), rep("Air conditioner", 2)),
-   State = c(rep("California", 2), rep("New Jersey", 2))
- )
-
- Rbind2(df1, df3)
-```
-
-    ##    which CustomerId         Product      State
-    ## 1    df1          1            Oven       <NA>
-    ## 2    df1          2            Oven       <NA>
-    ## 3    df1          3            Oven       <NA>
-    ## 4    df1          4      Television       <NA>
-    ## 5    df1          5      Television       <NA>
-    ## 6    df1          6      Television       <NA>
-    ## 7    df3          4      Television California
-    ## 8    df3          5      Television California
-    ## 9    df3          6 Air conditioner New Jersey
-    ## 10   df3          7 Air conditioner New Jersey
-
-``` r
- #dplyr::bind_rows(df1, df2)
-```
-
-## merge()
-
-``` r
-n<-10
-df1 <- 
-  data.frame(
-  origin = sample(c("A", "B", "C", "D", "E"), n, replace = T),
-  N = sample(seq(9, 27, 0.5), n, replace = T),
-  P = sample(seq(0.3, 4, 0.1), n, replace = T),
-  C = sample(seq(400, 500, 1), n, replace = T))
-df2 <-
-  data.frame(
-    origin = sample(c("A", "B", "C", "D", "E"), n, replace = T),
-    foo1 = sample(c(T, F), n, replace = T),
-    X = sample(seq(145600, 148300, 100), n, replace = T),
-    Y = sample(seq(349800, 398600, 100), n, replace = T))
-df3 <-
-  data.frame(origin = sample(c("A", "B", "C", "D", "E"), n, replace = T))
-df4 <-
-  data.frame(origin = sample(c("A", "B", "C", "D", "E"), n, replace = T))
-
-df1$id <- df2$id <- df3$id <- df4$id <- paste("P", sprintf("%02d", c(1:n)), sep = "")  
- 
-Merge2(df1, df2, df3, df4, by = "id")
-```
-
-    ##     id origin.x    N   P   C origin.y  foo1      X      Y origin.z origin.u
-    ## 1  P01        E 18.0 1.4 490        D FALSE 145800 386500        A        C
-    ## 2  P02        C 25.5 2.6 495        B  TRUE 148300 395600        D        A
-    ## 3  P03        A 12.0 0.3 433        A FALSE 145600 358600        D        D
-    ## 4  P04        C 24.5 2.9 437        B  TRUE 147600 392700        A        C
-    ## 5  P05        D 24.5 2.3 482        E  TRUE 148100 395600        C        E
-    ## 6  P06        B 17.5 0.5 447        A  TRUE 145800 364300        E        E
-    ## 7  P07        B 10.5 2.0 447        E FALSE 147700 373700        B        D
-    ## 8  P08        B  9.0 0.9 457        D FALSE 146100 370300        C        C
-    ## 9  P09        C 21.0 0.8 439        E FALSE 147300 376000        E        E
-    ## 10 P10        E 16.0 0.5 406        E FALSE 147700 388600        E        E
-
-## cbind data.frame aber listenweise
-
-``` r
-m <- data.frame(
-  Item = 1:3,
-  a = (1:3),
-  b = (1:3) * 2,
-  c = (1:3) * 3
-)
-sd <- data.frame(
-  Item = (1:3),
-  a = (1:3) * 4,
-  b = (1:3) * 5,
-  c = (1:3) * 6
-)
-combine_data_frame(m, sd)
-```
-
-    ##   Item a_m a_sd b_m b_sd c_m c_sd
-    ## 1    1   1    4   2    5   3    6
-    ## 2    2   2    8   4   10   6   12
-    ## 3    3   3   12   6   15   9   18
-
-``` r
-combine_data_frame(m, sd, by = NULL)
-```
-
-    ##   Item_m Item_sd a_m a_sd b_m b_sd c_m c_sd
-    ## 1      1       1   1    4   2    5   3    6
-    ## 2      2       2   2    8   4   10   6   12
-    ## 3      3       3   3   12   6   15   9   18
-
-## list_to_df
+### list_to_df
 
 ``` r
 x <- list(
@@ -659,10 +980,10 @@ fix_to_df(tab_3x2)
     ## 2       1        23           45
     ## 3       2        13           24
 
-## auto_trans
+### auto_trans
 
-Automatische Taranformation von numerischen Variablen entsprechend ihere
-Verteilungseigenschaft
+Automatic tare transformation of numerical variables according to their
+distribution properties.
 
 ``` r
 x <- c(1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 7, 7, 7, 7, 9, 20, 30)
@@ -685,12 +1006,12 @@ auto_trans(x)
     ## attr(,"link")
     ## function(x)
     ##   log(101 - x)
-    ## <bytecode: 0x000001d1c9efcb38>
+    ## <bytecode: 0x0000021d3de47f78>
     ## <environment: namespace:stp25tools>
     ## attr(,"inverse")
     ## function(x)
     ##   101 - (exp(x))
-    ## <bytecode: 0x000001d1c9efb7f8>
+    ## <bytecode: 0x0000021d3de44b98>
     ## <environment: namespace:stp25tools>
     ## attr(,"name")
     ## [1] "negative skew (max-Log)"
@@ -740,9 +1061,61 @@ for(i in 1:4){
 
 ![](README_files/figure-gfm/model-fit-1.png)<!-- -->![](README_files/figure-gfm/model-fit-2.png)<!-- -->![](README_files/figure-gfm/model-fit-3.png)<!-- -->![](README_files/figure-gfm/model-fit-4.png)<!-- -->
 
-## separate multiple choice
+### separate & separate_rows
 
-Aufdroeseln von Mehrfachantworten
+Multiple answers are often coded incorrectly. The following functions
+are used to prepare the data structure.
+
+``` r
+data_games <- tibble::tibble(
+  country = c("Germany", "France", "Spain"),
+  game = c("England - win", "Brazil - loss", "Portugal - tie")
+)
+
+#'   sep = "[^[:alnum:].]+"
+data_games |> tidyr::separate(col = game, into = c("opponent", "result"))
+```
+
+    ## # A tibble: 3 × 3
+    ##   country opponent result
+    ##   <chr>   <chr>    <chr> 
+    ## 1 Germany England  win   
+    ## 2 France  Brazil   loss  
+    ## 3 Spain   Portugal tie
+
+``` r
+data_opponents <- tibble::tibble(
+  country = c("Germany", "France", "Spain"),
+  opponent = c("England, Switzerland", "Brazil, Denmark", "Portugal, Argentina")
+)
+
+data_opponents
+```
+
+    ## # A tibble: 3 × 2
+    ##   country opponent            
+    ##   <chr>   <chr>               
+    ## 1 Germany England, Switzerland
+    ## 2 France  Brazil, Denmark     
+    ## 3 Spain   Portugal, Argentina
+
+``` r
+data_opponents |> tidyr::separate_rows(opponent)
+```
+
+    ## # A tibble: 6 × 2
+    ##   country opponent   
+    ##   <chr>   <chr>      
+    ## 1 Germany England    
+    ## 2 Germany Switzerland
+    ## 3 France  Brazil     
+    ## 4 France  Denmark    
+    ## 5 Spain   Portugal   
+    ## 6 Spain   Argentina
+
+### separate multiple choice
+
+Break down multiple answers.
 
 ``` r
  #require(stp25tools)
@@ -778,7 +1151,7 @@ rslt <-
     ## 
     ## ----------------------------------------------------------------
     ## Warnung: wenn komische Leerzeichen daher kommen gut aufpassen!
-    ## Das was unten kommt wird aufgedröselt.
+    ## Das was unten kommt wird aufgedroeselt.
     ## [1] "0"         "1,3,6,8,4" "2"         "2,3,4,5"   "4,6,8,3"   "8,4"      
     ## [7] "zz_9999"  
     ## 
@@ -792,7 +1165,9 @@ stp25stat2::Tbll_desc(rslt)
 ```
 
     ## 
-    ## Hallo Wolfgang!
+    ## Hi Wolfgang!
+    ## 
+    ## I wish you a good and successful working day.
 
     ## # A tibble: 8 × 3
     ##   Item                         n     m      
@@ -806,7 +1181,7 @@ stp25stat2::Tbll_desc(rslt)
     ## 7 "6 Neurological Event true " 6     33% (2)
     ## 8 "8 Others true "             6     50% (3)
 
-## Creation of dummy variables and reverse
+### Creation of dummy variables and reverse
 
 ``` r
  z <- gl(3, 2, 12, labels = c("apple", "salad", "orange"))
@@ -844,3 +1219,104 @@ table(z)
     ## z
     ##   veg fruit 
     ##     4     8
+
+## string manipulation
+
+      # NODE                     EXPLANATION
+      # --------------------------------------------------------------------------------
+      #   (?<=                     look behind to see if there is:
+      #      ---------------------------------------------------------------------------
+      #      [\s]                  any character of: whitespace (\n, \r, \t, \f, and " ")
+      #    -----------------------------------------------------------------------------
+      #   )                        end of look-behind
+      # --------------------------------------------------------------------------------
+      #   \s*                      whitespace (\n, \r, \t, \f, and " ") (0 or
+      #                            more times (matching the most amount possible))
+      # --------------------------------------------------------------------------------
+      #   |                        OR
+      # --------------------------------------------------------------------------------
+      #   ^                        the beginning of the string
+      # --------------------------------------------------------------------------------
+      #   \s+                      whitespace (\n, \r, \t, \f, and " ") (1 or more times 
+      #                            (matching the most amount possible))
+      # --------------------------------------------------------------------------------
+      #   $                        before an optional \n, and the end of the string
+
+Wrap string: split_string(), wrap_string(), wrap_sentence(),
+wrap_string_at()
+
+Clean up data frame and strings clean_names, cleansing_umlaute,
+cleansing_umlaute2
+
+``` r
+clean_names(tibble::tibble("Öli"=1:3, "p-k"=1:3, "95%-CI"=4:6) )
+```
+
+    ## # A tibble: 3 × 3
+    ##    oeli   p.k x95.pct.ci
+    ##   <int> <int>      <int>
+    ## 1     1     1          4
+    ## 2     2     2          5
+    ## 3     3     3          6
+
+``` r
+cleansing_umlaute( " Öäüö? hallo")
+```
+
+    ## [1] "_Oeaeueoe?_hallo"
+
+### wrap_string (Umbrechen)
+
+wrap_string(), wrap_factor(), wrap_data_label(), wrap_string_at(),
+split_string()
+
+``` r
+strg<- c("R is free   software and comes with ABSOLUTELY NO WARRANTY.",
+         "You are welcome to redistribute it under certain conditions.")
+
+wrap_string(strg, 5)
+```
+
+    ## [1] "R is\nfree\nsoftware\nand\ncomes\nwith\nABSOLUTELY\nNO\nWARRANTY."   
+    ## [2] "You\nare\nwelcome\nto\nredistribute\nit\nunder\ncertain\nconditions."
+
+``` r
+wrap_string(factor(strg))
+```
+
+    ## [1] "R is free software\nand comes with\nABSOLUTELY NO\nWARRANTY."   
+    ## [2] "You are welcome\nto redistribute\nit under certain\nconditions."
+
+``` r
+wrap_factor(factor(strg))
+```
+
+    ## [1] R is free software\nand comes with\nABSOLUTELY NO\nWARRANTY.   
+    ## [2] You are welcome\nto redistribute\nit under certain\nconditions.
+    ## 2 Levels: R is free software\nand comes with\nABSOLUTELY NO\nWARRANTY. ...
+
+``` r
+#wrap_data_label(data)
+wrap_string_at(strg, "and")
+```
+
+    ## [1] "R is free   software \nand comes with ABSOLUTELY NO WARRANTY."
+    ## [2] "You are welcome to redistribute it under certain conditions."
+
+``` r
+split_string(strg, "and")
+```
+
+    ## [1] "R is free   software"                                        
+    ## [2] "You are welcome to redistribute it under certain conditions."
+
+``` r
+animals <- c("cat", "dog", "mouse", "elephant")
+stringr::str_flatten_comma(animals, last = " and ")
+```
+
+    ## [1] "cat, dog, mouse and elephant"
+
+## Sonstiges
+
+Prepare internal data with formula `prepare_data2`
