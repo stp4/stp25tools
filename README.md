@@ -1,6 +1,6 @@
 stp25tools
 ================
-2024-03-18
+2024-03-30
 
 <!-- output: -->
 <!--   html_document: -->
@@ -185,18 +185,22 @@ ftable(xtabs(~ sex + treatment + befund, dat))
 
 ``` r
 if( file.exists("R/dummy.csv")) {
-  
 # get_data("R/dummy.csv", dec = ",", na.strings = "-", skip=1, label=1)
 # get_data("R/dummy.xlsx", na.strings = "-")
-  
  get_data("R/dummy.xlsx")
- 
  x <- get_data("R/dummy.sav")
  get_label(x)[1:4]
- }
+}
 ```
 
-### Save data and reconstruct from codebook
+### Get / Set a variable label
+
+Managing labels: `Label`, `delet_label`, `get_label`, `set_label`
+alternativ function `labelled::set_variable_labels`
+
+### Generate a data dictionnary
+
+Save data and reconstruct from codebook
 
 ``` r
  save_data(dat, "demo.xlsx", include.codebook=TRUE)
@@ -236,18 +240,29 @@ if( file.exists("R/dummy.csv")) {
     ##  befund : character -> factor
 
 ``` r
- head(DF2)
+codebook(DF2)
 ```
 
-    ## # A tibble: 6 × 4
-    ##   sex   treatment Var1  befund
-    ##   <fct> <fct>     <fct> <fct> 
-    ## 1 f     KG        f+KG  neg   
-    ## 2 f     KG        f+KG  neg   
-    ## 3 f     KG        f+KG  neg   
-    ## 4 f     UG        f+UG  neg   
-    ## 5 f     UG        f+UG  neg   
-    ## 6 f     UG        f+UG  neg
+    ##               names     label                      value.labels
+    ## sex             sex       sex                     factor: f | m
+    ## treatment treatment treatment                   factor: KG | UG
+    ## Var1           Var1      Var1 factor: f+KG | f+UG | m+KG | m+UG
+    ## befund       befund    befund                 factor: neg | pos
+
+Die funktion `look_for` macht fast das gleiche aber ist eventuell
+sinnvoll wenn ein Variable gesucht wird.
+
+``` r
+labelled::look_for(DF2, "KG")
+```
+
+    ##  pos variable  label     col_type missing values
+    ##  2   treatment treatment fct      0       KG    
+    ##                                           UG    
+    ##  3   Var1      Var1      fct      0       f+KG  
+    ##                                           f+UG  
+    ##                                           m+KG  
+    ##                                           m+UG
 
 ### Filter + Consort-Plot
 
@@ -379,12 +394,94 @@ out <- consort_plot(
 plot(out)
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 
 ## Transpose
 
 This is an extension of `tidyr::pivot_longer` and `tidyr::pivot_wider`,
 with added functionality using formulas.
+
+``` r
+DF_sprk <- data.frame(
+  Laborwert = gl(7,8,
+    labels = c("Albumin","Amylase","Lipase","AST","ALT","Bilirubin","C.Peptid")),
+  Treat = gl(2, 4, labels = c("Control", "Treat")),
+  Time = gl(4, 1, labels = c("t0", "t1", "t2", "t4")),
+  x = rnorm(7 * 8)
+) |>
+  stp25stat2::Summarise(x ~ Laborwert + Time + Treat,
+            fun = mean,
+            value = "x")
+```
+
+``` r
+DF_sprk
+```
+
+    ## # A tibble: 56 × 5
+    ##    Laborwert Time  Treat   variable       x
+    ##    <fct>     <fct> <fct>   <fct>      <dbl>
+    ##  1 Albumin   t0    Control x        -0.563 
+    ##  2 Albumin   t1    Control x        -1.36  
+    ##  3 Albumin   t2    Control x         0.934 
+    ##  4 Albumin   t4    Control x        -0.143 
+    ##  5 Albumin   t0    Treat   x        -0.0120
+    ##  6 Albumin   t1    Treat   x         0.436 
+    ##  7 Albumin   t2    Treat   x        -0.834 
+    ##  8 Albumin   t4    Treat   x         0.0421
+    ##  9 Amylase   t0    Control x         0.152 
+    ## 10 Amylase   t1    Control x         0.834 
+    ## # ℹ 46 more rows
+
+``` r
+DF<- Wide(DF_sprk[-4], Time ) |> Wide(Laborwert , t0, t1, t2, t4)
+```
+
+    ## 
+    ## 
+    ##    Achtung neue Version von Wide() !!!!
+    ## 
+    ## 
+    ## 
+    ##    Achtung neue Version von Wide() !!!!
+
+    ## Using x as value column: use value to override.
+
+``` r
+# So einen DF bekomme ich meist
+DF
+```
+
+    ## # A tibble: 2 × 29
+    ##   Treat  t0_Albumin t0_Amylase t0_Lipase  t0_AST t0_ALT t0_Bilirubin t0_C.Peptid
+    ##   <fct>       <dbl>      <dbl>     <dbl>   <dbl>  <dbl>        <dbl>       <dbl>
+    ## 1 Contr…    -0.563       0.152    0.0208 -0.0982 -0.110        1.13       -1.79 
+    ## 2 Treat     -0.0120     -0.763    2.17    1.28   -1.90        -0.140      -0.489
+    ## # ℹ 21 more variables: t1_Albumin <dbl>, t1_Amylase <dbl>, t1_Lipase <dbl>,
+    ## #   t1_AST <dbl>, t1_ALT <dbl>, t1_Bilirubin <dbl>, t1_C.Peptid <dbl>,
+    ## #   t2_Albumin <dbl>, t2_Amylase <dbl>, t2_Lipase <dbl>, t2_AST <dbl>,
+    ## #   t2_ALT <dbl>, t2_Bilirubin <dbl>, t2_C.Peptid <dbl>, t4_Albumin <dbl>,
+    ## #   t4_Amylase <dbl>, t4_Lipase <dbl>, t4_AST <dbl>, t4_ALT <dbl>,
+    ## #   t4_Bilirubin <dbl>, t4_C.Peptid <dbl>
+
+``` r
+DF |> Long(. ~ Treat)  |> tidyr::separate(variable, c("Time", "Laborwert"), sep="_")
+```
+
+    ## # A tibble: 56 × 4
+    ##    Treat   Time  Laborwert   value
+    ##    <fct>   <chr> <chr>       <dbl>
+    ##  1 Control t0    Albumin   -0.563 
+    ##  2 Control t0    Amylase    0.152 
+    ##  3 Control t0    Lipase     0.0208
+    ##  4 Control t0    AST       -0.0982
+    ##  5 Control t0    ALT       -0.110 
+    ##  6 Control t0    Bilirubin  1.13  
+    ##  7 Control t0    C.Peptid  -1.79  
+    ##  8 Control t1    Albumin   -1.36  
+    ##  9 Control t1    Amylase    0.834 
+    ## 10 Control t1    Lipase    -0.0523
+    ## # ℹ 46 more rows
 
 ### Wide
 
@@ -739,16 +836,16 @@ Merge2(df1, df2, df3, df4, by = "id")
 ```
 
     ##     id origin.x    N   P   C origin.y  foo1      X      Y origin.z origin.u
-    ## 1  P01        A 21.0 3.3 454        C FALSE 146500 362400        C        A
-    ## 2  P02        D 17.0 1.9 498        E FALSE 146500 377600        A        C
-    ## 3  P03        D 21.5 0.5 460        E FALSE 145600 359000        C        C
-    ## 4  P04        A 10.5 3.2 446        E  TRUE 146100 349800        A        D
-    ## 5  P05        E 16.5 3.4 442        E  TRUE 146500 360500        C        C
-    ## 6  P06        D 20.5 1.1 449        E  TRUE 148200 357200        D        A
-    ## 7  P07        E 16.5 3.9 449        A FALSE 145600 376200        D        D
-    ## 8  P08        C 15.5 2.5 437        C FALSE 147100 372800        D        D
-    ## 9  P09        E 20.0 1.8 420        B  TRUE 146500 360000        D        A
-    ## 10 P10        D 12.0 0.7 438        B  TRUE 145900 358800        D        D
+    ## 1  P01        B 17.0 1.5 432        A  TRUE 146200 389200        E        E
+    ## 2  P02        B 13.0 2.6 493        E  TRUE 145900 380700        D        C
+    ## 3  P03        E 22.0 1.7 440        A FALSE 147100 377900        B        E
+    ## 4  P04        E 14.0 1.9 465        E FALSE 147000 386200        D        E
+    ## 5  P05        A 20.5 1.0 420        C FALSE 147200 371200        C        E
+    ## 6  P06        B 26.0 2.2 439        A FALSE 147300 381100        D        E
+    ## 7  P07        D 19.0 3.3 480        D  TRUE 146900 378700        B        B
+    ## 8  P08        C 20.5 2.6 461        E FALSE 146500 355900        B        A
+    ## 9  P09        B 26.0 1.0 457        A FALSE 147000 360700        C        B
+    ## 10 P10        B 15.5 0.7 456        E  TRUE 147100 364900        A        D
 
 ### cbind listenweise
 
@@ -982,7 +1079,7 @@ fix_to_df(tab_3x2)
 
 ### auto_trans
 
-Automatic tare transformation of numerical variables according to their
+Automatic transformation of numerical variables according to their
 distribution properties.
 
 ``` r
@@ -1006,12 +1103,12 @@ auto_trans(x)
     ## attr(,"link")
     ## function(x)
     ##   log(101 - x)
-    ## <bytecode: 0x0000021d3de47f78>
+    ## <bytecode: 0x000001b116161e68>
     ## <environment: namespace:stp25tools>
     ## attr(,"inverse")
     ## function(x)
     ##   101 - (exp(x))
-    ## <bytecode: 0x0000021d3de44b98>
+    ## <bytecode: 0x000001b116160b98>
     ## <environment: namespace:stp25tools>
     ## attr(,"name")
     ## [1] "negative skew (max-Log)"
@@ -1163,11 +1260,6 @@ rslt <-
 ``` r
 stp25stat2::Tbll_desc(rslt)
 ```
-
-    ## 
-    ## Hi Wolfgang!
-    ## 
-    ## I wish you a good and successful working day.
 
     ## # A tibble: 8 × 3
     ##   Item                         n     m      

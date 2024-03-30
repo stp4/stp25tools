@@ -16,7 +16,7 @@ Wide <- function(data,
                   names_vary = "fastest") {
   
  
-  cat(crayon::bgMagenta('\n\n   Achtung neue Version von Wide() !!!!\n\n' )  )
+ # cat(crayon::bgMagenta('\n\n   Achtung neue Version von Wide() !!!!\n\n' )  )
   
   values_from <-
     as.character(sapply(lazyeval::lazy_dots(...),

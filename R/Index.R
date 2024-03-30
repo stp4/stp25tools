@@ -11,7 +11,8 @@ Index <- function(x, ...) {
   UseMethod("Index")
 }
 
-
+#' @rdname Index
+#' @export
 Index.formula <- function(x,
                           data,
                           ...) {

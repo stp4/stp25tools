@@ -149,27 +149,44 @@ ftable(xtabs(~ sex + treatment + befund, dat))
 
 ```{r, error=TRUE}
 if( file.exists("R/dummy.csv")) {
-  
 # get_data("R/dummy.csv", dec = ",", na.strings = "-", skip=1, label=1)
 # get_data("R/dummy.xlsx", na.strings = "-")
-  
  get_data("R/dummy.xlsx")
- 
  x <- get_data("R/dummy.sav")
  get_label(x)[1:4]
- }
+}
+
 ```
 
-### Save data and reconstruct from codebook
+
+### Get / Set a variable label
+
+
+Managing labels: `Label`, `delet_label`, `get_label`, `set_label`
+alternativ function `labelled::set_variable_labels`
+
+
+
+### Generate a data dictionnary
+
+Save data and reconstruct from codebook
 
 ```{r}
  save_data(dat, "demo.xlsx", include.codebook=TRUE)
-
  DF2 <- use_codebook(file = "demo.xlsx")
 
- 
- head(DF2)
 ```
+
+
+```{r}
+codebook(DF2)
+```
+
+Die funktion `look_for` macht fast das gleiche aber ist eventuell sinnvoll wenn ein Variable gesucht wird. 
+```{r}
+labelled::look_for(DF2, "KG")
+```
+
 
 ### Filter + Consort-Plot
 
@@ -247,6 +264,33 @@ plot(out)
 ## Transpose
 
 This is an extension of `tidyr::pivot_longer` and `tidyr::pivot_wider`, with added functionality using formulas.
+
+```{r}
+DF_sprk <- data.frame(
+  Laborwert = gl(7,8,
+    labels = c("Albumin","Amylase","Lipase","AST","ALT","Bilirubin","C.Peptid")),
+  Treat = gl(2, 4, labels = c("Control", "Treat")),
+  Time = gl(4, 1, labels = c("t0", "t1", "t2", "t4")),
+  x = rnorm(7 * 8)
+) |>
+  stp25stat2::Summarise(x ~ Laborwert + Time + Treat,
+            fun = mean,
+            value = "x")
+```
+
+```{r}
+DF_sprk
+
+DF<- Wide(DF_sprk[-4], Time ) |> Wide(Laborwert , t0, t1, t2, t4)
+#' So einen DF bekomme ich meist
+DF
+#' Und das brauch ich zum Rechnen
+DF |> Long(. ~ Treat)  |> tidyr::separate(variable, c("Time", "Laborwert"), sep="_")
+```
+
+
+
+
 
 ### Wide
 
@@ -525,7 +569,7 @@ fix_to_df(tab_3x2)
 
 ### auto_trans
 
-Automatic tare transformation of numerical variables according to their distribution properties.
+Automatic transformation of numerical variables according to their distribution properties.
 
 ```{r}
  
