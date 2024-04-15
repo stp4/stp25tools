@@ -2,9 +2,15 @@
 % Please edit documentation in R/data-auto-trans.R
 \name{auto_trans}
 \alias{auto_trans}
+\alias{auto_trans.data.frame}
+\alias{auto_trans.default}
 \title{transformation}
 \usage{
-auto_trans(x, treshhold = 1)
+auto_trans(x, ...)
+
+\method{auto_trans}{data.frame}(x, add = TRUE, ...)
+
+\method{auto_trans}{default}(x, treshhold = 1)
 }
 \arguments{
 \item{x}{Vector}
@@ -36,5 +42,25 @@ hist(x.neg)
 hist(x.pos)
 hist(auto_trans(x.neg))
 hist(auto_trans(x.pos))
+
+
+n <- 100
+
+scale_100 <- function(x) {
+  x <- x - min(x)
+  round(x / max(x) * 100)
+}
+
+DF <- data.frame(
+  group = gl(2, n / 2, labels = c("Control", "Treat")),
+  x1 = scale_100(rnorm(100) + 5),
+  x2 = scale_100(rlnorm(n, meanlog = 0, sdlog = 1) + 1),
+  x3 = scale_100(rpois(n, lambda = 1) + 1),
+  x4 = scale_100(rweibull(n, shape = .8, scale = 1) + 10),
+  x5 = scale_100(runif(n, min = 0, max = 100) + 1),
+  x6 = scale_100(sqrt(rnorm(100) + 5))
+)
+
+auto_trans(DF)
 
 }
