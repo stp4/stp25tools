@@ -85,8 +85,7 @@ condition.class,
 digits
 }
 \description{
-Funktion wird zum Aufbereiten der Daten verwendet. Die Daten werden als
- tibble::as_tibble() weitergegeben.
+This function is used to prepare the data. The return value is a list with all the information for the automatic calculation of the descriptive statistics. The data is returned as tibble::as_tibble() and contains information about the scale properties and the number of decimal places for formatting. The labels are also returned.
 
 makeNamesNum: aus Nummern die Namen extrahieren
 

@@ -1,7 +1,6 @@
 #' prepare_data2
 #'
-#'  Funktion wird zum Aufbereiten der Daten verwendet. Die Daten werden als
-#'  tibble::as_tibble() weitergegeben.
+#' This function is used to prepare the data. The return value is a list with all the information for the automatic calculation of the descriptive statistics. The data is returned as tibble::as_tibble() and contains information about the scale properties and the number of decimal places for formatting. The labels are also returned.
 #'  
 #' @param ... Formula, data usw
 #' @param measure,group.class,measure.test,catTest,conTest,names_data helpers do not change
@@ -200,22 +199,26 @@ select_data <-   function(formula,
 # auswertungs Methode
 #
 #' @noRd
-default_measure <- function(measure, measure.vars, measure.class) {
-  if (length(measure) == 1) {
-    measure <- measure.class
+default_measure <-
+  function(measure,
+           measure.vars,
+           measure.class) {
+    if (length(measure) == 1) {
+      measure <- measure.class
+    }
+    else{
+      nas <- which(is.na(measure))
+      measure[nas] <- measure.class[nas]
+    }
+    
+    if (any(is.na(measure))) {
+      measure.vars <- measure.vars[!is.na(measure)]
+      measure <- measure[!is.na(measure)]
+    }
+
+    names(measure) <- measure.vars
+    measure
   }
-  else{
-    nas <- which(is.na(measure))
-    measure[nas] <- measure.class[nas]
-  }
-  
-  if (any(is.na(measure)))
-    stop("Achtung eine Variable ist doppelt!\n",
-         paste(names(measure), collapse = ", "))
-  
-  names(measure) <- measure.vars
-  measure
-}
 
 
 #' @noRd
@@ -223,7 +226,7 @@ default_digits <- function(digits,
                            measure.vars, 
                            measure
                            ) {
-  
+  digits <- digits[measure.vars]
   if (length(digits) == 1) {
     digits <-  ifelse(measure == "factor", get_opt("prozent", "digits"),
                ifelse(measure == "multi", get_opt("prozent", "digits"), 
@@ -476,6 +479,17 @@ cleaup_formula <- function(formula,
   
   measure.vars <- all.vars(formula[[2L]]) 
   measure.class <- get_classes(data[measure.vars])
+  
+  in_vars <- strsplit(as.character(formula[[2L]])[2L], " \\+ ")[[1L]]
+  dupl_measure <- duplicated(in_vars)
+  if(any(dupl_measure)) {
+    warning("stp25tools::prepare_data2():\n Es wurden folgende Parameter mehrfach übergeben:\n" ,
+             paste( in_vars[dupl_measure], collapse =", "),
+             "\n  Sollte das gewollt sein bitte bei Tbll_desc() entsprechend die Einstellungen vornehmen."
+             )
+  }
+  
+  
   
   if (any(is.na(measure)))
     measure <- default_measure(measure, measure.vars, measure.class)
