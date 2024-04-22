@@ -24,7 +24,7 @@
 #'
 #' dat<- data.frame(sex=1:2, m1=1:2,m2=1:2, m3=1:2, m4=1:2, m5=1:2, m6=1:2, geschl=1:2)
 #'
-#' prepare_data2(~ m1 + m2 + m3 + m4, dat)
+#' prepare_data2(~ m1 + m1 + m2 + m3 + m4, dat)
 #' prepare_data2(~ log(m1) + m2 + m3 + m4, dat)
 #' prepare_data2(~ m1[1] + m2 + m3 + m4, dat)
 #' prepare_data2(~ m1[1] + m2 + m3[4,median] + m4, dat)
@@ -32,9 +32,9 @@
 #' prepare_data2(dat, 4:7)
 #' prepare_data2(dat, m1[1], m2, m3, m4)
 #' prepare_data2(dat, m1[1], m2, m3[4,median], m4)
-#' prepare_data2(dat, m1, m2, m3 , m4, by =  ~ geschl)
-#' prepare_data2(dat, m1[4, median], m2, m3 , m4[5], by =  ~ geschl)
-#'
+#' prepare_data2(dat, m1, m2, m3, m4, by = ~ geschl)
+#' prepare_data2(dat, m1[4, median], m2, m3, m4[5], by =  ~ geschl)
+#' prepare_data2(dat, 1,2,6)
 #'
 
 prepare_data2 <- function(...){
@@ -115,7 +115,7 @@ prepare_data2.data.frame <- function(data,
       }
     })
 
-  # abfangen vo prepare_data2(data, . ~ gender)
+  # abfangen von prepare_data2(data, . ~ gender)
   if (grepl('~', measure.vars[1]))
     return(
       prepare_data2.formula(
@@ -477,7 +477,17 @@ cleaup_formula <- function(formula,
     }
   }
   
-  measure.vars <- all.vars(formula[[2L]]) 
+  measure.vars <- all.vars(formula[[2L]])
+  
+  if (length(setdiff(measure.vars,  names(data))) > 0) {
+    cat("\n Das wurde Uebergeben: ")
+    print(measure.vars)
+    cat("\n\n und diese sind falsch: \n")
+    print(setdiff(measure.vars,  names(data)))
+    stop("Die oben ausgegebenen Variablen sind nicht in den Daten vorhanden")
+  }
+  
+  
   measure.class <- get_classes(data[measure.vars])
   
   in_vars <- strsplit(as.character(formula[[2L]])[2L], " \\+ ")[[1L]]
@@ -485,7 +495,7 @@ cleaup_formula <- function(formula,
   if(any(dupl_measure)) {
     warning("stp25tools::prepare_data2():\n Es wurden folgende Parameter mehrfach übergeben:\n" ,
              paste( in_vars[dupl_measure], collapse =", "),
-             "\n  Sollte das gewollt sein bitte bei Tbll_desc() entsprechend die Einstellungen vornehmen."
+             "\n  Sollte das gewollt sein bitte bei \nTbll_desc(..., use.duplicated = TRUE) \nentsprechend die Einstellungen vornehmen."
              )
   }
   

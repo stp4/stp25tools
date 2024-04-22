@@ -99,7 +99,7 @@ return: clean_dots_formula: formula - Objekt
 
 dat<- data.frame(sex=1:2, m1=1:2,m2=1:2, m3=1:2, m4=1:2, m5=1:2, m6=1:2, geschl=1:2)
 
-prepare_data2(~ m1 + m2 + m3 + m4, dat)
+prepare_data2(~ m1 + m1 + m2 + m3 + m4, dat)
 prepare_data2(~ log(m1) + m2 + m3 + m4, dat)
 prepare_data2(~ m1[1] + m2 + m3 + m4, dat)
 prepare_data2(~ m1[1] + m2 + m3[4,median] + m4, dat)
@@ -107,9 +107,9 @@ prepare_data2(dat, m1, m2, m3, m4)
 prepare_data2(dat, 4:7)
 prepare_data2(dat, m1[1], m2, m3, m4)
 prepare_data2(dat, m1[1], m2, m3[4,median], m4)
-prepare_data2(dat, m1, m2, m3 , m4, by =  ~ geschl)
-prepare_data2(dat, m1[4, median], m2, m3 , m4[5], by =  ~ geschl)
-
+prepare_data2(dat, m1, m2, m3, m4, by = ~ geschl)
+prepare_data2(dat, m1[4, median], m2, m3, m4[5], by =  ~ geschl)
+prepare_data2(dat, 1,2,6)
 
 
 \dontrun{
