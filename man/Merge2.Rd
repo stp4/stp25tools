@@ -2,6 +2,7 @@
 % Please edit documentation in R/data-Rbind2.R, R/data-merge.R
 \name{Rbind2}
 \alias{Rbind2}
+\alias{Rbind3}
 \alias{Merge2}
 \alias{combine_data_frame}
 \title{Merge/Combine}
@@ -13,6 +14,8 @@ Rbind2(
   .use.label = TRUE,
   include.rownames = FALSE
 )
+
+Rbind3(.data, list = list(NULL), .id = "time", names = NULL, ...)
 
 Merge2(
   ...,
@@ -40,6 +43,8 @@ combine_data_frame(..., by = 1, prefix = NULL)
 
 \item{include.rownames}{logical}
 
+\item{list}{Spalten sie aufgedröselt werden list(t0 = 1:3, t1 = 4:6, t2 = 7:9)}
+
 \item{by, by.x, by.y}{id an merge}
 
 \item{all, all.x, all.y}{all an merge}
@@ -59,6 +64,8 @@ data.frame
 }
 \description{
 Rbind2: dplyr::bind_rows() mit labels + name der Daten
+
+Rbind3 Combinirt Zeilenweise aber es wird nur ein data.frame übergeben der anhand einer liste aufgesplittet wird
 
 Combine more then two Data Frames  Objects by Columns
 }

@@ -42,6 +42,7 @@ Rbind2 <- function (...,
                     .names = NULL,
                     .use.label = TRUE,
                     include.rownames = FALSE) {
+  
   data <- dplyr::bind_rows(..., .id = .id)
   
   if (include.rownames)   {
@@ -78,6 +79,34 @@ Rbind2 <- function (...,
   data
 }
 
+#' @rdname Merge2
+#' @param list  Spalten sie aufgedröselt werden list(t0 = 1:3, t1 = 4:6, t2 = 7:9)
+#' @description
+#' Rbind3 Combinirt Zeilenweise aber es wird nur ein data.frame übergeben der anhand einer liste aufgesplittet wird
+#' 
+#' @export
+Rbind3 <-
+  function(.data,
+           list = list(NULL),
+           .id = "time",
+           names = NULL,
+           ...) {
+    new_data <- NULL
+    times <- names(list)
+    if (is.null(names))
+      names <- names(.data[list[[1]]])
+    
+    for (i in times) {
+      new_data_i <- tibble::as_tibble(cbind(.id = i, .data[list[[i]]]))
+      names(new_data_i) <- c(.id, names)
+      if (is.null(new_data))
+        new_data <- new_data_i
+      else
+        new_data <- rbind(new_data, new_data_i)
+      
+    }
+    new_data
+  }
 
 
 # require(stp25tools)
