@@ -101,7 +101,7 @@ Merge2 <-
       xrwnm <-   union(xrwnm,  yrwnm)
       
       i_suffixes <<- i_suffixes + 1
-      rslt <-  merge(
+      rslt <- merge(
         x,
         y,
         by = by,

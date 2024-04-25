@@ -4,6 +4,7 @@
 \alias{Long}
 \alias{Long.formula}
 \alias{Long.data.frame}
+\alias{Long_rbind}
 \alias{Wide}
 \title{Long und Wide}
 \usage{
@@ -18,7 +19,18 @@ Long(x, ...)
   key = "variable",
   value = "value",
   id.vars = all.vars(by),
-  use.label = TRUE
+  use.label = TRUE,
+  .list = NULL
+)
+
+Long_rbind(
+  .data,
+  .list = list(NULL),
+  by = NULL,
+  .id = "time",
+  names = NULL,
+  .first.data = NULL,
+  ...
 )
 
 Wide(
@@ -43,7 +55,19 @@ Wide(
 
 \item{by, id.vars}{Items}
 
+\item{.list}{Spalten die aufgedröselt werden list(t0 = 1:3, t1 = 4:6, t2 = 7:9)}
+
+\item{.data}{}
+
+\item{.id}{.id = "time",}
+
+\item{names}{Alternative zu den Namen}
+
+\item{.first.data}{Optional wenn nicht by verwendet wird}
+
 \item{values_fill, names_sep, names_vary}{an tidyr::pivot_wider}
+
+\item{by}{Namen der Spalten die behalten werden}
 }
 \value{
 data.frame
@@ -52,6 +76,9 @@ tibble
 }
 \description{
 Erweiterung von tidyr::pivot_longer tidyr::pivot_wider
+
+Long_rbind Die Funktion kombiniert zeilenweise und ist eigentlich eine Long-Funktion.
+Namen und Labels verden verworfen und nur die Namen der ersten Liste werden behalten
 }
 \examples{
 
@@ -108,4 +135,30 @@ dat |> Wide(A ~ student + month)
 dat |> Wide(month ~ student, A)
 dat |> Wide(month ~ student, A, B)
 
+
+DF <- data.frame(
+id = 1:16,
+group = gl(2, 8, labels = c("Control", "Treat")),
+age = rnorm(16),
+a1 = rnorm(16),
+b1 = rnorm(16),
+c1 = rnorm(16),
+a2 = rnorm(16),
+b2 = rnorm(16),
+c2 = rnorm(16),
+a3 = rnorm(16),
+b3 = rnorm(16),
+c3 = rnorm(16)
+)
+
+Long(
+  DF,
+  .list = list(
+    t0 = c("a1", "b1", "c1"),
+    t1 = c("a2", "b2", "c2"),
+    t2 = c("a3", "b3", "c3")
+  ),
+  by =  ~ id + group + age,
+  names = c("a", "b", "c")
+)
 }

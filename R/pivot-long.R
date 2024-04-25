@@ -122,7 +122,10 @@ Long.data.frame <- function(x,
                             key = "variable",
                             value = "value",
                             id.vars = all.vars(by),
-                            use.label=TRUE) {
+                            use.label=TRUE,
+                            .list =NULL) {
+  if(!is.null(.list)) return( Long_rbind(x, .list, by=by, .id = key, ...))
+  
   measure.vars <-
     sapply(lazyeval::lazy_dots(...), function(y) {
       as.character(y[1])
@@ -169,3 +172,82 @@ Long.data.frame <- function(x,
   
   rstl
 }
+
+
+#' @rdname Long
+#'
+#' @param .list  Spalten die aufgedröselt werden list(t0 = 1:3, t1 = 4:6, t2 = 7:9)
+#' @param .data 
+#' @param by Namen der Spalten die behalten werden  
+#' @param .id  .id = "time",
+#' @param names  Alternative zu den Namen
+#' @param ... nicht verwendet
+#' @param .first.data  Optional wenn nicht by verwendet wird
+#'
+#' @description
+#' Long_rbind Die Funktion kombiniert zeilenweise und ist eigentlich eine Long-Funktion.
+#' Namen und Labels verden verworfen und nur die Namen der ersten Liste werden behalten
+#' 
+#' @export
+#' @examples
+#' 
+#' DF <- data.frame(
+#' id = 1:16,
+#' group = gl(2, 8, labels = c("Control", "Treat")),
+#' age = rnorm(16),
+#' a1 = rnorm(16),
+#' b1 = rnorm(16),
+#' c1 = rnorm(16),
+#' a2 = rnorm(16),
+#' b2 = rnorm(16),
+#' c2 = rnorm(16),
+#' a3 = rnorm(16),
+#' b3 = rnorm(16),
+#' c3 = rnorm(16)
+#' )
+#' 
+#' Long(
+#'   DF,
+#'   .list = list(
+#'     t0 = c("a1", "b1", "c1"),
+#'     t1 = c("a2", "b2", "c2"),
+#'     t2 = c("a3", "b3", "c3")
+#'   ),
+#'   by =  ~ id + group + age,
+#'   names = c("a", "b", "c")
+#' )
+Long_rbind <-
+  function(.data,
+           .list = list(NULL),
+           by = NULL,
+           .id = "time",
+           names = NULL,
+           .first.data = NULL,
+           ...) {
+    if (length(unique(lengths(.list))) != 1)
+      stop("Die Elemente in der Liste müssen alle gleich lang sein!")
+    new_data <- NULL
+    if (!is.null(by))
+      .first.data <- .data[all.vars(by)]
+    if (!is.null(.first.data))
+      .first.data <- tibble::as_tibble(.first.data)
+    
+    times <- names(.list)
+    if (is.null(names))
+      names <- names(.data[.list[[1]]])
+    
+    for (i in times) {
+      new_data_i <- tibble::as_tibble(cbind(.id = i, .data[.list[[i]]]))
+      names(new_data_i) <- c(.id, names)
+      new_data_i <- delet_label(new_data_i)
+      if (!is.null(.first.data))
+        new_data_i <- dplyr::bind_cols(.first.data, new_data_i)
+      
+      if (is.null(new_data))
+        new_data <- new_data_i
+      else
+        new_data <- rbind(new_data, new_data_i)
+    }
+    new_data
+    
+  }
