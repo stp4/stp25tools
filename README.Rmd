@@ -423,6 +423,17 @@ Long(
 )
 ```
 
+Wenn die Variablen - Namen gut trennbar sind geht auch folgendes.
+```{r}
+names(DF) <- c("id","group", "age","a.t1","b.t1","c.t1","a.t2","b.t2","c.t2","a.t3","b.t3","c.t3")
+
+DF |> Long(.~ id + group + age)  |>
+  tidyr::separate(variable, 
+                  c( "Laborwert", "Time"), 
+                  sep = "\\.") |>
+  Wide(Laborwert)
+
+```
 
 
 
