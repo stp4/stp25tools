@@ -294,6 +294,8 @@ DF |> Long(. ~ Treat)  |> tidyr::separate(variable, c("Time", "Laborwert"), sep=
 
 ### Wide
 
+Works internally with the function `tidyr::pivot_wider`, with added functionality using formulas.
+
 ```{r, include=FALSE}
 dat <- data.frame(
   month = rep(1:3, 2),
@@ -355,6 +357,10 @@ dat |> Wide(month ~ student, A , B)
 
 ### Long
 
+
+Combining several variables into **one** long variable. Works internally with the function
+ `tidyr::pivot_longer`.
+
 ```{r}
 
 df2 <-  
@@ -374,6 +380,52 @@ dat |>
 #   tidyr::spread(temp, value)
 
 ```
+
+
+Combining several variables into **several** long variables. Works internally with the function `base::rbind()`.
+
+```{r, include=FALSE}
+DF <- data.frame(
+id = 1:16,
+group = gl(2, 8, labels = c("Control", "Treat")),
+age = rnorm(16),
+a1 = rnorm(16),
+b1 = rnorm(16),
+c1 = rnorm(16),
+a2 = rnorm(16),
+b2 = rnorm(16),
+c2 = rnorm(16),
+a3 = rnorm(16),
+b3 = rnorm(16),
+c3 = rnorm(16)
+)
+DF <- tibble::as_tibble(DF)
+```
+
+
+
+```{r}
+head(DF)
+#' das gleiche wie oben
+#' DF |> Long( a1, a2, a3, by = ~ id + group + age)
+#' Long( a1 + a2+ a3  ~ id + group + age, DF)
+
+Long(
+  DF,
+  .list = list(
+    t0 = c("a1", "b1", "c1"),
+    t1 = c("a2", "b2", "c2"),
+    t2 = c("a3", "b3", "c3")
+  ),
+  by =  ~ id + group + age,
+  names = c("a", "b", "c"),
+  key = "time"
+)
+```
+
+
+
+
 
 ### Pivot-Transpose
 
@@ -397,6 +449,8 @@ transpose2(
 ```
 
 ### Rbind2()
+
+Works internally with the function `dplyr::bind_rows`.
 
 ```         
 Rbind2( ...,
@@ -424,6 +478,8 @@ str(dat2)
 ```
 
 ### Merge2
+
+Operates internally with the function `base::merge` and `base::Reduce`.
 
 ```{r}
 n<-10

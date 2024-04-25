@@ -1,6 +1,6 @@
 stp25tools
 ================
-2024-03-30
+2024-04-25
 
 <!-- output: -->
 <!--   html_document: -->
@@ -419,44 +419,36 @@ DF_sprk
 ```
 
     ## # A tibble: 56 × 5
-    ##    Laborwert Time  Treat   variable       x
-    ##    <fct>     <fct> <fct>   <fct>      <dbl>
-    ##  1 Albumin   t0    Control x        -0.563 
-    ##  2 Albumin   t1    Control x        -1.36  
-    ##  3 Albumin   t2    Control x         0.934 
-    ##  4 Albumin   t4    Control x        -0.143 
-    ##  5 Albumin   t0    Treat   x        -0.0120
-    ##  6 Albumin   t1    Treat   x         0.436 
-    ##  7 Albumin   t2    Treat   x        -0.834 
-    ##  8 Albumin   t4    Treat   x         0.0421
-    ##  9 Amylase   t0    Control x         0.152 
-    ## 10 Amylase   t1    Control x         0.834 
+    ##    Laborwert Time  Treat   variable      x
+    ##    <fct>     <fct> <fct>   <fct>     <dbl>
+    ##  1 Albumin   t0    Control x        -2.28 
+    ##  2 Albumin   t1    Control x         2.64 
+    ##  3 Albumin   t2    Control x         0.742
+    ##  4 Albumin   t4    Control x         0.814
+    ##  5 Albumin   t0    Treat   x         0.230
+    ##  6 Albumin   t1    Treat   x        -0.309
+    ##  7 Albumin   t2    Treat   x        -0.309
+    ##  8 Albumin   t4    Treat   x        -0.206
+    ##  9 Amylase   t0    Control x         0.617
+    ## 10 Amylase   t1    Control x        -1.90 
     ## # ℹ 46 more rows
 
 ``` r
 DF<- Wide(DF_sprk[-4], Time ) |> Wide(Laborwert , t0, t1, t2, t4)
 ```
 
-    ## 
-    ## 
-    ##    Achtung neue Version von Wide() !!!!
-    ## 
-    ## 
-    ## 
-    ##    Achtung neue Version von Wide() !!!!
-
     ## Using x as value column: use value to override.
 
 ``` r
-# So einen DF bekomme ich meist
+#' So einen DF bekomme ich meist
 DF
 ```
 
     ## # A tibble: 2 × 29
-    ##   Treat  t0_Albumin t0_Amylase t0_Lipase  t0_AST t0_ALT t0_Bilirubin t0_C.Peptid
-    ##   <fct>       <dbl>      <dbl>     <dbl>   <dbl>  <dbl>        <dbl>       <dbl>
-    ## 1 Contr…    -0.563       0.152    0.0208 -0.0982 -0.110        1.13       -1.79 
-    ## 2 Treat     -0.0120     -0.763    2.17    1.28   -1.90        -0.140      -0.489
+    ##   Treat   t0_Albumin t0_Amylase t0_Lipase t0_AST t0_ALT t0_Bilirubin t0_C.Peptid
+    ##   <fct>        <dbl>      <dbl>     <dbl>  <dbl>  <dbl>        <dbl>       <dbl>
+    ## 1 Control     -2.28       0.617    -0.390  0.296 1.50          0.933       0.846
+    ## 2 Treat        0.230     -2.10     -0.590 -0.862 0.0127       -1.11       -0.143
     ## # ℹ 21 more variables: t1_Albumin <dbl>, t1_Amylase <dbl>, t1_Lipase <dbl>,
     ## #   t1_AST <dbl>, t1_ALT <dbl>, t1_Bilirubin <dbl>, t1_C.Peptid <dbl>,
     ## #   t2_Albumin <dbl>, t2_Amylase <dbl>, t2_Lipase <dbl>, t2_AST <dbl>,
@@ -465,25 +457,29 @@ DF
     ## #   t4_Bilirubin <dbl>, t4_C.Peptid <dbl>
 
 ``` r
+#' Und das brauch ich zum Rechnen
 DF |> Long(. ~ Treat)  |> tidyr::separate(variable, c("Time", "Laborwert"), sep="_")
 ```
 
     ## # A tibble: 56 × 4
-    ##    Treat   Time  Laborwert   value
-    ##    <fct>   <chr> <chr>       <dbl>
-    ##  1 Control t0    Albumin   -0.563 
-    ##  2 Control t0    Amylase    0.152 
-    ##  3 Control t0    Lipase     0.0208
-    ##  4 Control t0    AST       -0.0982
-    ##  5 Control t0    ALT       -0.110 
-    ##  6 Control t0    Bilirubin  1.13  
-    ##  7 Control t0    C.Peptid  -1.79  
-    ##  8 Control t1    Albumin   -1.36  
-    ##  9 Control t1    Amylase    0.834 
-    ## 10 Control t1    Lipase    -0.0523
+    ##    Treat   Time  Laborwert  value
+    ##    <fct>   <chr> <chr>      <dbl>
+    ##  1 Control t0    Albumin   -2.28 
+    ##  2 Control t0    Amylase    0.617
+    ##  3 Control t0    Lipase    -0.390
+    ##  4 Control t0    AST        0.296
+    ##  5 Control t0    ALT        1.50 
+    ##  6 Control t0    Bilirubin  0.933
+    ##  7 Control t0    C.Peptid   0.846
+    ##  8 Control t1    Albumin    2.64 
+    ##  9 Control t1    Amylase   -1.90 
+    ## 10 Control t1    Lipase     0.500
     ## # ℹ 46 more rows
 
 ### Wide
+
+Works internally with the function `tidyr::pivot_wider`, with added
+functionality using formulas.
 
 ``` r
 dat
@@ -501,10 +497,6 @@ dat
 dat |> 
   Wide(student,  A)
 ```
-
-    ## 
-    ## 
-    ##    Achtung neue Version von Wide() !!!!
 
     ## # A tibble: 6 × 4
     ##   month     B   Amy   Bob
@@ -569,10 +561,6 @@ dat |> tidyr::pivot_wider(names_from = student,
 dat |> Wide(month ~ student, A, B)
 ```
 
-    ## 
-    ## 
-    ##    Achtung neue Version von Wide() !!!!
-
     ## # A tibble: 6 × 4
     ##   which month   Amy   Bob
     ##   <fct> <int> <dbl> <dbl>
@@ -594,10 +582,6 @@ Formulas are evaluated in two ways
 dat |> Wide(A ~ student)
 ```
 
-    ## 
-    ## 
-    ##    Achtung neue Version von Wide() !!!!
-
     ## # A tibble: 6 × 4
     ##   month     B   Amy   Bob
     ##   <int> <dbl> <dbl> <dbl>
@@ -612,10 +596,6 @@ dat |> Wide(A ~ student)
 dat |> Wide(A + B ~ student)
 ```
 
-    ## 
-    ## 
-    ##    Achtung neue Version von Wide() !!!!
-
     ## # A tibble: 3 × 5
     ##   month A_Amy A_Bob B_Amy B_Bob
     ##   <int> <dbl> <dbl> <dbl> <dbl>
@@ -626,10 +606,6 @@ dat |> Wide(A + B ~ student)
 ``` r
 dat |> Wide(A + B ~ student + month)
 ```
-
-    ## 
-    ## 
-    ##    Achtung neue Version von Wide() !!!!
 
     ## # A tibble: 1 × 12
     ##   A_Amy_1 A_Amy_2 A_Amy_3 A_Bob_1 A_Bob_2 A_Bob_3 B_Amy_1 B_Amy_2 B_Amy_3
@@ -644,10 +620,6 @@ dat |> Wide(A + B ~ student + month)
 dat |> Wide(month ~ student, A)
 ```
 
-    ## 
-    ## 
-    ##    Achtung neue Version von Wide() !!!!
-
     ## # A tibble: 3 × 3
     ##   month   Amy   Bob
     ##   <int> <dbl> <dbl>
@@ -658,10 +630,6 @@ dat |> Wide(month ~ student, A)
 ``` r
 dat |> Wide(month ~ student, A , B)
 ```
-
-    ## 
-    ## 
-    ##    Achtung neue Version von Wide() !!!!
 
     ## # A tibble: 6 × 4
     ##   which month   Amy   Bob
@@ -675,16 +643,13 @@ dat |> Wide(month ~ student, A , B)
 
 ### Long
 
+Combining several variables into **one** long variable. Works internally
+with the function `tidyr::pivot_longer`.
+
 ``` r
 df2 <-  
 dat |> Wide(student,  A, B)
-```
 
-    ## 
-    ## 
-    ##    Achtung neue Version von Wide() !!!!
-
-``` r
 df2  |> Long(A_Amy, A_Bob, B_Amy ,B_Bob, by =  ~ month) |> 
   tidyr::separate(variable , c('First', 'Last'))
 ```
@@ -733,6 +698,57 @@ dat |>
 #   tidyr::spread(temp, value)
 ```
 
+Combining several variables into **several** long variables. Works
+internally with the function `base::rbind()`.
+
+``` r
+head(DF)
+```
+
+    ## # A tibble: 6 × 12
+    ##      id group        age      a1      b1      c1      a2     b2     c2     a3
+    ##   <int> <fct>      <dbl>   <dbl>   <dbl>   <dbl>   <dbl>  <dbl>  <dbl>  <dbl>
+    ## 1     1 Control -0.643   -0.171   2.09   -1.48    0.964   1.85  -0.553  1.02 
+    ## 2     2 Control  1.39     0.123   0.0666 -0.943   1.07    2.21  -0.736 -1.74 
+    ## 3     3 Control  0.108    1.77    0.689  -0.678  -1.18   -1.01  -0.129 -0.240
+    ## 4     4 Control  1.62    -0.0131  0.927   0.292   0.0570  1.83  -2.00  -0.161
+    ## 5     5 Control -1.67     0.716   0.901   1.84   -1.01   -0.548  2.27   0.331
+    ## 6     6 Control  0.00376  0.522  -0.755  -0.0875  0.186   1.34   0.868  0.175
+    ## # ℹ 2 more variables: b3 <dbl>, c3 <dbl>
+
+``` r
+#' das gleiche wie oben
+#' DF |> Long( a1, a2, a3, by = ~ id + group + age)
+#' Long( a1 + a2+ a3  ~ id + group + age, DF)
+
+Long(
+  DF,
+  .list = list(
+    t0 = c("a1", "b1", "c1"),
+    t1 = c("a2", "b2", "c2"),
+    t2 = c("a3", "b3", "c3")
+  ),
+  by =  ~ id + group + age,
+  names = c("a", "b", "c"),
+  key = "time"
+)
+```
+
+    ## # A tibble: 48 × 7
+    ##       id group        age time        a       b       c
+    ##    <int> <fct>      <dbl> <chr>   <dbl>   <dbl>   <dbl>
+    ##  1     1 Control -0.643   t0    -0.171   2.09   -1.48  
+    ##  2     2 Control  1.39    t0     0.123   0.0666 -0.943 
+    ##  3     3 Control  0.108   t0     1.77    0.689  -0.678 
+    ##  4     4 Control  1.62    t0    -0.0131  0.927   0.292 
+    ##  5     5 Control -1.67    t0     0.716   0.901   1.84  
+    ##  6     6 Control  0.00376 t0     0.522  -0.755  -0.0875
+    ##  7     7 Control  0.185   t0     0.218  -0.683  -2.17  
+    ##  8     8 Control -0.748   t0    -0.683  -0.420  -0.135 
+    ##  9     9 Treat   -0.216   t0     0.739   0.387  -0.724 
+    ## 10    10 Treat   -1.96    t0     1.83    0.166  -0.852 
+    ## # ℹ 38 more rows
+
 ### Pivot-Transpose
 
 ``` r
@@ -766,6 +782,8 @@ transpose2(
     ## y y-axis       3       4       5
 
 ### Rbind2()
+
+Works internally with the function `dplyr::bind_rows`.
 
     Rbind2( ...,
             .id = "which",
@@ -811,6 +829,8 @@ str(dat2)
 
 ### Merge2
 
+Operates internally with the function `base::merge` and `base::Reduce`.
+
 ``` r
 n<-10
 df1 <- 
@@ -836,16 +856,16 @@ Merge2(df1, df2, df3, df4, by = "id")
 ```
 
     ##     id origin.x    N   P   C origin.y  foo1      X      Y origin.z origin.u
-    ## 1  P01        B 17.0 1.5 432        A  TRUE 146200 389200        E        E
-    ## 2  P02        B 13.0 2.6 493        E  TRUE 145900 380700        D        C
-    ## 3  P03        E 22.0 1.7 440        A FALSE 147100 377900        B        E
-    ## 4  P04        E 14.0 1.9 465        E FALSE 147000 386200        D        E
-    ## 5  P05        A 20.5 1.0 420        C FALSE 147200 371200        C        E
-    ## 6  P06        B 26.0 2.2 439        A FALSE 147300 381100        D        E
-    ## 7  P07        D 19.0 3.3 480        D  TRUE 146900 378700        B        B
-    ## 8  P08        C 20.5 2.6 461        E FALSE 146500 355900        B        A
-    ## 9  P09        B 26.0 1.0 457        A FALSE 147000 360700        C        B
-    ## 10 P10        B 15.5 0.7 456        E  TRUE 147100 364900        A        D
+    ## 1  P01        C 14.5 2.7 452        C FALSE 146900 380900        C        E
+    ## 2  P02        D 20.5 0.7 470        A  TRUE 146400 386000        D        D
+    ## 3  P03        C  9.0 1.2 483        C  TRUE 146500 390800        E        B
+    ## 4  P04        C 23.5 3.5 439        B FALSE 145900 393900        E        C
+    ## 5  P05        E 14.0 3.0 433        C  TRUE 146200 375700        A        D
+    ## 6  P06        A  9.5 3.4 469        C  TRUE 146600 367400        B        C
+    ## 7  P07        C 11.0 1.9 444        E  TRUE 146100 353800        E        E
+    ## 8  P08        A  9.5 1.9 472        C  TRUE 147400 388100        B        B
+    ## 9  P09        B  9.5 2.1 470        B  TRUE 147100 392800        B        B
+    ## 10 P10        C 22.5 2.5 413        A  TRUE 146100 360300        A        E
 
 ### cbind listenweise
 
@@ -1091,6 +1111,8 @@ auto_trans(x_trans)
     ##  [1]  1  1  1  1  2  2  2  2  3  3  3  3  3  3  7  7  7  7  9 20 30
     ## attr(,"name")
     ## [1] "Re-trans"
+    ## attr(,"suffix")
+    ## [1] ".rev"
 
 ``` r
 x <- 100 - x
@@ -1101,17 +1123,17 @@ auto_trans(x)
     ##  [8] 1.0986123 1.3862944 1.3862944 1.3862944 1.3862944 1.3862944 1.3862944
     ## [15] 2.0794415 2.0794415 2.0794415 2.0794415 2.3025851 3.0445224 3.4339872
     ## attr(,"link")
-    ## function(x)
-    ##   log(101 - x)
-    ## <bytecode: 0x000001b116161e68>
+    ## function(x) { log(101 - x) }
+    ## <bytecode: 0x0000025d8c559240>
     ## <environment: namespace:stp25tools>
     ## attr(,"inverse")
-    ## function(x)
-    ##   101 - (exp(x))
-    ## <bytecode: 0x000001b116160b98>
+    ## function(x) { 101 - (exp(x)) }
+    ## <bytecode: 0x0000025d8c557d20>
     ## <environment: namespace:stp25tools>
     ## attr(,"name")
     ## [1] "negative skew (max-Log)"
+    ## attr(,"suffix")
+    ## [1] ".log"
 
 ``` r
 par(mfrow=c(2,2))
