@@ -1,12 +1,17 @@
-#https://stackoverflow.com/questions/35553244/count-leading-zeros-between-the-decimal-point-and-first-nonzero-digit
-
-
-#' Round to the next order of magnitude
+#' Imputation of LOD
+#' 
+#' Limit Of Detection (LOD)  is the minimum detectable value. (blank signal + 3SD)
+#' 
+#' Replace NA by LOD*threshold and
+#' round to the next order of magnitude
+#' 
+#' https://github.com/jranke/chemCal
 #'
 #' @param x numeric  vector to round
-#' @param lod Limit of dedection (accuracy)
+#' @param lod  Limit of detection if NULL lod = min - 3sd
 #' @param threshold replace NA and x < lod by lod * threshold
 #' @param na.replace should NA be replaced by the lod  * threshold
+#' @param force.lod should all values smaller than the LOD be replaced?
 #' @param accuracy  significant digits for rounding
 #'
 #' @return vector, data.frame
@@ -23,48 +28,50 @@
 #'   )
 #'
 #'
-#' data.frame(x = signif(x, 3), x.lod = round_lod(x,  lod = .0035648))
+#' data.frame(x = signif(x, 3), x.lod = imputation_LOD(x,  lod = .0035648))
 #'
-#' data.frame(y = signif(y, 3), y.lod = round_lod(y,  lod = 49.156))
-
-round_lod <- function(x, ...) {
-  UseMethod("round_lod")
+#' data.frame(y = signif(y, 3), y.lod = imputation_LOD(y,  lod = 49.156))
+imputation_LOD <- function(x, ...) {
+  UseMethod("imputation_LOD")
 }
-#' @rdname round_lod
+#' @rdname imputation_LOD
 #' @export
-round_lod.default <-
+imputation_LOD.default <-
   function(x,
            lod = NULL,
            threshold = .5,
            na.replace = TRUE,
+           force.lod = TRUE,
            accuracy = 1) {
+    # LOD aus den Daten ableiten
     if (is.null(lod))
-      lod <- min(x, na.rm = TRUE)
+      lod <- min(x, na.rm = TRUE) - 3*sd(x, na.rm = TRUE)
+    # Messwert gilt häufig als quantitativ (bestimmt), wenn die Genauigkeit der 
+    # Messung um den Faktor 3.33 höher (besser) ist als die Genauigkeit der Nachweisgrenze.
+    # loq <- 3.33 * lod
     
+    # Anzahl an digits fuer die accuracy bestimmen
     if (abs(lod) < 1)
       dgt <-
         as.integer(log10(abs(lod) - floor(abs(lod))) * (-1) + accuracy)
     else
       dgt <- as.integer(log10(round(abs(lod))) * (-1) + accuracy)
     
-    x[x < lod] <- NA
+    if(force.lod) x[x < lod] <- lod * threshold
+    
     if (na.replace)
       x[is.na(x)] <- lod * threshold
     
-    cat(" -> digits =", dgt, ", LOD =", round(lod, dgt + 1), "\n")
-    
+    # cat("digits =", dgt, ", LOD =", round(lod, dgt + 1), "\n")
+    attr(x, "LOD") <- round(lod, dgt)
   
-   attr(x,  "LOD")  <- round(lod, dgt + 1)
-      print( attributes(x))
-      
-      
     if (dgt < 1)
       round(round(x), dgt)
     else
       round(x, dgt)
   }
 
-#' @rdname round_lod
+#' @rdname imputation_LOD
 #' @export
 #' @examples
 #'
@@ -76,22 +83,24 @@ round_lod.default <-
 #'   Label( x ="Asp", y ="Trp", z ="Leu")
 #' DF[1,1] <- NA
 #'
-#' round_lod(DF, lod =c(-.2, .2, .05), accuracy=3)
-#' round_lod(DF, lod = c(-.2, .2, .05), accuracy = 3, na.replace =FALSE)
-round_lod.data.frame <-
+#' imputation_LOD(DF, lod =c(-.2, .2, .05), accuracy=3)
+#' imputation_LOD(DF, lod = c(-.2, .2, .05), accuracy = 3, na.replace =FALSE)
+imputation_LOD.data.frame <-
   function(x,
            lod = NULL,
            threshold = .5,
            na.replace = TRUE,
+           force.lod =TRUE,
            accuracy = 1) {
     res <- purrr::map2(
       x,
       lod,
-      \(x, lod) round_lod.default(
+      \(x, lod) imputation_LOD.default(
         x,
         lod,
         threshold = threshold,
         na.replace = na.replace,
+        force.lod = force.lod,
         accuracy = accuracy
       )
     )
