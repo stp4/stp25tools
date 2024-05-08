@@ -109,3 +109,80 @@ dapply1 <-
   }
 
  
+ 
+#' @rdname Dapply
+#' 
+#' @description 
+#' Scaling and Centering of data.frame
+#'
+#' @param x,...,by data.frame, measure and by
+#' @param scale default = 1/2 (aproximativ range between -1 and +1)
+#' @param reference for factor which level devault = 1
+#' @param digits digits
+#'
+#' @return same as x
+#' @export
+#'
+#' @examples
+#' 
+#' #' set.seed(1)
+#' dat <- data.frame(
+#'   x = round(c(rnorm(5), rnorm(5, 10, 2)), 1),
+#'   y = c(12, 13, 10, 14, 10, 26, 25, 31, 28, 20) ,
+#'   g =  factor(c(T, T, T, T, T, F, F, F, F, F), c(T, F))
+#' )
+#' 
+#' 
+#' dat |>
+#'   scale_by(x, by = ~ g, scale = 1)  #|>  Tbll_desc(x, y, by =  ~ g)
+scale_by <- function(x,
+                     ...,
+                     by = NULL,
+                     scale = .5,
+                     reference = 1,
+                     digits = 3) {
+  measure.vars <-
+    sapply(lazyeval::lazy_dots(...), function(x) {
+      if (!is.character(x$expr))
+        as.character(x[1])
+    })
+  
+  if (!is.null(by))
+    by <- x[[all.vars(by)]]
+  if (is.factor(by))
+    by <- by == levels(by)[reference]
+  else if (!is.logical(by))
+    stop("by muss ein factor oder ein locical -Objekt sein!\n")
+  
+  
+  if (length(measure.vars) == 0)
+    dapply2(
+      x,
+      fun = function(x) {
+        if (is.numeric(x)) {
+          center <- mean(x[by], na.rm = TRUE)
+          cs <- sd(x[by], na.rm = TRUE) / scale
+          round(as.vector(scale(x, center, cs)), digits)
+        }
+        else
+          x
+      }
+    )
+  else
+    Dapply(
+      x,
+      ...,
+      fun = function(x) {
+        if (is.numeric(x)) {
+          center <- mean(x[by], na.rm = TRUE)
+          cs <- sd(x[by], na.rm = TRUE) / scale
+          round(as.vector(scale(x, center, cs)), digits)
+        }
+        else
+          x
+      }
+    )
+  
+}
+
+

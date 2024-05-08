@@ -145,7 +145,7 @@ imputation_LOD.data.frame <-
       
       if (any(w_remove.lod)) {
         w_remove.lod <- names(w_remove.lod)[w_remove.lod]
-        cat("\n I will remove folowing Items!\n")
+        cat("\n I will remove folowing Items! (LOD Limit ist " ,remove.lod*100, "%) \n")
         print(w_remove.lod)
         x[w_remove.lod] <- NULL
       }

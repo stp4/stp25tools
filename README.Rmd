@@ -1,7 +1,7 @@
 ---
 title: "stp25tools"
 date: "`r Sys.Date()`"
-output: github_document
+output: html_document
 ---
 
 
@@ -540,6 +540,27 @@ combine_data_frame(m, sd, by = NULL)
 ## data.frame manipulation
 
 This group includes functions for converting objects into data frames (`fix_to_df`, `fix_to_tibble`, `list_to_df`), adding elements to vectors or lists (`add_to`, `add_row_df`), adding and transforming missing data (`na_approx`, `auto_trans`), managing labels (`Label`, `delete_label`, `get_label`, `set_label`) and performing arithmetic operations (`auc_trapezoid`).
+
+
+### Imputation LOD
+
+```{r}
+
+#'  x <-
+#' c(.00049001,.0035648,.01,.0112,
+#'   .023212548,.00541257,.004041257,.458,.500)
+#' y <-
+#'   c(43.01,49.156,678.00112458964,789.023212548,
+#'     674.00049001,634.00541257,76.004041257,789.458,500
+#'   )
+#'   
+#' data.frame(x = signif(x, 3), x.lod = imputation_LOD(x,  lod = .0035648))
+#'
+#' data.frame(y = signif(y, 3), y.lod = imputation_LOD(y,  lod = 49.156))
+
+```
+
+
 
 ### add_to
 

@@ -5,6 +5,7 @@
 \alias{Dapply.formula}
 \alias{Dapply.data.frame}
 \alias{dapply2}
+\alias{scale_by}
 \alias{transpose2}
 \alias{transpose2.default}
 \alias{transpose2.tbl_df}
@@ -20,6 +21,8 @@ Dapply(x, ...)
 
 dapply2(x, fun = function(x) as.numeric(x), stringsAsFactors = FALSE, ...)
 
+scale_by(x, ..., by = NULL, scale = 0.5, reference = 1, digits = 3)
+
 transpose2(x, ...)
 
 \method{transpose2}{default}(x, ...)
@@ -31,7 +34,7 @@ transpose2(x, ...)
 transpose_factor(x, levels = names(x))
 }
 \arguments{
-\item{x}{data.frame}
+\item{x, ..., by}{data.frame, measure and by}
 
 \item{...}{key="Item"}
 
@@ -41,10 +44,20 @@ transpose_factor(x, levels = names(x))
 
 \item{stringsAsFactors}{logical: should character vectors be converted to factors?}
 
+\item{scale}{default = 1/2 (aproximativ range between -1 and +1)}
+
+\item{reference}{for factor which level devault = 1}
+
+\item{digits}{digits}
+
 \item{levels}{optional Levels}
+
+\item{x}{data.frame}
 }
 \value{
 data.frame
+
+same as x
 
 gleiches Objekt
 
@@ -54,6 +67,8 @@ data.frame
 Dapply, dapply2:  plyr::llply() + Label()
 
 dapply2: Copie of plyr::llply()
+
+Scaling and Centering of data.frame
 
 transpose2: Data Frame Transpose
 
@@ -78,6 +93,17 @@ rs1 <- Dapply(~ A + B,
               breaks = 3,
               labels = c(1:3))
               
+
+#' set.seed(1)
+dat <- data.frame(
+  x = round(c(rnorm(5), rnorm(5, 10, 2)), 1),
+  y = c(12, 13, 10, 14, 10, 26, 25, 31, 28, 20) ,
+  g =  factor(c(T, T, T, T, T, F, F, F, F, F), c(T, F))
+)
+
+
+dat |>
+  scale_by(x, by = ~ g, scale = 1)  #|>  Tbll_desc(x, y, by =  ~ g)
 
 
 transpose2(data.frame(pos = c("A", "B"), x = 1:2))
