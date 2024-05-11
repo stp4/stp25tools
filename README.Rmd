@@ -18,7 +18,10 @@ output: html_document
 
 The stp25tools package provides tools for data wrangling and statistical transformations.
 
-![](https://lifecycle.r-lib.org/reference/figures/lifecycle-experimental.svg)
+<!-- badges: start -->
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![CRAN status](https://www.r-pkg.org/badges/version/stp25stat2)](https://CRAN.R-project.org/package=stp25stat2)
+<!-- badges: end -->
 
 
 

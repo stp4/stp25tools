@@ -1,4 +1,4 @@
-https://github.com/ekstroem/MESS/blob/master/R/auc.R
+# https://github.com/ekstroem/MESS/blob/master/R/auc.R
 
 #' Compute the area under the curve for two vectors.
 #'
