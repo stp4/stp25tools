@@ -28,6 +28,8 @@ reorder2(
 \arguments{
 \item{x}{a vector of data,}
 
+\item{...}{levels and labels  male = 1, female = 0, 'div inter' = 3, other = 2}
+
 \item{levels, labels, exclude, ordered, nmax}{an die Funktion factor}
 
 \item{X, ...}{an reorder  x => an atomic vector, usually a factor
@@ -43,12 +45,7 @@ X    => a vector of the same length as x, whose subset of values for each unique
 factor
 }
 \description{
-Fancy copie der fun factor.
-}
-\examples{
-
-
-x <- c(1, 0, 0, 0, 1, 1, 0, 3, 2, 2)
+Fancy copy of the base function factor.
 
 x <- data.frame(x = x,
                 sex = factor2(
@@ -58,25 +55,16 @@ x <- data.frame(x = x,
                   div = 3,
                   other = 2
                 ))
-x
-levels(x$sex)
+}
+\examples{
 
-
-table(reorder2(x$sex, last = "other"))
-
-
-#' lattice::barchart(rev(reorder2(x$sex, last = "other")))
-
-# dat<-as.data.frame(table(x$sex))
-# lattice::barchart(
-#   reorder2(Var1, Freq, last="other") ~Freq,
-#   dat,
-#   origin =0)
-#
-# with(
-#   dat,
-#   reorder2(Var1, Freq, last="other"))
-#'
+x <- c(1, 0, 0, 0, 1, 1, 0, 3, 2, 2)
+factor2(x)
+factor2(x, levels = 1:0)
+factor2(x, labels = c("m", "f", "d"))
+factor2(x, male = 1, female = 0, 'div inter' = 3, other = 2)
+factor2(x, 0:3)
+factor2(x, 0:3, c("m", "f", "d", "o"))
 
  x <-
 c(

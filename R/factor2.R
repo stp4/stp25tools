@@ -1,10 +1,12 @@
 #' Factors
 #'
-#' Fancy copie der fun factor.
+#' Fancy copy of the base function factor.
 #'
 #' @param x a vector of data,
+#' @param ... levels and labels  male = 1, female = 0, 'div inter' = 3, other = 2
 #' @param levels,labels,exclude,ordered,nmax an die Funktion factor
-
+#'
+#'
 #' @return factor
 #' @export
 #'
