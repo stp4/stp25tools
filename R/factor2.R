@@ -9,8 +9,121 @@
 #' @export
 #'
 #' @examples
-#'
-#'
+#' 
+#' x <- c(1, 0, 0, 0, 1, 1, 0, 3, 2, 2)
+#' factor2(x)
+#' factor2(x, levels = 1:0)
+#' factor2(x, labels = c("m", "f", "d"))
+#' factor2(x, male = 1, female = 0, 'div inter' = 3, other = 2)
+#' factor2(x, 0:3)
+#' factor2(x, 0:3, c("m", "f", "d", "o"))
+
+factor2 <- function(x,
+                    ...,
+                    levels,
+                    labels,
+                    exclude = NA,
+                    ordered = is.ordered(x),
+                    nmax = NA) {
+  dots <- unlist(list(...))
+  lbl <-  attr(x, "label")
+  
+  if (length(dots) == 0 & missing(levels) & missing(labels)) {
+    x <- factor(x,
+                exclude = exclude,
+                ordered = ordered,
+                nmax = nmax)
+  } else if (!missing(levels)) {
+    x <- factor(
+      x,
+      levels = levels,
+      labels = labels,
+      exclude = exclude,
+      ordered = ordered,
+      nmax = nmax
+    )
+  } else if (!missing(labels)) {
+    if (is.factor(x))
+      lvls <-   levels(x)
+    else
+      lvls <- seq_along(labels)
+    x <- factor(
+      x,
+      levels = lvls,
+      labels = labels,
+      exclude = exclude,
+      ordered = ordered,
+      nmax = nmax
+    )
+  } else if (length(dots) != 0) {
+    labels <-  names(dots)
+    if (is.null(labels)) {
+      print(class(dots))
+      if (is.numeric(dots)) {
+        labels <- levels <- dots
+      }
+      else {
+        n_halbe <- length(dots) / 2
+        if (n_halbe %% 2 != 0) {
+          cat("\n Input: ")
+          print(dots)
+          stop(
+            "Entweder explizit die labels und levels angeben oder zwei gleich lange Vektoren übergeben."
+          )
+        }
+        levels <- dots[seq_len(n_halbe)]
+        labels <-  dots[seq_len(n_halbe) + n_halbe]
+      }
+    }
+    else
+      levels <- as.vector(dots)
+    
+    x <-
+      factor(
+        x,
+        levels = levels,
+        labels = labels,
+        exclude = exclude,
+        ordered = ordered,
+        nmax = nmax
+      )
+    
+  }
+  attr(x, "label") <- lbl
+  x
+}
+
+
+
+# factor2 <- function(x,
+#                     ...,
+#                     levels,
+#                     labels,
+#                     exclude = NA,
+#                     ordered = is.ordered(x),
+#                     nmax = NA) {
+#   dots <- unlist(list(...))
+#    lbl <-  attr(x, "label")
+#   if (missing(levels))
+#     labels <-  names(dots)
+#   if (missing(levels))
+#     levels <- as.vector(dots)
+#    
+#   x <-  
+#   factor(
+#     x,
+#     levels = levels,
+#     labels = labels,
+#     exclude = exclude,
+#     ordered = ordered,
+#     nmax = nmax
+#   )
+#   
+#     attr(x, "label") <- lbl
+#   x
+# }
+
+ 
 #' x <- c(1, 0, 0, 0, 1, 1, 0, 3, 2, 2)
 #'
 #' x <- data.frame(x = x,
@@ -21,46 +134,12 @@
 #'                   div = 3,
 #'                   other = 2
 #'                 ))
-#' x
-#' levels(x$sex)
-#'
-#'
-#' table(reorder2(x$sex, last = "other"))
-#'
-#'
-#' #' lattice::barchart(rev(reorder2(x$sex, last = "other")))
-#'
-#' # dat<-as.data.frame(table(x$sex))
-#' # lattice::barchart(
-#' #   reorder2(Var1, Freq, last="other") ~Freq,
-#' #   dat,
-#' #   origin =0)
-#' #
-#' # with(
-#' #   dat,
-#' #   reorder2(Var1, Freq, last="other"))
-#' #'
-factor2 <- function(x,
-                    ...,
-                    levels,
-                    labels,
-                    exclude = NA,
-                    ordered = is.ordered(x),
-                    nmax = NA) {
-  dots <- unlist(list(...))
-  if (missing(levels))
-    labels <-  names(dots)
-  if (missing(levels))
-    levels <- as.vector(dots)
-  factor(
-    x,
-    levels = levels,
-    labels = labels,
-    exclude = exclude,
-    ordered = ordered,
-    nmax = nmax
-  )
-}
+
+
+
+
+
+
 
 
 #' @rdname factor2
@@ -93,6 +172,7 @@ reorder2 <- function(x,
                      last = NULL,
                      threshold = NULL,
                      threshold.na.strings = "Other") {
+  lbl <-  attr(x, "label")
   if (missing(X)) {
     if (is.null(threshold)) {
       x <-
@@ -131,6 +211,8 @@ reorder2 <- function(x,
       for (ref in last)
         x <- relevel(x, ref)
   }
+  
+  attr(x, "label") <- lbl
   x
 }
 
