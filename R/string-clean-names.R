@@ -38,6 +38,9 @@ clean_names <- function(x, ...) {
 #' Speziell im Fall von readxl::read_excel sind die Spalten-Namen
 #' exakt so wie sie im Excel vorliegen, also mit allen Sonderzeichen.
 #' Diese funktion packt die Namen in die Labels und bereinigt die Spalten-Namen
+#' 
+#' clean_names()  ist praktich die identische Funktion aber fix_names 
+#' ist einfacher. clean_names() beherscht noch das cleanup.encoding(),
 #'
 #' @param x Data.frame
 #' @param tolower  lower case
@@ -81,6 +84,9 @@ fix_names <- function(x,
 }
 
 #' @rdname clean_names
+#' @description clean_names2 ist eine einfachere Variante von clean_names. Die Funktion gibt es nur für Vektoren.
+#' A short description...
+#' 
 #' @export
 clean_names2 <- function(x,
                          tolower = TRUE,
@@ -118,17 +124,21 @@ clean_names2 <- function(x,
 #' data.frame mit bereinigten namen.
 #' @export
 #' @examples 
+#' #' 
+#' df <- data.frame(
+#'   Öse = c(1, 2, 3, 1, 2, 3),
+#'   Löre = gl(2, 3, labels = c("Amy", "Bob")),
+#'   Fürn = c(9, 7, 6, 8, 6, 9),
+#'   Mäße = c(6, 7, 8, 5, 6, 7),
+#'   hüne=c(1, 2, 3, 1, 2, 3)
+#' )
 #' 
-#' # df <- data.frame(
-#' # Öse = c(1, 2, 3, 1, 2, 3),
-#' # Löre = gl(2, 3, labels = c("Amy", "Bob")),
-#' # Fürn = c(9, 7, 6, 8, 6, 9),
-#' # Mäße = c(6, 7, 8, 5, 6, 7),
-#' # hüne=c(1, 2, 3, 1, 2, 3)
-#' # )
+#' # Beide funktionen machen das gleiche 
+#' # nur fix_names ist etwas einfacher gestrickt.
+#' get_label(clean_names(df))
 #' 
-#' # clean_names(df)
-
+#' get_label(fix_names(df))
+#' 
 clean_names.data.frame <-
   function(x,
            label = TRUE,
