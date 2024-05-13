@@ -103,25 +103,32 @@ get_data <- function (file = NA,
   
   read_xlsx <- function() {
     if (is.null(na.strings)) {
-      readxl::read_excel(file,
-                         sheet = sheet,
-                         skip = skip,
-                         range = range)
+      dat <-
+        readxl::read_excel(file,
+                           sheet = sheet,
+                           skip = skip,
+                           range = range)
     }
     else{
-      readxl::read_excel(
-        file,
-        sheet = sheet,
-        skip = skip,
-        range = range,
-        na = na.strings
-      )
+      dat <-
+        readxl::read_excel(
+          file,
+          sheet = sheet,
+          skip = skip,
+          range = range,
+          na = na.strings
+        )
+    }
+    if (cleanup.names) {
+      fix_names(dat)
+    }
+    else {
+      dat
     }
   }
   
   read_csv <- function() {
-    
-    dat<-
+    dat <-
     read.table(
       file = file,
       header = header,
@@ -129,39 +136,49 @@ get_data <- function (file = NA,
       quote = quote,
       dec = dec,
       na.strings = na.strings,
-      skip =skip,
+      skip = skip,
+      check.names = FALSE,
       fill = fill,
       comment.char = comment.char
     )
     
-    if( skip > 0 & label > 0){
-      label <-
-        read.table(
-          file = file,
-          header = FALSE,
-          sep = sep,
-          quote = quote,
-          skip = label - 1,
-          nrows = 1
-        )
-      
-      if (any(is.na(label))) {
-        isna <- which(is.na(label))
-        
-        label[isna] <- names(dat)[isna]
-      }
-      names(label) <-  names(dat)
-      dat <- set_label2(dat, label)
-    } 
-    dat
+    if(cleanup.names) { 
+      fix_names(dat)
+    }
+    else {dat}
+    
+      # if( skip > 0 & label > 0){
+      # label <-
+      #   read.table(
+      #     file = file,
+      #     header = FALSE,
+      #     sep = sep,
+      #     quote = quote,
+      #     skip = label - 1,
+      #     nrows = 1
+      #   )
+      #   
+      #   if (any(is.na(label))) {
+      #     isna <- which(is.na(label))
+      #     
+      #     label[isna] <- names(dat)[isna]
+      #   }
+      #   names(label) <-  names(dat)
+      #   dat <- set_label2(dat, label)
+      # } 
+     # dat
   }
   
   read_sav <- function() {
     dat <-
-      haven::read_sav(file, 
-                      encoding = encoding,  
-                      user_na = user_na)
-    haven::as_factor(dat)
+      haven::read_sav(file, encoding = encoding, user_na = user_na)
+    dat <-  haven::as_factor(dat)
+    
+    if (cleanup.names) {
+      clean_names(dat, label = FALSE)
+    } else  {
+      dat
+    }
   }
   
   data <- data.frame(NULL)
@@ -169,7 +186,7 @@ get_data <- function (file = NA,
     # cat("\n\nread-text\n")
     # workaround
     # ich habe nachträglich die tabs eingebaut!
-    if( sep == ";" ) sep<- "" 
+    if( sep == ";" ) sep <- "" 
     data <-
       read.text2(file,
                  na.strings = na.strings,
@@ -193,10 +210,6 @@ get_data <- function (file = NA,
         data <- names_label_encoding(data)
         data <- character_encoding(data)
         data <- factor_levels_encoding(data)
-      }
-      if (cleanup.names) {
-        data <-
-          clean_names(data, label = FALSE)
       }
     }
     else {
