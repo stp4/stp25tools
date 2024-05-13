@@ -2,6 +2,7 @@
 % Please edit documentation in R/string-clean-names.R
 \name{clean_names}
 \alias{clean_names}
+\alias{clean_names2}
 \alias{clean_names.data.frame}
 \alias{clean_names.default}
 \alias{paste_names}
@@ -12,6 +13,15 @@
 \title{clean_names}
 \usage{
 clean_names(x, ...)
+
+clean_names2(
+  x,
+  tolower = TRUE,
+  abbreviate = TRUE,
+  minlength = 25,
+  replace = c(`\%` = "_pct", `#` = "_cnt", `¨` = "", `&+` = "_and_", `@+` = "_at_", `_`
+    = ".")
+)
 
 \method{clean_names}{data.frame}(
   x,
@@ -50,17 +60,17 @@ abbreviate2(x, minlength = 4)
 
 \item{...}{alles}
 
-\item{label, labels}{label}
-
-\item{cleanup.encoding, from, to}{logical  UTF-8 to latin}
-
 \item{tolower}{alles zu kleinbuschstaben}
-
-\item{unique}{eindeitige namen}
 
 \item{abbreviate, minlength}{Abbkürzung}
 
 \item{replace}{named character string}
+
+\item{label, labels}{label}
+
+\item{cleanup.encoding, from, to}{logical  UTF-8 to latin}
+
+\item{unique}{eindeitige namen}
 
 \item{collapse}{an  character string to separate the results ", "}
 

@@ -33,6 +33,81 @@ clean_names <- function(x, ...) {
   UseMethod("clean_names")
 }
 
+#' Fix names of data.frames
+#'
+#' Speziell im Fall von readxl::read_excel sind die Spalten-Namen
+#' exakt so wie sie im Excel vorliegen, also mit allen Sonderzeichen.
+#' Diese funktion packt die Namen in die Labels und bereinigt die Spalten-Namen
+#'
+#' @param x Data.frame
+#' @param tolower  lower case
+#' @param abbreviate,name_length Abbreviate strings to at least name_length characters,
+#' @param replace character to replace
+#'
+#' @return Data.frame
+#' @export
+#'
+#' @examples
+#' 
+#' #   fl_new <- "Raw data/Mai_Markiert_LT_Cases_Jan2018-Dez2022.xlsx"
+#' # DF <- readxl::read_excel(fl_new, range = "A1:z15", sheet = 1) |> 
+#' #   fix_names()
+fix_names <- function(x,
+                      tolower = TRUE,
+                      abbreviate = TRUE,
+                      name_length = 25,
+                      replace =
+                        c(
+                          "%" =  "_pct",
+                          "#" =  "_cnt",
+                          "\u00A8" = "",
+                          "&+" = "_and_",
+                          "@+" = "_at_",
+                          "_" = "."
+                        )) {
+  labl <- names(x)
+  
+  mns <- clean_names2(
+    labl,
+    tolower = tolower,
+    abbreviate = abbreviate,
+    minlength = name_length,
+    replace = replace
+  )
+  
+  names(labl) <- mns
+  names(x) <- mns
+  set_label(x, labl)
+}
+
+#' @rdname clean_names
+#' @export
+clean_names2 <- function(x,
+                         tolower = TRUE,
+                         abbreviate = TRUE,
+                         minlength = 25,
+                         replace =
+                           c(
+                             "%" =  "_pct",
+                             "#" =  "_cnt",
+                             "\u00A8" = "",
+                             "&+" = "_and_",
+                             "@+" = "_at_",
+                             "_" = "."
+                           )) {
+  x <- stringi::stri_trans_general(x, "latin-ascii")
+  if (tolower) x <- tolower(x)
+  if(!is.null(replace)) x <- stringr::str_replace_all(str = x, pattern = replace)
+  x <- gsub("[^a-zA-Z0-9_]+", "\\.", x)
+  if (abbreviate) {
+    x <- abbreviate(x, minlength = 25, named = FALSE)
+    x <- gsub("\\.+", ".", x)
+  }
+  x <- gsub("(^\\.+|\\.+$)", "", x)
+  
+  make.names(x, unique = TRUE)
+}
+
 
 #' @rdname clean_names
 #' 
