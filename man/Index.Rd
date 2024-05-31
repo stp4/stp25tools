@@ -46,7 +46,7 @@ Sum2(
 )
 }
 \arguments{
-\item{x}{data.frame}
+\item{x, data}{data.frame x ist entwerde formula oder ein data.frame}
 
 \item{...}{alles weitere}
 

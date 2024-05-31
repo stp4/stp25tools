@@ -129,10 +129,10 @@ c(
   multi = "notest"
 )
 }
-#'\dontrun{
- measure <- c("geschl", "1" , "3:5", 1)
- stp25tools:::makeNamesNum(measure,  data=dat)
- }
+
+ # measure <- c("geschl", "1" , "3:5", 1)
+ # stp25tools:::makeNamesNum(measure,  data=dat)
+ 
 
 \dontrun{
 make_formula("a", "b")

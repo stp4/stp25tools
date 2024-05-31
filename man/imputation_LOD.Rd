@@ -14,7 +14,8 @@ imputation_LOD(x, ...)
   threshold = 0.0707,
   na.replace = TRUE,
   force.lod = TRUE,
-  accuracy = 1
+  accuracy = 1,
+  ...
 )
 
 \method{imputation_LOD}{data.frame}(
@@ -24,11 +25,14 @@ imputation_LOD(x, ...)
   na.replace = TRUE,
   force.lod = TRUE,
   accuracy = 1,
-  remove.lod = 1/2
+  remove.lod = 1/2,
+  ...
 )
 }
 \arguments{
 \item{x}{numeric  vector to round}
+
+\item{...}{platzhalter}
 
 \item{lod}{Limit of detection if NULL lod = min - 3sd}
 
@@ -76,6 +80,9 @@ DF <-
   Label( x ="Asp", y ="Trp", z ="Leu")
 DF[1,1] <- NA
 
-imputation_LOD(DF, lod =c(-.2, .2, .05), accuracy=3)
-imputation_LOD(DF, lod = c(-.2, .2, .05), accuracy = 3, na.replace =FALSE)
+# imputation_LOD(DF, lod =c(-.2, .2, .05), accuracy=3)
+# imputation_LOD(DF, lod = c(-.2, .2, .05), accuracy = 3, na.replace =FALSE)
+ #  Error in imputation_LOD.data.frame(DF, lod = c(-0.2, 0.2, 0.05), accuracy = 3) : 
+ #  Negative LOD machen Physikalisch keinen Sinn.
+
 }

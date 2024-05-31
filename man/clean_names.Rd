@@ -84,22 +84,23 @@ character
 character
 }
 \description{
-Alternative zu janitor  
+Alternative zu `janitor`
 Quelle https://drdoane.com/clean-consistent-column-names/
+
+clean_names2() ist eine einfachere Variante von clean_names(). 
+Die Funktion gibt es nur für Vektoren. Die Umlaute werden nicht mit Ue oder oe
+übersätzt.
 
 clean_names(): Input data.frame  output ist ein 
 data.frame mit bereinigten namen.
 
 paste_names:  paste names
 
-paste_names_levels:  paste names + Labels
+paste_names_levels:  paste names + Labels Die funktion ist gedacht für 
+Copy and Paste.
 
-cleansing_umlaute:
-
-
-cleansing_umlaute(): Funktion entfernt stoerende Umlaute,
-Funktion entfernt stoerende Umlaute, unten stehende Liste ggf. erweitern
-sprintf("%X", as.integer(charToRaw("Ae")))
+cleansing_umlaute(): 
+Funktion entfernt stoerende Umlaute, unten stehende Liste ggf. erweitern.
 
 cleansing_umlaute2: Sonderzeichen aus socisurvy
 }
@@ -122,16 +123,21 @@ c(
 
 
 
+#' 
+df <- data.frame(
+  Öse = c(1, 2, 3, 1, 2, 3),
+  Löre = gl(2, 3, labels = c("Amy", "Bob")),
+  Fürn = c(9, 7, 6, 8, 6, 9),
+  Mäße = c(6, 7, 8, 5, 6, 7),
+  hüne=c(1, 2, 3, 1, 2, 3)
+)
 
-# df <- data.frame(
-# Öse = c(1, 2, 3, 1, 2, 3),
-# Löre = gl(2, 3, labels = c("Amy", "Bob")),
-# Fürn = c(9, 7, 6, 8, 6, 9),
-# Mäße = c(6, 7, 8, 5, 6, 7),
-# hüne=c(1, 2, 3, 1, 2, 3)
-# )
+# Beide funktionen machen das gleiche 
+# nur fix_names ist etwas einfacher gestrickt.
+get_label(clean_names(df))
 
-# clean_names(df)
+get_label(fix_names(df))
+
 abbreviate2(c("Hallö", "Halü"))
 
 }

@@ -53,21 +53,21 @@ Wide(
 
 \item{use.label}{attribut label verwenden}
 
-\item{by, id.vars}{Items}
+\item{by}{Names of the columns to be kept}
 
-\item{.list}{Spalten die aufgedröselt werden list(t0 = 1:3, t1 = 4:6, t2 = 7:9)}
+\item{id.vars}{Items}
+
+\item{.list}{Columns that are being unraveled list(t0 = 1:3, t1 = 4:6, t2 = 7:9)}
 
 \item{.data}{}
 
 \item{.id}{.id = "time",}
 
-\item{names}{Alternative zu den Namen}
+\item{names}{Alternative to the names}
 
-\item{.first.data}{Optional wenn nicht by verwendet wird}
+\item{.first.data}{Optional if 'by' is not used}
 
 \item{values_fill, names_sep, names_vary}{an tidyr::pivot_wider}
-
-\item{by}{Namen der Spalten die behalten werden}
 }
 \value{
 data.frame
@@ -77,8 +77,8 @@ tibble
 \description{
 Erweiterung von tidyr::pivot_longer tidyr::pivot_wider
 
-Long_rbind Die Funktion kombiniert zeilenweise und ist eigentlich eine Long-Funktion.
-Namen und Labels verden verworfen und nur die Namen der ersten Liste werden behalten
+Long_rbind The function combines row by row and is actually a long function.
+Names and labels are discarded and only the names from the first list are kept
 }
 \examples{
 

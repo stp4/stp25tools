@@ -34,7 +34,7 @@ transpose2(x, ...)
 transpose_factor(x, levels = names(x))
 }
 \arguments{
-\item{x, ..., by}{data.frame, measure and by}
+\item{x}{data.frame}
 
 \item{...}{key="Item"}
 
@@ -44,6 +44,8 @@ transpose_factor(x, levels = names(x))
 
 \item{stringsAsFactors}{logical: should character vectors be converted to factors?}
 
+\item{by}{data.frame, measure and by}
+
 \item{scale}{default = 1/2 (aproximativ range between -1 and +1)}
 
 \item{reference}{for factor which level devault = 1}
@@ -51,8 +53,6 @@ transpose_factor(x, levels = names(x))
 \item{digits}{digits}
 
 \item{levels}{optional Levels}
-
-\item{x}{data.frame}
 }
 \value{
 data.frame
@@ -98,7 +98,7 @@ rs1 <- Dapply(~ A + B,
 dat <- data.frame(
   x = round(c(rnorm(5), rnorm(5, 10, 2)), 1),
   y = c(12, 13, 10, 14, 10, 26, 25, 31, 28, 20) ,
-  g =  factor(c(T, T, T, T, T, F, F, F, F, F), c(T, F))
+  g =  factor(c(TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE), c(TRUE, FALSE))
 )
 
 

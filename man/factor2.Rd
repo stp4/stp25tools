@@ -2,6 +2,7 @@
 % Please edit documentation in R/factor2.R
 \name{factor2}
 \alias{factor2}
+\alias{add_NA}
 \alias{reorder2}
 \title{Factors}
 \usage{
@@ -12,8 +13,11 @@ factor2(
   labels,
   exclude = NA,
   ordered = is.ordered(x),
-  nmax = NA
+  nmax = NA,
+  add.na = FALSE
 )
+
+add_NA(x, na.string = "n.a.")
 
 reorder2(
   x,
@@ -32,7 +36,11 @@ reorder2(
 
 \item{levels, labels, exclude, ordered, nmax}{an die Funktion factor}
 
-\item{X, ...}{an reorder  x => an atomic vector, usually a factor
+\item{add.na}{should NA be included}
+
+\item{na.string}{replacement for NA}
+
+\item{X}{an reorder  x => an atomic vector, usually a factor
 X    => a vector of the same length as x, whose subset of values for each unique level of x determines the eventual order of that level.}
 
 \item{decreasing}{an ordere logical}

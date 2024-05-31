@@ -10,10 +10,14 @@ auto_trans(x, ...)
 
 \method{auto_trans}{data.frame}(x, add = TRUE, ...)
 
-\method{auto_trans}{default}(x, treshhold = 1)
+\method{auto_trans}{default}(x, treshhold = 1, ...)
 }
 \arguments{
 \item{x}{Vector}
+
+\item{...}{weitere Argumente}
+
+\item{add}{spalte hinzufügen oder ersätzen}
 
 \item{treshhold}{grundlienie}
 }
