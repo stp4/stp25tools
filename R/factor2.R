@@ -5,7 +5,7 @@
 #' @param x a vector of data,
 #' @param ... levels and labels  male = 1, female = 0, 'div inter' = 3, other = 2
 #' @param levels,labels,exclude,ordered,nmax an die Funktion factor
-#'
+#' @param add.na should NA be included
 #'
 #' @return factor
 #' @export
@@ -26,7 +26,8 @@ factor2 <- function(x,
                     labels,
                     exclude = NA,
                     ordered = is.ordered(x),
-                    nmax = NA) {
+                    nmax = NA,
+                    add.na = FALSE) {
   dots <- unlist(list(...))
   lbl <-  attr(x, "label")
   
@@ -70,7 +71,7 @@ factor2 <- function(x,
           cat("\n Input: ")
           print(dots)
           stop(
-            "Entweder explizit die labels und levels angeben oder zwei gleich lange Vektoren übergeben."
+            "Entweder explizit die labels und levels angeben oder zwei gleich lange Vektoren uebergeben."
           )
         }
         levels <- dots[seq_len(n_halbe)]
@@ -91,11 +92,28 @@ factor2 <- function(x,
       )
     
   }
+  
+  if(add.na) x <- add_NA(x)
+  
   attr(x, "label") <- lbl
   x
 }
-
-
+#' @rdname factor2
+#' @param na.string replacement for NA
+#' @export
+add_NA  <- 
+  function (x, na.string = "n.a."){
+    if (!is.factor(x)) x <- factor(x)
+    if (!anyNA(x)) return(x)
+    
+    label  <-  attr(x, "label")
+    ll <- levels(x)
+    ll <- c(ll, na.string)
+    x <-  factor(x, levels = ll, exclude = NULL)
+    x[ which(is.na(x))] <- na.string
+    attr(x, "label")  <- label
+    x
+  }
 
 # factor2 <- function(x,
 #                     ...,
@@ -146,7 +164,7 @@ factor2 <- function(x,
 
 #' @rdname factor2
 #'
-#' @param X,... an reorder  x => an atomic vector, usually a factor
+#' @param X an reorder  x => an atomic vector, usually a factor
 #' X	=> a vector of the same length as x, whose subset of values for each unique level of x determines the eventual order of that level.
 #' @param decreasing an ordere logical
 #' @param last character
