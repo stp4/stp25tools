@@ -13,6 +13,7 @@
 #' @param na.replace should NA be replaced by the lod  * threshold
 #' @param force.lod should all values smaller than the LOD be replaced?
 #' @param accuracy  significant digits for rounding
+#' @param ... platzhalter
 #'
 #' @return vector, data.frame
 #' @export
@@ -42,12 +43,13 @@ imputation_LOD.default <-
            # 1/sqrt(2)
            na.replace = TRUE,
            force.lod = TRUE,
-           accuracy = 1) {
+           accuracy = 1,
+           ...) {
     # LOD aus den Daten ableiten
     if (is.null(lod))
       lod <- min(x, na.rm = TRUE) - 3 * sd(x, na.rm = TRUE)
-    # Messwert gilt häufig als quantitativ (bestimmt), wenn die Genauigkeit der
-    # Messung um den Faktor 3.33 höher (besser) ist als die Genauigkeit der Nachweisgrenze.
+    # Messwert gilt hauufig als quantitativ (bestimmt), wenn die Genauigkeit der
+    # Messung um den Faktor 3.33 hoeher (besser) ist als die Genauigkeit der Nachweisgrenze.
     # loq <- 3.33 * lod
     
     # Anzahl an digits fuer die accuracy bestimmen
@@ -85,8 +87,11 @@ imputation_LOD.default <-
 #'   Label( x ="Asp", y ="Trp", z ="Leu")
 #' DF[1,1] <- NA
 #'
-#' imputation_LOD(DF, lod =c(-.2, .2, .05), accuracy=3)
-#' imputation_LOD(DF, lod = c(-.2, .2, .05), accuracy = 3, na.replace =FALSE)
+#' # imputation_LOD(DF, lod =c(-.2, .2, .05), accuracy=3)
+#' # imputation_LOD(DF, lod = c(-.2, .2, .05), accuracy = 3, na.replace =FALSE)
+#'  #  Error in imputation_LOD.data.frame(DF, lod = c(-0.2, 0.2, 0.05), accuracy = 3) : 
+#'  #  Negative LOD machen Physikalisch keinen Sinn.
+#' 
 imputation_LOD.data.frame <-
   function(x,
            lod = NULL,
@@ -95,7 +100,8 @@ imputation_LOD.data.frame <-
            na.replace = TRUE,
            force.lod = TRUE,
            accuracy = 1,
-           remove.lod = 1 / 2) {
+           remove.lod = 1 / 2,
+           ...) {
     # test input
     my <- names(x)
     
@@ -115,7 +121,7 @@ imputation_LOD.data.frame <-
       }
     } else {
       if (length(my) != length(lod))
-        stop("Wenn LOD ohne Namen übergeben werden müssen diese gleich lang sein wie die Daten!")
+        stop("Wenn LOD ohne Namen übergeben werden muessen diese gleich lang sein wie die Daten!")
     }
     
     if (any(lod < 0))

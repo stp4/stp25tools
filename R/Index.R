@@ -2,7 +2,7 @@
 #'  
 #' Summen Index eine Summenfunktion mit der Erweiterung zum Umcodieren
 #' 
-#' @param x data.frame
+#' @param x,data data.frame x ist entwerde formula oder ein data.frame
 #' @param ... alles weitere
 #' @return Vektor
 #' @export

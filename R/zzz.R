@@ -19,6 +19,8 @@
 #' @importFrom stats as.formula formula na.exclude na.omit na.pass relevel reorder update
 #' @importFrom utils head read.table type.convert
 #' @importFrom Hmisc all.is.numeric
+#' @importFrom purrr map2
+ 
  
  
  

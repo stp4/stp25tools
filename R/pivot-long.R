@@ -6,7 +6,7 @@
 #' @param data data
 #' @param key,value Namen fuer die Ausgabe
 #' @param use.label attribut label verwenden
-#' @param by,id.vars Items
+#' @param id.vars Items
 #' @param ... weitere Argument 
 #'
 #' @return data.frame
@@ -176,17 +176,17 @@ Long.data.frame <- function(x,
 
 #' @rdname Long
 #'
-#' @param .list  Spalten die aufgedröselt werden list(t0 = 1:3, t1 = 4:6, t2 = 7:9)
+#' @param .list  Columns that are being unraveled list(t0 = 1:3, t1 = 4:6, t2 = 7:9)
 #' @param .data 
-#' @param by Namen der Spalten die behalten werden  
+#' @param by Names of the columns to be kept 
 #' @param .id  .id = "time",
-#' @param names  Alternative zu den Namen
-#' @param ... nicht verwendet
-#' @param .first.data  Optional wenn nicht by verwendet wird
+#' @param names  Alternative to the names
+#' @param ... Alternative to the names
+#' @param .first.data  Optional if 'by' is not used
 #'
 #' @description
-#' Long_rbind Die Funktion kombiniert zeilenweise und ist eigentlich eine Long-Funktion.
-#' Namen und Labels verden verworfen und nur die Namen der ersten Liste werden behalten
+#' Long_rbind The function combines row by row and is actually a long function.
+#' Names and labels are discarded and only the names from the first list are kept
 #' 
 #' @export
 #' @examples

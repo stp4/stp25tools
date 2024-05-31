@@ -363,10 +363,10 @@ get_classes <-
 #' @description makeNamesNum: aus Nummern die Namen extrahieren
 #' @param  meAsNum  logical welche sind Zahlen
 #' @examples
-#' #'\dontrun{
-#'  measure <- c("geschl", "1" , "3:5", 1)
-#'  stp25tools:::makeNamesNum(measure,  data=dat)
-#'  }
+#' 
+#'  # measure <- c("geschl", "1" , "3:5", 1)
+#'  # stp25tools:::makeNamesNum(measure,  data=dat)
+#'  
 makeNamesNum <- function(measure,
                          data,
                          meAsNum = grepl("^[[:digit:]]", measure)

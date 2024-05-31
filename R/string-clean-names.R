@@ -1,6 +1,6 @@
 #' clean_names
 #' 
-#' Alternative zu janitor  
+#' Alternative zu `janitor`
 #' Quelle https://drdoane.com/clean-consistent-column-names/
 #'
 #' @param data data.frame oder character
@@ -34,14 +34,14 @@ clean_names <- function(x, ...) {
 }
 
 #' Fix names of data.frames
-#'
-#' Speziell im Fall von readxl::read_excel sind die Spalten-Namen
-#' exakt so wie sie im Excel vorliegen, also mit allen Sonderzeichen.
-#' Diese funktion packt die Namen in die Labels und bereinigt die Spalten-Namen
 #' 
-#' clean_names()  ist praktich die identische Funktion aber fix_names 
-#' ist einfacher. clean_names() beherscht noch das cleanup.encoding(),
-#'
+#' Insbesondere bei `readxl::read_excel` werden die Spaltennamen
+#' genau so übernommen, wie sie in Excel vorkommen, also mit allen Sonderzeichen.
+#' Diese Funktion packt die Namen in die Labels und bereinigt die Spaltennamen.
+#' Die Funktion ist praktisch die gleiche wie `clean_names()`, aber `fix_names()` 
+#' ist einfacher aufgebaut. 
+#' `clean_names()` enthält die Funktion `cleanup.encoding()`.
+#' #'
 #' @param x Data.frame
 #' @param tolower  lower case
 #' @param abbreviate,name_length Abbreviate strings to at least name_length characters,
@@ -84,8 +84,10 @@ fix_names <- function(x,
 }
 
 #' @rdname clean_names
-#' @description clean_names2 ist eine einfachere Variante von clean_names. Die Funktion gibt es nur für Vektoren.
-#' A short description...
+#' @description clean_names2() ist eine einfachere Variante von clean_names(). 
+#' Die Funktion gibt es nur für Vektoren. Die Umlaute werden nicht mit Ue oder oe
+#' übersätzt.
+#' 
 #' 
 #' @export
 clean_names2 <- function(x,
@@ -253,7 +255,8 @@ paste_names <-
 
 #' @rdname clean_names
 #' @description 
-#' paste_names_levels:  paste names + Labels
+#' paste_names_levels:  paste names + Labels Die funktion ist gedacht für 
+#' Copy and Paste.
 #'
 #' @param collapse  an  character string to separate the results ", "
 #'
@@ -274,12 +277,9 @@ paste_names_levels <- function(x,
 
 #' @rdname clean_names
 #' @description 
-#'  cleansing_umlaute:
+#' cleansing_umlaute(): 
+#' Funktion entfernt stoerende Umlaute, unten stehende Liste ggf. erweitern.
 #'
-#'
-#' cleansing_umlaute(): Funktion entfernt stoerende Umlaute,
-#' Funktion entfernt stoerende Umlaute, unten stehende Liste ggf. erweitern
-#' sprintf("%X", as.integer(charToRaw("Ae")))
 #' @param x string
 #' @export
 #'
@@ -332,53 +332,55 @@ clean_space <- function(x) {
   sub(",", ".", x)
 }
 
-
-#-- Functions stolen from library(report)
-scrubber <- function(text.var, 
-                     rm.quote = TRUE, 
-                     fix.comma = TRUE, ...){
-  x <- reducer(Trim(clean(text.var)))
-  if (rm.quote) {
-    x  <- gsub('\"', "", x)
-  }
-  if (fix.comma) {
-    x <- gsub(" ,", ",", x)
-  }
-  ncx <- nchar(x)
-  x <- paste0(Trim(substring(x, 1, ncx - 1)), substring(x, ncx))
-  x[is.na(text.var)] <- NA
-  x
-}
-
-
-#internal not exported
-reducer <- function(x) gsub("\\s+", " ", x)
-
-#internal not exported
-Trim <- function (x) gsub("^\\s+|\\s+$", "", x)
-
-#internal not exported
-unblanker <- function(x) subset(x, nchar(x)>0)
-
-#internal not exported
-clean <- function(text.var) sub("\\s+", " ", gsub("\r|\n|\t", " ", text.var))
-
-mgsub <- function(pattern, 
-                  replacement = NULL, 
-                  text.var,
-                  fixed = TRUE, ...){
-  key <- data.frame(pat=pattern, rep=replacement,
-                    stringsAsFactors = FALSE)
-  msubs <-function(K, x, ...){
-    sapply(seq_len(nrow(K)), function(i){
-      x <<- gsub(K[i, 1], K[i, 2], x, fixed = fixed, ...)
-    }
-    )
-    return(gsub(" +", " ", x))
-  }
-  x <- Trim(msubs(K=key, x=text.var, ...))
-  return(x)
-}
+# Wird in stp25projekt verwendet
+#
+# #-- Functions stolen from library(report)
+# scrubber <- function(text.var, 
+#                      rm.quote = TRUE, 
+#                      fix.comma = TRUE, ...){
+#   x <- reducer(Trim(clean(text.var)))
+#   if (rm.quote) {
+#     x  <- gsub('\"', "", x)
+#   }
+#   if (fix.comma) {
+#     x <- gsub(" ,", ",", x)
+#   }
+#   ncx <- nchar(x)
+#   x <- paste0(Trim(substring(x, 1, ncx - 1)), substring(x, ncx))
+#   x[is.na(text.var)] <- NA
+#   x
+# }
+# # sprintf("%X", as.integer(charToRaw("Ae")))
+# 
+# 
+# #internal not exported
+# reducer <- function(x) gsub("\\s+", " ", x)
+# 
+# #internal not exported
+# Trim <- function (x) gsub("^\\s+|\\s+$", "", x)
+# 
+# #internal not exported
+# unblanker <- function(x) subset(x, nchar(x)>0)
+# 
+# #internal not exported
+# clean <- function(text.var) sub("\\s+", " ", gsub("\r|\n|\t", " ", text.var))
+# 
+# mgsub <- function(pattern, 
+#                   replacement = NULL, 
+#                   text.var,
+#                   fixed = TRUE, ...){
+#   key <- data.frame(pat=pattern, rep=replacement,
+#                     stringsAsFactors = FALSE)
+#   msubs <-function(K, x, ...){
+#     sapply(seq_len(nrow(K)), function(i){
+#       x <<- gsub(K[i, 1], K[i, 2], x, fixed = fixed, ...)
+#     }
+#     )
+#     return(gsub(" +", " ", x))
+#   }
+#   x <- Trim(msubs(K=key, x=text.var, ...))
+#   return(x)
+# }
 
 
  

@@ -101,9 +101,12 @@ separate_multiple_choice <- function(x,
   mssn <- "zz_9999"
   is_numeric_x <- FALSE
   
-  if (!is.null(na.strings))   x[which(x == na.strings)] <- NA
+  if (!is.null(na.strings))   
+    x[which(x == na.strings)] <- NA
   
-  if (is.null(prafix))  prafix <- paste0(gsub("^.*\\$", "", deparse(substitute(x))), "_")
+  if (is.null(prafix)) 
+    prafix <- paste0(gsub("^.*\\$", "", deparse(substitute(x))), "_")
+  
   prafix <- gsub("[^[:alnum:]_]", "", prafix)
   
   if (is.numeric(x)) {
@@ -154,8 +157,24 @@ Das was unten kommt wird aufgedroeselt.\n"
   ## breit zu lang
   res <-
     na.exclude(tidyr::gather(res, q2 , val, -id, -xxxx))   
+  
+ # cat("\n Test Modus\n")
+ # print(res)
+  
+  
+  
+  ##[Superseded]
+  # gather(data,  "key", "value", x, y, z) 
+  # is equivalent to
+  # pivot_longer(data, , c(x, y, z), names_to = "key", values_to = "value")
+  
   res <- 
     tidyr::spread(dplyr::mutate(res, q2 = 1), val, q2)
+  ##[Superseded]
+  # spread(data, key, value) is equivalent to   
+  # pivot_wider(data, names_from = key, values_from = value)
+  # See more details in vignette("pivot").
+  
   res[-1:-2][is.na(res[-1:-2])] <- 0
   
   

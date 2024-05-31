@@ -90,7 +90,6 @@ dapply2 <- function (x,
 #'
 #' @param fun an dplyr default = as.numeric
 #' @param stringsAsFactors an data.frame default = FALSE
-#' @param ...
 #'
 #' @noRd
 #'
@@ -115,7 +114,7 @@ dapply1 <-
 #' @description 
 #' Scaling and Centering of data.frame
 #'
-#' @param x,...,by data.frame, measure and by
+#' @param by data.frame, measure and by
 #' @param scale default = 1/2 (aproximativ range between -1 and +1)
 #' @param reference for factor which level devault = 1
 #' @param digits digits
@@ -129,7 +128,7 @@ dapply1 <-
 #' dat <- data.frame(
 #'   x = round(c(rnorm(5), rnorm(5, 10, 2)), 1),
 #'   y = c(12, 13, 10, 14, 10, 26, 25, 31, 28, 20) ,
-#'   g =  factor(c(T, T, T, T, T, F, F, F, F, F), c(T, F))
+#'   g =  factor(c(TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE), c(TRUE, FALSE))
 #' )
 #' 
 #' 

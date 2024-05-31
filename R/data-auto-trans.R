@@ -7,6 +7,7 @@
 #'
 #' @param x Vector
 #' @param treshhold grundlienie
+#' @param ... weitere Argumente
 #'
 #' @return Vector mit attr link, inverse und name
 #' @export
@@ -32,13 +33,13 @@
 #' hist(auto_trans(x.pos))
 #'
 auto_trans <- function(x, ...){
-  
   UseMethod("auto_trans")
 }
 
 
 
 #' @rdname auto_trans
+#' @param add spalte hinzufügen oder ersätzen
 #' @export
 #' @examples
 #' 
@@ -88,7 +89,8 @@ auto_trans.data.frame <- function(x,
 #' @export
 auto_trans.default <-
   function(x,
-           treshhold = 1) {
+           treshhold = 1,
+           ...) {
     if (!is.null(attr(x, "inverse"))) {
       x <-  do.call(attr(x, "inverse"), list(x))
       attr(x, "link") <-   NULL
