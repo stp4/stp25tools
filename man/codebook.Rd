@@ -85,19 +85,43 @@ DF <-
 
 
 
-cdb<- codebook(DF)
-save_codebook(DF)
-cdb
+cdb <- codebook(DF)
 
+#' Haendisch aendern
 cdb$Value.Labels[2] <- "factor: Big | Small"
 
-(use_codebook(df, cdb))
 
 }
+ 
+#' Speichern des Codebook
+ save_codebook(
+    DF,
+    "codebook.xlsx"
+ )
+ 
+ 
  \dontrun{
-# save_data(DF, "demo.xlsx")
-# use_codebook(DF, codebook(DF))
-# use_codebook(file = "demo.xlsx")
+ 
+#' Labels und Factoren ubernehmen  
+   use_codebook(
+      DF, 
+      file = "demo.xlsx", 
+      sheet.codebook = 2
+      )
+
+#' Nur die Labels  ubernehmen  
+   use_codebook(
+         DF, 
+         file = "demo.xlsx", 
+         sheet.codebook = 2,
+         value.labels = NULL
+) 
+
+#' Strucktur aus einem anderen data.frame uebernehmen
+#  use_codebook(DF1, codebook(DF))
+
+#' Daten und Strucktur im Excell-File
+#  use_codebook(file = "demo.xlsx")
 }
 
 \dontrun{
@@ -111,6 +135,8 @@ dat <-  Label(
   ),
   month="Monat", student="Student", A= "Anzahl", B= "B-Score" )
 
+
+#' Speichern der Kompletten Strucktur
 save_data(dat, "demo.xlsx")
 }
 

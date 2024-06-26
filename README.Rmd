@@ -1,7 +1,7 @@
 ---
 title: "stp25tools"
 date: "`r Sys.Date()`"
-output: html_document
+output: github_document
 ---
 
 
@@ -593,6 +593,8 @@ add_to(df, c("Erste Zeile", "Zweite"))
 add_to(df, c("Erste Zeile" = 1, "letzte" = 5))
 ```
 
+
+
 ```{r}
 add_to(df, list("G", 5), pos = -1)
 add_to(df, data.frame(  Source = c("G", "H"),
@@ -835,6 +837,18 @@ table(z)
 Wrap string: split_string(), wrap_string(), wrap_sentence(), wrap_string_at()
 
 Clean up data frame and strings clean_names, cleansing_umlaute, cleansing_umlaute2
+
+```
+fl <- "Raw data/Mai_Markiert_LT_Cases_Jan2018-Dez2022.xlsx"
+DF <- 
+   readxl::read_excel(fl_new, 
+                      range = "A1:z15", 
+                      sheet = 1) |> 
+   fix_names()
+
+```
+
+
 
 ```{r}
 clean_names(tibble::tibble("Öli"=1:3, "p-k"=1:3, "95%-CI"=4:6) )
