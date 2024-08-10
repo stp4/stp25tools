@@ -4,10 +4,10 @@
 
 #' add_to
 #'
-#' @param x Dataframe ore list
+#' @param x Dataframe or list
 #' @param ... what to add
 #'
-#' @return  data.frame ore list
+#' @return  data.frame or list
 #' @export
 #'
 #' @examples
@@ -30,6 +30,46 @@
 add_to <-function(x, ...){
   UseMethod("add_to")
 }
+
+
+
+#' Manually change values in data.frames
+#'
+#' @param x data.fram to be canged.
+#' @param row which row or which condition sex == "male"
+#' @param col which column
+#' @param value the value to be changed
+#'
+#' @return data.frame
+#' @export
+#'
+#' @examples
+#' 
+#' DF <- data.frame(
+#' pat.id = 1:5,
+#' sex = factor(c("male", NA, "female", "male", "female")),
+#' hight = c(170, 178, 185, 169, 10)
+#' )
+#' 
+#' add_value(DF, 5, 3, NA)
+#' add_value(DF, pat.id == 2, sex, "female")
+#' add_value(DF, hight < 100, hight, 175)
+#' 
+add_value <- function(x, row, col, value = NA) {
+  row <- substitute(row)
+  if (!is.numeric(row))
+    row <- eval(row, x, parent.frame())
+  col <- substitute(col)
+  if (!is.numeric(col))
+    col <- as.character(col)
+  x[row, col] <- value
+  x
+}
+
+
+
+
+
 
 
 #' @rdname add_to

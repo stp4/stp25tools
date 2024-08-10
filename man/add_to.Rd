@@ -13,12 +13,12 @@ add_to(x, ...)
 \method{add_to}{data.frame}(x, ...)
 }
 \arguments{
-\item{x}{Dataframe ore list}
+\item{x}{Dataframe or list}
 
 \item{...}{what to add}
 }
 \value{
-data.frame ore list
+data.frame or list
 }
 \description{
 add_to
