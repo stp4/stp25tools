@@ -117,89 +117,97 @@ use_codebook <-
            sheet.codebook = 2,
            names = "names",
            label = "label",
-           value.labels = "value.labels") {
-    if (is.null(data)) {
-      cat("\nUse data from file", file, "\n")
-      data <-
-        readxl::read_excel(file,
-                           sheet = sheet.data)
-      print(head(data))
-    }else{
-      cat("\nI am using the provided data.\n")
-    }
-    
-    if (is.null(codebook)) {
-      cat("\nLabel and levels from file", file, "\n")
-      codebook <-
-        readxl::read_excel(file,
-                           sheet = sheet.codebook)
-      print(head(codebook))
-    }
-    
-    label <- codebook[[label]]
-    names(label) <- codebook[[names]]
-    
-    
-    
-    if (!is.null(value.labels)) {
-      
-      for (i in grep("factor\\: ", codebook[[value.labels]])) {
-        
-        fct <- codebook[[value.labels]][i]
-        fct <- gsub("factor\\: ", "", fct)
-        fct <- unlist(stringr::str_split(fct, " \\| "))
-        
-        old <- data[[codebook[[names]][i]]]
-        if (is.character(old))  {
-          cat("\n", codebook[[names]][i] , ": character -> factor")
-          
-          
-          data[[codebook[[names]][i]]] <- factor(old, fct)
-        }
-        else if (is.factor(old)) {
-          
-         if( identical(levels(old), fct) ) {
-           cat("\n", codebook[[names]][i] , ": no change")
-         }
-          else{
-          cat("\n", codebook[[names]][i] , ": factor -> factor")
-            
-            if(nlevels(old) != length(fct) ){
-              
-              cat("\n\nFehler!!\n\n Old: ", nlevels(old), "New: ", length(fct),"\n")
-              cat("\n Old: \n")
-              
-              print(levels(old))
-              cat("\n New: \n")
-              
-              print(fct)
-              cat("\n")
-            }
-            
-          data[[codebook[[names]][i]]] <- 
-            factor(as.numeric(old), seq_len(nlevels(old)), fct)
-          }
-          }
-        else if (is.numeric(old)) {
-          cat("\n", codebook[[names]][i] , ": numeric -> factor")
-          data[[codebook[[names]][i]]] <- factor(old,
-                                                 seq_len(nlevels(old)),
-                                                 fct)
-        }
-      }
-      
-      for (i in grep("numeric\\:", codebook[[value.labels]])) {
-        if (!is.numeric(data[[codebook[[names]][i]]])) {
-          cat("\n", codebook[[names]][i] , ": numeric -> factor")
-          data[[codebook[[names]][i]]] <-
-            as.numeric(as.character(data[[codebook[[names]][i]]]))
-        }
-        cat("\n", codebook[[names]][i] , ": no change")
-      }
-      
-    }
-    set_label2(data, label)
-  }
+           value.labels = "value.labels")    function(data = NULL,
+                                                      codebook = NULL,
+                                                      file = "demo.xlsx",
+                                                      sheet.data = 1,
+                                                      sheet.codebook = 2,
+                                                      names = "names",
+                                                      label = "label",
+                                                      value.labels = "value.labels") {
+             if (is.null(data)) {
+               cat("\n(1)\nUse data from file", file, "\n")
+               data <-
+                 readxl::read_excel(file,
+                                    sheet = sheet.data)
+               print(head(data))
+             }else{
+               cat("\n(1)\nI am using the provided data.\n")
+               print(deparse(substitute(data)))
+               print(head(data))
+               if(is.null(codebook) & (file == "demo.xlsx")){
+                 stop("\nI need the codebook either as file location or as data.frame\n")
+               }
+               
+             }
+             
+             if (is.null(codebook)) {
+               cat("\n(2)\nLabel and levels from file:\n", file, "\n")
+               codebook <-try (
+                 readxl::read_excel(file,
+                                    sheet = sheet.codebook)
+               )
+               if(inherits(codebook, "try-error")) {
+                 cat("\nYou have to tell me the correct sheet of the codebook!\nI am now trying to guess the page.\n\n")
+                 codebook <- readxl::read_excel(file, sheet = 1)
+               }
+               print(head(codebook))
+             }
+             
+             label <- codebook[[label]]
+             names(label) <- codebook[[names]]
+             
+             if (!is.null(value.labels)) {
+               cat("\n(3) I am going to work on the value.labels\n")
+               for (i in grep("factor\\: ", codebook[[value.labels]])) {
+                 fct <- codebook[[value.labels]][i]
+                 fct <- gsub("factor\\: ", "", fct)
+                 fct <- unlist(stringr::str_split(fct, " \\| "))
+                 
+                 old <- data[[codebook[[names]][i]]]
+                 if (is.character(old))  {
+                   cat("\n", codebook[[names]][i] , ": character -> factor")
+                   data[[codebook[[names]][i]]] <- factor(old, fct)
+                 }
+                 else if (is.factor(old)) {
+                   
+                   if( identical(levels(old), fct) ) {
+                     cat("\n", codebook[[names]][i] , ": no change")
+                   }
+                   else{
+                     cat("\n", codebook[[names]][i] , ": factor -> factor")
+                     if(nlevels(old) != length(fct) ){
+                       cat("\n\nFehler!!\n\n Old: ", nlevels(old), "New: ", length(fct),"\n")
+                       cat("\n Old: \n")
+                       print(levels(old))
+                       cat("\n New: \n")
+                       print(fct)
+                       cat("\n")
+                     }
+                     data[[codebook[[names]][i]]] <- 
+                       factor(as.numeric(old), seq_len(nlevels(old)), fct)
+                   }
+                 }
+                 else if (is.numeric(old)) {
+                   cat("\n", codebook[[names]][i] , ": numeric -> factor")
+                   data[[codebook[[names]][i]]] <- 
+                     factor(old,seq_len(nlevels(old)),fct)
+                 }
+               }
+               
+               for (i in grep("numeric\\:", codebook[[value.labels]])) {
+                 if (!is.numeric(data[[codebook[[names]][i]]])) {
+                   cat("\n", codebook[[names]][i] , ": numeric -> factor")
+                   data[[codebook[[names]][i]]] <-
+                     as.numeric(as.character(data[[codebook[[names]][i]]]))
+                 }
+                 cat("\n", codebook[[names]][i] , ": no change")
+               }
+               
+             }
+             cat("\n\n(4) \nI am in the process of label restoration.\n")
+             set_label2(data, label)
+           }
 
 
 
