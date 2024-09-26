@@ -170,7 +170,7 @@ alternativ function `labelled::set_variable_labels`
 
 
 
-### Generate a data dictionnary
+### Codebook Generate a data dictionnary
 
 Save data and reconstruct from codebook
 
@@ -185,7 +185,8 @@ Save data and reconstruct from codebook
 codebook(DF2)
 ```
 
-Die funktion `look_for` macht fast das gleiche aber ist eventuell sinnvoll wenn ein Variable gesucht wird. 
+ 
+Die Funktion `look_for` macht zwar nicht dasselbe, kann aber nützlich sein, wenn eine Variable gesucht wird.
 ```{r}
 labelled::look_for(DF2, "KG")
 ```

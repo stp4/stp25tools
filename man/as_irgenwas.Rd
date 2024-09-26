@@ -2,25 +2,13 @@
 % Please edit documentation in R/as_numeric.R
 \name{as_irgenwas}
 \alias{as_irgenwas}
-\alias{cut_bmi}
 \alias{as_numeric}
 \alias{as_numeric.numeric}
 \alias{as_numeric.character}
 \alias{as_numeric.factor}
 \alias{as_logical}
-\alias{as_factor}
-\alias{as_cut}
-\alias{rev.factor}
-\title{as_irgenwas}
+\title{as_numeric and as_logical}
 \usage{
-cut_bmi(
-  x,
-  breaks = c(-Inf, 15, 16, 18.5, 25, 30, 35, 40, Inf),
-  labels = c("Very severely underweight", "Severely underweight", "Underweight",
-    "Normal", "Overweight", "Obese Class I", "Obese Class II", "Obese Class III"),
-  n = 4
-)
-
 as_numeric(x, ...)
 
 \method{as_numeric}{numeric}(x, ...)
@@ -30,21 +18,12 @@ as_numeric(x, ...)
 \method{as_numeric}{factor}(x, na.string = "", dec = c(".", ","), ...)
 
 as_logical(x)
-
-as_factor(x, ...)
-
-as_cut(x, ...)
-
-\method{rev}{factor}(x)
 }
 \arguments{
 \item{x}{vector}
 
-\item{breaks, labels}{an cut}
-
-\item{n}{anzahl der BMI-Kategorien default = 4 Underweight,        Normal,    Overweight, Obese Class I}
-
-\item{...}{readr::parse_number trim_ws    Should leading and trailing whitespace (ASCII spaces and tabs) be trimmed from each field before parsing it?}
+\item{...}{readr::parse_number trim_ws
+Should leading and trailing whitespace (ASCII spaces and tabs) be trimmed from each field before parsing it?}
 
 \item{na.string}{missing}
 
@@ -56,36 +35,17 @@ as_cut(x, ...)
 vector
 }
 \description{
-cut_bmi
-
- BMI: WHO   (kg/m2)
-
-     Very severely underweight 15
-     Severely underweight 15-16
-     Underweight 16-18.5
-     Normal (healthy weight) 18.5-25
-     Overweight 25-30
-     Obese Class I (Moderately obese) 30-35
-     Obese Class II (Severely obese) 35-40
-     Obese Class III (Very severely obese) 40
-
 as_numeric: character, factor to numeric
 
+as_numeric: beim Type character wird die Funktion readr::parse_number ausgeführt.
+parse_number(x, na = c(".", ","), trim_ws=TRUE)
+
+as_numeric: beim Type factor wird zu erst versucht aus den labels  die Zahlen zu extrahieren 
+und erst wenn das nicht geht die levels (1:n).
+
 as_logical: alles mit zwei Merkmalen zu logical
-
-as_factor: haven_labelled zu factor
-
-as_cut: cut mit label
-
-as_rev: reverse factor
 }
 \examples{
-
-table(cut_bmi(c(10, 15, 16, 18.5, 25, 30, 35, 40, 45)))
-table(cut_bmi(c(10, 15, 16, 18.5, 25, 30, 35, 40, 45), n=4))
-table(cut_bmi(c(10, 15, 16, 18.5, 25, 30, 35, 40, 45), n=5))
-table(cut_bmi(c(10, 15, 16, 18.5, 25, 30, 35, 40, 45), n=6))
-
 
 dummy <- factor(c("3", "4", "6"))
 as_numeric(dummy)

@@ -15,20 +15,15 @@
 #' @importFrom readr parse_number
 #' @importFrom tools file_ext
 #' @importFrom stp25settings get_opt
-#' @importFrom magrittr %>%
+# @importFrom magrittr %>%
 #' @importFrom stats as.formula formula na.exclude na.omit na.pass relevel reorder update
 #' @importFrom utils head read.table type.convert
 #' @importFrom Hmisc all.is.numeric
 #' @importFrom purrr map2
- 
- 
- 
- 
 
- 
-
-
- 
+#' @importFrom Hmisc cut2
+#' @export
+Hmisc::cut2
  
 #' @param x string
 #' @param search_string Meine Methoden

@@ -1,6 +1,8 @@
 #' Factors
 #'
 #' Fancy copy of the base function factor.
+#' 
+#' as_factor, factor2, cut_bmi, reorder2, relevel2, add_NA
 #'
 #' @param x a vector of data,
 #' @param ... levels and labels  male = 1, female = 0, 'div inter' = 3, other = 2
@@ -115,50 +117,88 @@ add_NA  <-
     x
   }
 
-# factor2 <- function(x,
-#                     ...,
-#                     levels,
-#                     labels,
-#                     exclude = NA,
-#                     ordered = is.ordered(x),
-#                     nmax = NA) {
-#   dots <- unlist(list(...))
-#    lbl <-  attr(x, "label")
-#   if (missing(levels))
-#     labels <-  names(dots)
-#   if (missing(levels))
-#     levels <- as.vector(dots)
-#    
-#   x <-  
-#   factor(
-#     x,
-#     levels = levels,
-#     labels = labels,
-#     exclude = exclude,
-#     ordered = ordered,
-#     nmax = nmax
-#   )
-#   
-#     attr(x, "label") <- lbl
+#' @rdname factor2
+#' @description as_factor: haven_labelled zu factor
+#' @export
+as_factor <- function(x, 
+                      ...) {
+  if (inherits(x, "haven_labelled"))
+    haven::as_factor(x)
+  else {
+    lbl <- attr(x, "label")
+    x <- factor(x, ...)
+    attr(x, "label") <- lbl
+    x
+  }
+}
+
+
+# @rdname factor2
+# @description as_cut: cut mit label
+# @export
+# as_cut <- function(x, ...) {
+#   lbl <- attr(x, "label")
+#   x <- cut(as.numeric(x), ...)
+#   attr(x, "label") <- lbl
 #   x
 # }
 
- 
-#' x <- c(1, 0, 0, 0, 1, 1, 0, 3, 2, 2)
+
+#' @rdname factor2
+#' @description cut_bmi
+#' 
+#'  BMI: WHO   (kg/m2)
 #'
-#' x <- data.frame(x = x,
-#'                 sex = factor2(
-#'                   x,
-#'                   male = 1,
-#'                   female = 0,
-#'                   div = 3,
-#'                   other = 2
-#'                 ))
-
-
-
-
-
+#'      Very severely underweight 15
+#'      Severely underweight 15-16
+#'      Underweight 16-18.5
+#'      Normal (healthy weight) 18.5-25
+#'      Overweight 25-30
+#'      Obese Class I (Moderately obese) 30-35
+#'      Obese Class II (Severely obese) 35-40
+#'      Obese Class III (Very severely obese) 40
+#' 
+#'
+#' @param x vector
+#' @param breaks,labels an cut 
+#' @param n anzahl der BMI-Kategorien default = 4 Underweight,        Normal,    Overweight, Obese Class I 
+#' 
+#' @export
+#' @examples 
+#' 
+#' table(cut_bmi(c(10, 15, 16, 18.5, 25, 30, 35, 40, 45)))
+#' table(cut_bmi(c(10, 15, 16, 18.5, 25, 30, 35, 40, 45), n=4))
+#' table(cut_bmi(c(10, 15, 16, 18.5, 25, 30, 35, 40, 45), n=5))
+#' table(cut_bmi(c(10, 15, 16, 18.5, 25, 30, 35, 40, 45), n=6))
+#' 
+cut_bmi <- function(x,
+                    breaks = c(-Inf, 15, 16, 18.5, 25, 30, 35, 40, Inf),
+                    labels = c(
+                      "Very severely underweight",
+                      "Severely underweight",
+                      "Underweight",
+                      "Normal",
+                      "Overweight",
+                      "Obese Class I",
+                      "Obese Class II",
+                      "Obese Class III"
+                    ),
+                    n = 4) {
+  if (n == 3)
+    cut(x, breaks[c(1, 4:5,  9)], labels[c(3:5)])
+  else if (n == 4)
+    cut(x,  breaks[c(1, 4:6,  9)],  labels[c(3:6)])
+  else if (n == 5)
+    cut(x, breaks[c(1, 3:6,  9)], labels[c(2:6)])
+  else if (n == 6)
+    cut(x, breaks[c(1, 3:7,  9)], labels[c(2:7)])
+  else if (n == 7)
+    cut(x, breaks[c(1, 2:7,  9)], labels[c(1:7)])
+  else
+    cut(x, breaks, labels)
+  
+  
+}
 
 
 

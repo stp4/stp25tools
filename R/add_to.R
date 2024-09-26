@@ -58,7 +58,7 @@ add_to <-function(x, ...){
 add_value <- function(x, row, col, value = NA) {
   row <- substitute(row)
   if (!is.numeric(row))
-    row <- eval(row, x, parent.frame())
+    row <-  which(eval(row, x, parent.frame()))
   col <- substitute(col)
   if (!is.numeric(col))
     col <- as.character(col)

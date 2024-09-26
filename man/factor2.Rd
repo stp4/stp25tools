@@ -3,6 +3,8 @@
 \name{factor2}
 \alias{factor2}
 \alias{add_NA}
+\alias{as_factor}
+\alias{cut_bmi}
 \alias{reorder2}
 \title{Factors}
 \usage{
@@ -19,6 +21,16 @@ factor2(
 
 add_NA(x, na.string = "n.a.")
 
+as_factor(x, ...)
+
+cut_bmi(
+  x,
+  breaks = c(-Inf, 15, 16, 18.5, 25, 30, 35, 40, Inf),
+  labels = c("Very severely underweight", "Severely underweight", "Underweight",
+    "Normal", "Overweight", "Obese Class I", "Obese Class II", "Obese Class III"),
+  n = 4
+)
+
 reorder2(
   x,
   X,
@@ -30,7 +42,7 @@ reorder2(
 )
 }
 \arguments{
-\item{x}{a vector of data,}
+\item{x}{vector}
 
 \item{...}{levels and labels  male = 1, female = 0, 'div inter' = 3, other = 2}
 
@@ -39,6 +51,10 @@ reorder2(
 \item{add.na}{should NA be included}
 
 \item{na.string}{replacement for NA}
+
+\item{breaks, labels}{an cut}
+
+\item{n}{anzahl der BMI-Kategorien default = 4 Underweight,        Normal,    Overweight, Obese Class I}
 
 \item{X}{an reorder  x => an atomic vector, usually a factor
 X    => a vector of the same length as x, whose subset of values for each unique level of x determines the eventual order of that level.}
@@ -55,14 +71,23 @@ factor
 \description{
 Fancy copy of the base function factor.
 
-x <- data.frame(x = x,
-                sex = factor2(
-                  x,
-                  male = 1,
-                  female = 0,
-                  div = 3,
-                  other = 2
-                ))
+as_factor: haven_labelled zu factor
+
+cut_bmi
+
+ BMI: WHO   (kg/m2)
+
+     Very severely underweight 15
+     Severely underweight 15-16
+     Underweight 16-18.5
+     Normal (healthy weight) 18.5-25
+     Overweight 25-30
+     Obese Class I (Moderately obese) 30-35
+     Obese Class II (Severely obese) 35-40
+     Obese Class III (Very severely obese) 40
+}
+\details{
+as_factor, factor2, cut_bmi, reorder2, relevel2, add_NA
 }
 \examples{
 
@@ -73,6 +98,12 @@ factor2(x, labels = c("m", "f", "d"))
 factor2(x, male = 1, female = 0, 'div inter' = 3, other = 2)
 factor2(x, 0:3)
 factor2(x, 0:3, c("m", "f", "d", "o"))
+
+table(cut_bmi(c(10, 15, 16, 18.5, 25, 30, 35, 40, 45)))
+table(cut_bmi(c(10, 15, 16, 18.5, 25, 30, 35, 40, 45), n=4))
+table(cut_bmi(c(10, 15, 16, 18.5, 25, 30, 35, 40, 45), n=5))
+table(cut_bmi(c(10, 15, 16, 18.5, 25, 30, 35, 40, 45), n=6))
+
 
  x <-
 c(
