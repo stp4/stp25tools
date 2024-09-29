@@ -6,6 +6,8 @@
 \alias{Index.data.frame}
 \alias{Index.default}
 \alias{Sum2}
+\alias{key_list}
+\alias{Index.principal}
 \title{Summen-Index
  
 Summen Index eine Summenfunktion mit der Erweiterung zum Umcodieren}
@@ -44,11 +46,17 @@ Sum2(
   max.level = NA,
   min.level = NA
 )
+
+key_list(x, loadings = 0.4, communality = 0.4)
+
+\method{Index}{principal}(x, data = NULL, loadings = 0.4, communality = 0.4, ...)
 }
 \arguments{
 \item{x, data}{data.frame x ist entwerde formula oder ein data.frame}
 
-\item{...}{alles weitere}
+\item{...}{an scoreItems  min=1, max=6, missing = TRUE (is the normal case and data are imputed)}
+
+\item{data}{Optional data.frame}
 
 \item{re.code}{revers code logical}
 
@@ -59,12 +67,44 @@ Sum2(
 \item{digits}{Nachkomastellen}
 
 \item{max.level, min.level}{nin und max levels}
+
+\item{loadings}{threshold for loadings}
+
+\item{communality}{threshold communality}
+
+\item{x}{psych::principal}
+
+\item{loadings, communality}{an key_list}
 }
 \value{
 Vektor
+
+matrix
+
+matrix
 }
 \description{
-Summen-Index
- 
-Summen Index eine Summenfunktion mit der Erweiterung zum Umcodieren
+key_list (scoring keys): Extract names and signs from a psych::principal object.
+}
+\examples{
+
+require(psych)
+data(bfi)
+rslt <- psych::principal(bfi[1:25], 5)
+
+# keys <-
+#  list(agree=         c("-A1","A2","A3","A4","A5"),
+#       conscientious= c("C1","C2","C3","-C4","-C5"),
+#       extraversion=  c("-E1","-E2","E3","E4","E5"),
+#       neuroticism=   c("N1","N2","N3","N4","N5"),
+#       openness =     c("O1","-O2","O3","O4","-O5"))
+
+key_list(rslt)
+scores <- psych::scoreItems(key_list(rslt), bfi , min=1, max=6) #specify the minimum and maximum values
+scores$alpha
+summary(scores)
+head(scores$scores)
+
+head(Index(rslt, bfi))
+
 }
