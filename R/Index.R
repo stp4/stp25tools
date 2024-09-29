@@ -160,3 +160,89 @@ Umcodieren <- function(x,
 }
 
 
+
+
+#' @rdname Index
+#' @description
+#' key_list (scoring keys): Extract names and signs from a psych::principal object.
+#'
+#' @param x psych::principal
+#' @param loadings threshold for loadings
+#' @param communality threshold communality  
+#'
+#' @return matrix
+#' @export
+#'
+#' @examples
+#' 
+#' require(psych)
+#' data(bfi)
+#' rslt <- psych::principal(bfi[1:25], 5)
+#' 
+#' # keys <-
+#' #  list(agree=         c("-A1","A2","A3","A4","A5"),
+#' #       conscientious= c("C1","C2","C3","-C4","-C5"),
+#' #       extraversion=  c("-E1","-E2","E3","E4","E5"),
+#' #       neuroticism=   c("N1","N2","N3","N4","N5"),
+#' #       openness =     c("O1","-O2","O3","O4","-O5"))
+#' 
+#' key_list(rslt)
+#' scores <- psych::scoreItems(key_list(rslt), bfi , min=1, max=6) #specify the minimum and maximum values
+#' scores$alpha
+#' summary(scores)
+#' head(scores$scores)
+#' 
+#' head(Index(rslt, bfi))
+#' 
+key_list <- function(x,
+                     loadings = .40,
+                     communality = .40) {
+  my_loadings <- as.matrix(x$loadings)
+  class(my_loadings) <- "matrix"
+  if (!is.null(communality)) {
+    my_loadings <- my_loadings[x$communality > communality, ]
+  }
+  
+  if (!is.matrix(my_loadings)) {
+    my_loadings <- matrix(my_loadings, dimnames = list(names(my_loadings), c("PC1")))
+  }
+  
+  key <- list()
+  for (i in colnames(my_loadings)) {
+    ldng <-   my_loadings[, i] [abs(my_loadings[, i])  > loadings]
+    key[[i]] <- paste(ifelse(ldng < 0 , "-", ""), names(ldng), sep = "")
+  }
+  return(key)
+}
+
+
+#' @rdname Index
+#'
+#' @param x psych::principal
+#' @param data Optional data.frame
+#' @param loadings,communality an key_list
+#' @param ...  an scoreItems  min=1, max=6, missing = TRUE (is the normal case and data are imputed)
+#'
+#' @return matrix
+#' @export
+#'
+Index.principal <- function(x,
+                            data = NULL,
+                            loadings = .40,
+                            communality = .40,
+                            ...)  {
+  if (is.null(data)){
+    
+    cat("\nIch verwende einfach die scores aus dem psych Objekt!\n\n")
+    x$scores}
+  else{
+    cat("\nAchtung ich extrahiere die Keys und Vorzeichen und verwende einfach die psych::scoreItems Funktion!\n\n")
+    scores <- psych::scoreItems(key_list(x, loadings = loadings, communality =
+                                           communality),
+                                data ,
+                                ...) #specify the minimum and maximum values
+    scores$scores
+  }
+  
+}
+
