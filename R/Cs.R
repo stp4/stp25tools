@@ -4,7 +4,8 @@
 
 #' Character strings from unquoted names
 #'
-#' Erweiterung der  Hmisc Cs-Funktion um trim.ws. Erlaubt Variablen mit Komma oder Plus(+) oder Leerzeichen abzuternnen.
+#' Erweiterung der  Hmisc Cs-Funktion um trim.ws.
+#' Erlaubt Variablen mit Komma oder Plus(+) oder Leerzeichen abzuternnen.
 #' @param ... Vektor oder String oder Formula
 #' @return Vektor
 #' @export
