@@ -132,9 +132,7 @@ use_codebook <-
       }
       
     }
-    
-<<<<<<< HEAD
-=======
+
     
     if( is.character(codebook) ) {
       
@@ -145,7 +143,7 @@ use_codebook <-
     }
     
     
->>>>>>> 6ff61637d005f708eaa59ff61adf73fd6212598f
+
     if (is.null(codebook)) {
       cat("\n(2)\nLabel and levels from file:\n", file, "\n")
       codebook <- try (readxl::read_excel(file, sheet = sheet.codebook))
