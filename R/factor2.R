@@ -209,6 +209,7 @@ cut_bmi <- function(x,
 #' @param decreasing an ordere logical
 #' @param last character
 #' @param threshold,threshold.na.strings Anzahl an minimalen Nennungen
+#' @param rev logical. Reverse 
 #'
 #' @export
 #'
@@ -224,52 +225,55 @@ cut_bmi <- function(x,
 #' table(x)
 #' table(reorder2(x))
 #' table(reorder2(x, threshold = 30))
-#'
+#' #Reverse Elements
+#' table(reorder2(x, rev = TRUE))
 reorder2 <- function(x,
                      X,
                      ...,
                      decreasing = TRUE,
                      last = NULL,
                      threshold = NULL,
-                     threshold.na.strings = "Other") {
+                     threshold.na.strings = "Other",
+                     rev = FALSE) {
   lbl <-  attr(x, "label")
-  if (missing(X)) {
-    if (is.null(threshold)) {
-      x <-
-        factor(x, levels(x)[order(table(x), decreasing = decreasing)])
-    }
-    else {
-      xt <- table(x)
-      
-      if (is.na(threshold.na.strings)) {
-   
+  
+  if (!rev) {
+    if (missing(X)) {
+      if (is.null(threshold)) {
         x <-
-          factor(x, names(sort(xt[xt > threshold], 
-                               decreasing = decreasing)))
+          factor(x, levels(x)[order(table(x), decreasing = decreasing)])
       }
-      else{
-        x.names <- names(sort(xt, decreasing = decreasing))
-        lvl <-
-          names(sort(xt[xt > threshold], decreasing = decreasing))
-        lvl <-
-          c(lvl , rep(threshold.na.strings, length(x.names) - length(lvl)))
+      else {
+        xt <- table(x)
         
-        x <-
-          factor(x, x.names, lvl)
-        
+        if (is.na(threshold.na.strings)) {
+          x <-
+            factor(x, names(sort(xt[xt > threshold], decreasing = decreasing)))
+        }
+        else{
+          x.names <- names(sort(xt, decreasing = decreasing))
+          lvl <-
+            names(sort(xt[xt > threshold], decreasing = decreasing))
+          lvl <-
+            c(lvl , rep(threshold.na.strings, length(x.names) - length(lvl)))
+          
+          x <-
+            factor(x, x.names, lvl)
+        }
       }
       
+      if (!is.null(last))
+        for (ref in last)
+          x <- relevel2(x, ref)
     }
-    
-    if (!is.null(last))
-      for (ref in last)
-        x <- relevel2(x, ref)
-  }
-  else{
-    x <- reorder(x, X, ...)
-    if (!is.null(last))
-      for (ref in last)
-        x <- relevel(x, ref)
+    else{
+      x <- reorder(x, X, ...)
+      if (!is.null(last))
+        for (ref in last)
+          x <- relevel(x, ref)
+    }
+  } else {
+    x <- factor(x, rev(levels(x)))
   }
   
   attr(x, "label") <- lbl

@@ -38,7 +38,8 @@ reorder2(
   decreasing = TRUE,
   last = NULL,
   threshold = NULL,
-  threshold.na.strings = "Other"
+  threshold.na.strings = "Other",
+  rev = FALSE
 )
 }
 \arguments{
@@ -64,6 +65,8 @@ X    => a vector of the same length as x, whose subset of values for each unique
 \item{last}{character}
 
 \item{threshold, threshold.na.strings}{Anzahl an minimalen Nennungen}
+
+\item{rev}{logical. Reverse}
 }
 \value{
 factor
@@ -115,5 +118,6 @@ x <- factor(x, 1:10, letters[1:10])
 table(x)
 table(reorder2(x))
 table(reorder2(x, threshold = 30))
-
+#Reverse Elements
+table(reorder2(x, rev = TRUE))
 }
