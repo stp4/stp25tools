@@ -28,6 +28,36 @@ Index.formula <- function(x,
 #'
 #' @rdname Index
 #' @export
+#' 
+#' @examples
+#' # example code
+#' 
+#' # Methode um den Index ueber stp25stat2::Tbll_reliability
+#' # zu erhalten und gleichzeitig die Statistik zu behalten
+#' #
+#'  Skalen <- function(...) {
+#' var_name <- gsub("[^[:alnum:\\._] ]", "",
+#'                  var_name <- gsub("[^[:alnum:\\._] ]", "",
+#'                                   strsplit(capture.output(sys.call()) , "[ <]")[[1]][1]))
+#' measure.vars <-
+#'   sapply(lazyeval::lazy_dots(...), function(x) {
+#'     as.character(x[1])
+#'   })
+#' rslt <- Tbll_reliability(DF[measure.vars])
+#' if(nchar(var_name) > 0){
+#'    cat("\nvar_name:",var_name, "\n")
+#'    DF[[var_name]] <<- rslt$index
+#'    attr(DF[[var_name]], "label") <<- gsub("\\.", " ", var_name)
+#'  
+#' }
+#' 
+#' rslt
+#' }
+#' 
+#' DF <- data.frame( az1= 1:5, az2=1:5, az3=1:5 )
+#' 
+#' # Arbetszufriedenheit <- Skalen(az1, az2, az3)
+#' 
 Index.data.frame <- function(x,
                              ...,
                              re.code = FALSE,
