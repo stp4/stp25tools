@@ -177,12 +177,11 @@ Long.data.frame <- function(x,
 #' @rdname Long
 #'
 #' @param .list  Columns that are being unraveled list(t0 = 1:3, t1 = 4:6, t2 = 7:9)
-#' @param .data 
 #' @param by Names of the columns to be kept 
 #' @param .id  .id = "time",
 #' @param names  Alternative to the names
 #' @param ... Alternative to the names
-#' @param .first.data  Optional if 'by' is not used
+#' @param first.data  Optional if 'by' is not used
 #'
 #' @description
 #' Long_rbind The function combines row by row and is actually a long function.
@@ -217,31 +216,31 @@ Long.data.frame <- function(x,
 #'   names = c("a", "b", "c")
 #' )
 Long_rbind <-
-  function(.data,
+  function(data,
            .list = list(NULL),
            by = NULL,
            .id = "time",
            names = NULL,
-           .first.data = NULL,
+           first.data = NULL,
            ...) {
     if (length(unique(lengths(.list))) != 1)
       stop("Die Elemente in der Liste müssen alle gleich lang sein!")
     new_data <- NULL
     if (!is.null(by))
-      .first.data <- .data[all.vars(by)]
-    if (!is.null(.first.data))
-      .first.data <- tibble::as_tibble(.first.data)
+      first.data <- data[all.vars(by)]
+    if (!is.null(first.data))
+      first.data <- tibble::as_tibble(first.data)
     
     times <- names(.list)
     if (is.null(names))
-      names <- names(.data[.list[[1]]])
+      names <- names(data[.list[[1]]])
     
     for (i in times) {
-      new_data_i <- tibble::as_tibble(cbind(.id = i, .data[.list[[i]]]))
+      new_data_i <- tibble::as_tibble(cbind(.id = i, data[.list[[i]]]))
       names(new_data_i) <- c(.id, names)
       new_data_i <- delet_label(new_data_i)
-      if (!is.null(.first.data))
-        new_data_i <- dplyr::bind_cols(.first.data, new_data_i)
+      if (!is.null(first.data))
+        new_data_i <- dplyr::bind_cols(first.data, new_data_i)
       
       if (is.null(new_data))
         new_data <- new_data_i
