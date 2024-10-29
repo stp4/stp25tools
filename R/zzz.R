@@ -21,6 +21,10 @@
 #' @importFrom Hmisc all.is.numeric
 #' @importFrom purrr map2
 
+# Declarations Used in Checking a Package
+globalVariables(c(".id", "Condition", "Criteria", "Excluded.N",
+                  "Freq", "Remaining.N", "nms", "q2", "val", "xxxx"))
+
 #' @importFrom Hmisc cut2
 #' @export
 Hmisc::cut2

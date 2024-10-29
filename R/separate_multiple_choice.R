@@ -146,6 +146,7 @@ Das was unten kommt wird aufgedroeselt.\n"
     into <- paste("M", 1:length(unique_elements), sep = "")
   
   # id ist zur kontrolle und name xxxx damit es zu keinen konflikten kommt
+  # also nicht das Australische Bier XXXX
   res <- data.frame(id = id, xxxx = x)
   ## Aufsplitten
   res <-

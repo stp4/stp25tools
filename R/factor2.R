@@ -160,7 +160,17 @@ as_factor <- function(x,
 #' 
 #'
 #' @param x vector
-#' @param breaks 
+#' @param breaks number. breaks = c(-Inf, 15, 16, 18.5, 25, 30, 35, 40, Inf),
+#'   labels = c(
+#' "Very severely underweight",
+#' "Severely underweight",
+#' "Underweight",
+#' "Normal",
+#' "Overweight",
+#' "Obese Class I",
+#' "Obese Class II",
+#' "Obese Class III"
+#' )
 #' @param n anzahl der BMI-Kategorien default = 4 Underweight,        Normal,    Overweight, Obese Class I 
 #' 
 #' @export
