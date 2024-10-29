@@ -33,6 +33,7 @@
 #' 
 #' 
 #' }
+#' 
 codebook <- function(x) {
   lbl <- get_label(x)
   value_lbl <- sapply(x, function(y) {
@@ -56,11 +57,11 @@ codebook <- function(x) {
 #' 
 #' @examples
 #'  
-#' #' Speichern des Codebook
-#'  save_codebook(
-#'     DF,
-#'     "codebook.xlsx"
-#'  )
+#'  # Speichern des Codebook
+#'  # save_codebook(
+#'  #    DF,
+#'  #   "codebook.xlsx"
+#'  # )
 #'  
 #'  
 save_codebook <- function(x, 

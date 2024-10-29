@@ -351,7 +351,7 @@ expand_table <-
     if (length(id.vars) == 1) {
       dimnames(dataMatrix)[[1]] <- data[, 1]
       data2 <-
-        expand.dft(as.data.frame(as.table(dataMatrix),
+        expand_dft(as.data.frame(as.table(dataMatrix),
                                  stringsAsFactors = TRUE),
                    na.strings,
                    as.is,
@@ -362,7 +362,7 @@ expand_table <-
       dimnames(dataMatrix)[[1]] <- apply(data[, id.vars], 1, paste,
                                          collapse = "+")
       data2 <-
-        expand.dft(as.data.frame(as.table(dataMatrix),
+        expand_dft(as.data.frame(as.table(dataMatrix),
                                  stringsAsFactors = TRUE),
                    na.strings,
                    as.is,
@@ -391,12 +391,13 @@ expand_table <-
 #'  
 #' http://wiki.stdout.org/rcookbook/Manipulating%20data/Converting%20between%20data%20frames%20and%20contingency%20tables/
 #' @noRd
-expand.dft <-
+expand_dft <-
   function(x,
            na.strings = "NA",
            as.is = FALSE,
            dec = ".") {
-   # Take each row in the source data frame table and replicate it using the Freq value
+   # Take each row in the source data frame table 
+   #  and replicate it using the Freq value
     data <- sapply(1:nrow(x),
                    function(i)
                      x[rep(i, each = x$Freq[i]),],

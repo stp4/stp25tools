@@ -33,7 +33,7 @@ data.frame
 data.frame
 }
 \description{
-filter2: stolen from filter {dplyr} and https://github.com/openpharma/visR
+filter2: stolen from dplyr::filter  and https://github.com/openpharma/visR
 
 subset2: subset + label_data_frame
 

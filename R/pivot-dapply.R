@@ -160,7 +160,7 @@ scale_by <- function(x,
       fun = function(x) {
         if (is.numeric(x)) {
           center <- mean(x[by], na.rm = TRUE)
-          cs <- sd(x[by], na.rm = TRUE) / scale
+          cs <- stats::sd(x[by], na.rm = TRUE) / scale
           round(as.vector(scale(x, center, cs)), digits)
         }
         else
@@ -174,7 +174,7 @@ scale_by <- function(x,
       fun = function(x) {
         if (is.numeric(x)) {
           center <- mean(x[by], na.rm = TRUE)
-          cs <- sd(x[by], na.rm = TRUE) / scale
+          cs <- stats::sd(x[by], na.rm = TRUE) / scale
           round(as.vector(scale(x, center, cs)), digits)
         }
         else

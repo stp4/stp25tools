@@ -160,7 +160,7 @@ as_factor <- function(x,
 #' 
 #'
 #' @param x vector
-#' @param breaks,labels an cut 
+#' @param breaks 
 #' @param n anzahl der BMI-Kategorien default = 4 Underweight,        Normal,    Overweight, Obese Class I 
 #' 
 #' @export

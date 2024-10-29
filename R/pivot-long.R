@@ -224,7 +224,7 @@ Long_rbind <-
            first.data = NULL,
            ...) {
     if (length(unique(lengths(.list))) != 1)
-      stop("Die Elemente in der Liste müssen alle gleich lang sein!")
+      stop("Die Elemente in der Liste muessen alle gleich lang sein!")
     new_data <- NULL
     if (!is.null(by))
       first.data <- data[all.vars(by)]

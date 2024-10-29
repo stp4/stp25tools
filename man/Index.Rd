@@ -52,11 +52,10 @@ key_list(x, loadings = 0.4, communality = 0.4)
 \method{Index}{principal}(x, data = NULL, loadings = 0.4, communality = 0.4, ...)
 }
 \arguments{
-\item{x, data}{data.frame x ist entwerde formula oder ein data.frame}
+\item{x, data}{data.frame x ist entwerde formula oder ein data.frame
+#'oder  psych::principal-Objekt}
 
 \item{...}{an scoreItems  min=1, max=6, missing = TRUE (is the normal case and data are imputed)}
-
-\item{data}{Optional data.frame}
 
 \item{re.code}{revers code logical}
 
@@ -71,10 +70,6 @@ key_list(x, loadings = 0.4, communality = 0.4)
 \item{loadings}{threshold for loadings}
 
 \item{communality}{threshold communality}
-
-\item{x}{psych::principal}
-
-\item{loadings, communality}{an key_list}
 }
 \value{
 Vektor
@@ -87,15 +82,15 @@ matrix
 key_list (scoring keys): Extract names and signs from a psych::principal object.
 }
 \examples{
-# example code
 
 # Methode um den Index ueber stp25stat2::Tbll_reliability
 # zu erhalten und gleichzeitig die Statistik zu behalten
-#
- Skalen <- function(...) {
+
+Skalen <- function(...) {
+var_name <-
+gsub("[^[:alnum:\\\\._] ]", "",
 var_name <- gsub("[^[:alnum:\\\\._] ]", "",
-                 var_name <- gsub("[^[:alnum:\\\\._] ]", "",
-                                  strsplit(capture.output(sys.call()) , "[ <]")[[1]][1]))
+strsplit(capture.output(sys.call()) , "[ <]")[[1]][1]))
 measure.vars <-
   sapply(lazyeval::lazy_dots(...), function(x) {
     as.character(x[1])
@@ -104,7 +99,8 @@ rslt <- Tbll_reliability(DF[measure.vars])
 if(nchar(var_name) > 0){
    cat("\nvar_name:",var_name, "\n")
    DF[[var_name]] <<- rslt$index
-   attr(DF[[var_name]], "label") <<- gsub("\\\\.", " ", var_name)
+   attr(DF[[var_name]], "label") <<- 
+   gsub("\\\\.", " ", var_name)
  
 }
 
@@ -128,7 +124,10 @@ rslt <- psych::principal(bfi[1:25], 5)
 #       openness =     c("O1","-O2","O3","O4","-O5"))
 
 key_list(rslt)
-scores <- psych::scoreItems(key_list(rslt), bfi , min=1, max=6) #specify the minimum and maximum values
+scores <-
+ psych::scoreItems(key_list(rslt), bfi , min=1, max=6) 
+
+#specify the minimum and maximum values
 scores$alpha
 summary(scores)
 head(scores$scores)

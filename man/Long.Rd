@@ -24,12 +24,12 @@ Long(x, ...)
 )
 
 Long_rbind(
-  .data,
+  data,
   .list = list(NULL),
   by = NULL,
   .id = "time",
   names = NULL,
-  .first.data = NULL,
+  first.data = NULL,
   ...
 )
 
@@ -59,13 +59,11 @@ Wide(
 
 \item{.list}{Columns that are being unraveled list(t0 = 1:3, t1 = 4:6, t2 = 7:9)}
 
-\item{.data}{}
-
 \item{.id}{.id = "time",}
 
 \item{names}{Alternative to the names}
 
-\item{.first.data}{Optional if 'by' is not used}
+\item{first.data}{Optional if 'by' is not used}
 
 \item{values_fill, names_sep, names_vary}{an tidyr::pivot_wider}
 }

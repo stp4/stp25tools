@@ -53,7 +53,7 @@ reorder2(
 
 \item{na.string}{replacement for NA}
 
-\item{breaks, labels}{an cut}
+\item{breaks}{}
 
 \item{n}{anzahl der BMI-Kategorien default = 4 Underweight,        Normal,    Overweight, Obese Class I}
 

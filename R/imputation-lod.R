@@ -45,9 +45,12 @@ imputation_LOD.default <-
            force.lod = TRUE,
            accuracy = 1,
            ...) {
+    #possible problems
+    #imputation_LOD.default: no visible global function definition for 'sd'
+    
     # LOD aus den Daten ableiten
     if (is.null(lod))
-      lod <- min(x, na.rm = TRUE) - 3 * sd(x, na.rm = TRUE)
+      lod <- min(x, na.rm = TRUE) - 3 * stats::sd(x, na.rm = TRUE)
     # Messwert gilt hauufig als quantitativ (bestimmt), wenn die Genauigkeit der
     # Messung um den Faktor 3.33 hoeher (besser) ist als die Genauigkeit der Nachweisgrenze.
     # loq <- 3.33 * lod
@@ -102,6 +105,7 @@ imputation_LOD.data.frame <-
            accuracy = 1,
            remove.lod = 1 / 2,
            ...) {
+
     # test input
     my <- names(x)
     
@@ -121,7 +125,7 @@ imputation_LOD.data.frame <-
       }
     } else {
       if (length(my) != length(lod))
-        stop("Wenn LOD ohne Namen übergeben werden muessen diese gleich lang sein wie die Daten!")
+        stop("Wenn LOD ohne Namen uebergeben werden muessen diese gleich lang sein wie die Daten!")
     }
     
     if (any(lod < 0))
@@ -139,7 +143,8 @@ imputation_LOD.data.frame <-
       )
     )
     
-    
+    #possible problems
+    #imputation_LOD.data.frame: no visible binding for global variable '.id'
     res <- dplyr::bind_rows(res, .id = .id)
     x[my] <- res[my]
     

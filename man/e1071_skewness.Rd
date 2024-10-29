@@ -18,13 +18,13 @@ stolen from e1071::skewness
 }
 \details{
 Type 1:
-g_1 = m_3 / m_2^{3/2}  This is the typical definition used in many older textbooks.
+g_1 = m_3 / m_2^(3/2)  This is the typical definition used in many older textbooks.
 
 Type 2:
-  G_1 = g_1 sqrt{n(n-1)} / (n-2)  Used in SAS and SPSS.
+  G_1 = g_1 sqrt(n(n-1)) / (n-2)  Used in SAS and SPSS.
 
 Type 3:
-  b_1 = m_3 / s^3 = g_1 ((n-1)/n)^{3/2}  Used in MINITAB and BMDP.
+  b_1 = m_3 / s^3 = g_1 ((n-1)/n)^(3/2)  Used in MINITAB and BMDP.
 }
 \examples{
 x <- rnorm(100)

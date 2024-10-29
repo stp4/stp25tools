@@ -493,7 +493,7 @@ cleaup_formula <- function(formula,
   in_vars <- strsplit(as.character(formula[[2L]])[2L], " \\+ ")[[1L]]
   dupl_measure <- duplicated(in_vars)
   if(any(dupl_measure)) {
-    warning("stp25tools::prepare_data2():\n Es wurden folgende Parameter mehrfach übergeben:\n" ,
+    warning("stp25tools::prepare_data2():\n Es wurden folgende Parameter mehrfach uebergeben:\n" ,
              paste( in_vars[dupl_measure], collapse =", "),
              "\n  Sollte das gewollt sein bitte bei \nTbll_desc(..., use.duplicated = TRUE) \nentsprechend die Einstellungen vornehmen."
              )
@@ -528,7 +528,7 @@ cleaup_formula <- function(formula,
     condition.vars<-condition.class <- NULL
   }
   
-  # Texte also Überschfifte werden zu logical mit NA
+  # Texte also Ueberschfifte werden zu logical mit NA
   # daher hie die Heder vergeben
   if (any(measure == "logical")) {
     logik <-  which(measure == "logical")

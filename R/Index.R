@@ -3,6 +3,7 @@
 #' Summen Index eine Summenfunktion mit der Erweiterung zum Umcodieren
 #' 
 #' @param x,data data.frame x ist entwerde formula oder ein data.frame
+#' #'oder  psych::principal-Objekt
 #' @param ... alles weitere
 #' @return Vektor
 #' @export
@@ -30,15 +31,15 @@ Index.formula <- function(x,
 #' @export
 #' 
 #' @examples
-#' # example code
 #' 
 #' # Methode um den Index ueber stp25stat2::Tbll_reliability
 #' # zu erhalten und gleichzeitig die Statistik zu behalten
-#' #
-#'  Skalen <- function(...) {
+#' 
+#' Skalen <- function(...) {
+#' var_name <-
+#' gsub("[^[:alnum:\\._] ]", "",
 #' var_name <- gsub("[^[:alnum:\\._] ]", "",
-#'                  var_name <- gsub("[^[:alnum:\\._] ]", "",
-#'                                   strsplit(capture.output(sys.call()) , "[ <]")[[1]][1]))
+#' strsplit(capture.output(sys.call()) , "[ <]")[[1]][1]))
 #' measure.vars <-
 #'   sapply(lazyeval::lazy_dots(...), function(x) {
 #'     as.character(x[1])
@@ -47,7 +48,8 @@ Index.formula <- function(x,
 #' if(nchar(var_name) > 0){
 #'    cat("\nvar_name:",var_name, "\n")
 #'    DF[[var_name]] <<- rslt$index
-#'    attr(DF[[var_name]], "label") <<- gsub("\\.", " ", var_name)
+#'    attr(DF[[var_name]], "label") <<- 
+#'    gsub("\\.", " ", var_name)
 #'  
 #' }
 #' 
@@ -196,7 +198,6 @@ Umcodieren <- function(x,
 #' @description
 #' key_list (scoring keys): Extract names and signs from a psych::principal object.
 #'
-#' @param x psych::principal
 #' @param loadings threshold for loadings
 #' @param communality threshold communality  
 #'
@@ -217,7 +218,10 @@ Umcodieren <- function(x,
 #' #       openness =     c("O1","-O2","O3","O4","-O5"))
 #' 
 #' key_list(rslt)
-#' scores <- psych::scoreItems(key_list(rslt), bfi , min=1, max=6) #specify the minimum and maximum values
+#' scores <-
+#'  psych::scoreItems(key_list(rslt), bfi , min=1, max=6) 
+#' 
+#' #specify the minimum and maximum values
 #' scores$alpha
 #' summary(scores)
 #' head(scores$scores)
@@ -248,9 +252,6 @@ key_list <- function(x,
 
 #' @rdname Index
 #'
-#' @param x psych::principal
-#' @param data Optional data.frame
-#' @param loadings,communality an key_list
 #' @param ...  an scoreItems  min=1, max=6, missing = TRUE (is the normal case and data are imputed)
 #'
 #' @return matrix

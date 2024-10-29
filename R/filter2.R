@@ -2,7 +2,7 @@
 #' 
 #' Keep rows that match a condition,  Subsetting Vectors, Matrices and Data Frames
 #' 
-#' @description filter2: stolen from filter {dplyr} and https://github.com/openpharma/visR
+#' @description filter2: stolen from dplyr::filter  and https://github.com/openpharma/visR
 #'
 #' @param .data 	A data frame,
 #' @param ... Expressions

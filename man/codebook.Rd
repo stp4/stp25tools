@@ -92,12 +92,13 @@ cdb$Value.Labels[2] <- "factor: Big | Small"
 
 
 }
+
  
-#' Speichern des Codebook
- save_codebook(
-    DF,
-    "codebook.xlsx"
- )
+ # Speichern des Codebook
+ # save_codebook(
+ #    DF,
+ #   "codebook.xlsx"
+ # )
  
  
  \dontrun{
