@@ -106,6 +106,17 @@ as_numeric.factor <-   function(x,
 
 
 #' @rdname as_irgenwas
+#' @description as_numeric: beim Type factor wird zu erst versucht aus den labels  die Zahlen zu extrahieren 
+#' und erst wenn das nicht geht die levels (1:n).
+#' @export
+as_numeric.logical <-   function(x, ...) {
+  lbl <- attr(x, "label")
+  x <- ifelse(x, 1, 0)
+  attr(x, "label") <- lbl
+  x
+}
+
+#' @rdname as_irgenwas
 #' @description as_logical: alles mit zwei Merkmalen zu logical
 #' @export
 as_logical <- function(x) {

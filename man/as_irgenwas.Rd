@@ -6,6 +6,7 @@
 \alias{as_numeric.numeric}
 \alias{as_numeric.character}
 \alias{as_numeric.factor}
+\alias{as_numeric.logical}
 \alias{as_logical}
 \title{as_numeric and as_logical}
 \usage{
@@ -16,6 +17,8 @@ as_numeric(x, ...)
 \method{as_numeric}{character}(x, na.string = "", dec = c(".", ","), trim_ws = TRUE, ...)
 
 \method{as_numeric}{factor}(x, na.string = "", dec = c(".", ","), ...)
+
+\method{as_numeric}{logical}(x, ...)
 
 as_logical(x)
 }
@@ -39,6 +42,9 @@ as_numeric: character, factor to numeric
 
 as_numeric: beim Type character wird die Funktion readr::parse_number ausgeführt.
 parse_number(x, na = c(".", ","), trim_ws=TRUE)
+
+as_numeric: beim Type factor wird zu erst versucht aus den labels  die Zahlen zu extrahieren 
+und erst wenn das nicht geht die levels (1:n).
 
 as_numeric: beim Type factor wird zu erst versucht aus den labels  die Zahlen zu extrahieren 
 und erst wenn das nicht geht die levels (1:n).
