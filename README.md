@@ -1,6 +1,6 @@
 stp25tools
 ================
-2024-10-29
+2024-12-20
 
 <!-- output: -->
 <!--   html_document: -->
@@ -433,18 +433,18 @@ DF_sprk
 ```
 
     ## # A tibble: 56 × 5
-    ##    Laborwert Time  Treat   variable      x
-    ##    <fct>     <fct> <fct>   <fct>     <dbl>
-    ##  1 Albumin   t0    Control x         1.03 
-    ##  2 Albumin   t1    Control x         0.674
-    ##  3 Albumin   t2    Control x        -1.37 
-    ##  4 Albumin   t4    Control x        -0.446
-    ##  5 Albumin   t0    Treat   x         0.489
-    ##  6 Albumin   t1    Treat   x         0.349
-    ##  7 Albumin   t2    Treat   x         0.875
-    ##  8 Albumin   t4    Treat   x        -1.01 
-    ##  9 Amylase   t0    Control x        -0.407
-    ## 10 Amylase   t1    Control x        -1.08 
+    ##    Laborwert Time  Treat   variable       x
+    ##    <fct>     <fct> <fct>   <fct>      <dbl>
+    ##  1 Albumin   t0    Control x        -2.29  
+    ##  2 Albumin   t1    Control x        -1.31  
+    ##  3 Albumin   t2    Control x        -0.625 
+    ##  4 Albumin   t4    Control x         0.0612
+    ##  5 Albumin   t0    Treat   x        -0.232 
+    ##  6 Albumin   t1    Treat   x        -0.553 
+    ##  7 Albumin   t2    Treat   x        -0.853 
+    ##  8 Albumin   t4    Treat   x        -0.661 
+    ##  9 Amylase   t0    Control x         0.506 
+    ## 10 Amylase   t1    Control x         1.53  
     ## # ℹ 46 more rows
 
 ``` r
@@ -461,8 +461,8 @@ DF
     ## # A tibble: 2 × 29
     ##   Treat   t0_Albumin t0_Amylase t0_Lipase t0_AST t0_ALT t0_Bilirubin t0_C.Peptid
     ##   <fct>        <dbl>      <dbl>     <dbl>  <dbl>  <dbl>        <dbl>       <dbl>
-    ## 1 Control      1.03      -0.407    0.0547  0.254 -0.656       1.35         0.450
-    ## 2 Treat        0.489     -1.64     1.01   -0.801  0.469       0.0203       0.312
+    ## 1 Control     -2.29       0.506    -0.864 -0.303 -0.344        0.503      -0.943
+    ## 2 Treat       -0.232     -1.06     -0.166 -1.38   0.164        1.08        0.351
     ## # ℹ 21 more variables: t1_Albumin <dbl>, t1_Amylase <dbl>, t1_Lipase <dbl>,
     ## #   t1_AST <dbl>, t1_ALT <dbl>, t1_Bilirubin <dbl>, t1_C.Peptid <dbl>,
     ## #   t2_Albumin <dbl>, t2_Amylase <dbl>, t2_Lipase <dbl>, t2_AST <dbl>,
@@ -476,18 +476,18 @@ DF |> Long(. ~ Treat)  |> tidyr::separate(variable, c("Time", "Laborwert"), sep=
 ```
 
     ## # A tibble: 56 × 4
-    ##    Treat   Time  Laborwert   value
-    ##    <fct>   <chr> <chr>       <dbl>
-    ##  1 Control t0    Albumin    1.03  
-    ##  2 Control t0    Amylase   -0.407 
-    ##  3 Control t0    Lipase     0.0547
-    ##  4 Control t0    AST        0.254 
-    ##  5 Control t0    ALT       -0.656 
-    ##  6 Control t0    Bilirubin  1.35  
-    ##  7 Control t0    C.Peptid   0.450 
-    ##  8 Control t1    Albumin    0.674 
-    ##  9 Control t1    Amylase   -1.08  
-    ## 10 Control t1    Lipase     0.828 
+    ##    Treat   Time  Laborwert  value
+    ##    <fct>   <chr> <chr>      <dbl>
+    ##  1 Control t0    Albumin   -2.29 
+    ##  2 Control t0    Amylase    0.506
+    ##  3 Control t0    Lipase    -0.864
+    ##  4 Control t0    AST       -0.303
+    ##  5 Control t0    ALT       -0.344
+    ##  6 Control t0    Bilirubin  0.503
+    ##  7 Control t0    C.Peptid  -0.943
+    ##  8 Control t1    Albumin   -1.31 
+    ##  9 Control t1    Amylase    1.53 
+    ## 10 Control t1    Lipase    -0.911
     ## # ℹ 46 more rows
 
 ### Wide
@@ -720,14 +720,14 @@ head(DF)
 ```
 
     ## # A tibble: 6 × 12
-    ##      id group      age     a1     b1      c1     a2     b2      c2     a3     b3
-    ##   <int> <fct>    <dbl>  <dbl>  <dbl>   <dbl>  <dbl>  <dbl>   <dbl>  <dbl>  <dbl>
-    ## 1     1 Control  0.266  1.47  -0.326 -0.370  -0.204 -0.190 -0.694  -0.809 -0.563
-    ## 2     2 Control  0.126  1.20   1.23   2.20    0.618  0.152 -0.214  -1.47   0.137
-    ## 3     3 Control  0.838  1.28  -1.16   0.0848  0.141 -1.43  -1.33   -1.28   0.734
-    ## 4     4 Control -1.09   0.350  0.818 -0.571   0.604 -1.19   2.37    2.18   0.788
-    ## 5     5 Control -1.51  -0.232  0.759 -0.615  -0.570 -1.91  -1.05    1.75  -0.507
-    ## 6     6 Control  0.983  0.178 -0.944 -0.313   1.98   1.78   0.0323 -0.536  0.176
+    ##      id group      age     a1     b1     c1     a2      b2     c2     a3     b3
+    ##   <int> <fct>    <dbl>  <dbl>  <dbl>  <dbl>  <dbl>   <dbl>  <dbl>  <dbl>  <dbl>
+    ## 1     1 Control -0.962 -2.21   0.810  1.02   1.13   1.58   -1.58  -0.149  2.91 
+    ## 2     2 Control  1.18   1.15   0.167 -0.440  1.33   0.894  -0.645  1.27  -0.395
+    ## 3     3 Control -0.198  0.650 -1.40   1.27  -0.385 -0.0439 -1.72   0.349 -1.03 
+    ## 4     4 Control -1.09   1.23   0.858 -0.652 -0.264 -0.907  -0.437  0.327 -0.582
+    ## 5     5 Control  0.933 -0.486 -0.359 -2.06   0.638  0.160   0.462 -1.42   0.567
+    ## 6     6 Control -1.85  -2.43  -0.432  0.420 -0.680  0.957  -1.39   1.36  -0.829
     ## # ℹ 1 more variable: c3 <dbl>
 
 ``` r
@@ -749,18 +749,18 @@ Long(
 ```
 
     ## # A tibble: 48 × 7
-    ##       id group      age time       a      b       c
-    ##    <int> <fct>    <dbl> <chr>  <dbl>  <dbl>   <dbl>
-    ##  1     1 Control  0.266 t0     1.47  -0.326 -0.370 
-    ##  2     2 Control  0.126 t0     1.20   1.23   2.20  
-    ##  3     3 Control  0.838 t0     1.28  -1.16   0.0848
-    ##  4     4 Control -1.09  t0     0.350  0.818 -0.571 
-    ##  5     5 Control -1.51  t0    -0.232  0.759 -0.615 
-    ##  6     6 Control  0.983 t0     0.178 -0.944 -0.313 
-    ##  7     7 Control -0.910 t0    -0.453  0.553  2.36  
-    ##  8     8 Control  0.412 t0    -0.396  0.764  1.65  
-    ##  9     9 Treat   -0.347 t0    -0.401  0.454 -0.499 
-    ## 10    10 Treat   -0.579 t0    -0.507 -0.153 -1.14  
+    ##       id group      age time       a      b      c
+    ##    <int> <fct>    <dbl> <chr>  <dbl>  <dbl>  <dbl>
+    ##  1     1 Control -0.962 t0    -2.21   0.810  1.02 
+    ##  2     2 Control  1.18  t0     1.15   0.167 -0.440
+    ##  3     3 Control -0.198 t0     0.650 -1.40   1.27 
+    ##  4     4 Control -1.09  t0     1.23   0.858 -0.652
+    ##  5     5 Control  0.933 t0    -0.486 -0.359 -2.06 
+    ##  6     6 Control -1.85  t0    -2.43  -0.432  0.420
+    ##  7     7 Control  1.10  t0     0.178 -0.987  0.672
+    ##  8     8 Control -1.33  t0    -0.630 -1.45  -1.06 
+    ##  9     9 Treat   -1.31  t0     0.845 -1.06  -0.742
+    ## 10    10 Treat   -2.83  t0    -1.29  -0.662  1.61 
     ## # ℹ 38 more rows
 
 Wenn die Variablen - Namen gut trennbar sind geht auch folgendes.
@@ -776,18 +776,18 @@ DF |> Long(.~ id + group + age)  |>
 ```
 
     ## # A tibble: 48 × 7
-    ##       id group      age Time       a      b        c
-    ##    <int> <fct>    <dbl> <chr>  <dbl>  <dbl>    <dbl>
-    ##  1     1 Control  0.266 t1     1.47  -0.326 -0.370  
-    ##  2     1 Control  0.266 t2    -0.204 -0.190 -0.694  
-    ##  3     1 Control  0.266 t3    -0.809 -0.563 -2.50   
-    ##  4     2 Control  0.126 t1     1.20   1.23   2.20   
-    ##  5     2 Control  0.126 t2     0.618  0.152 -0.214  
-    ##  6     2 Control  0.126 t3    -1.47   0.137  0.00151
-    ##  7     3 Control  0.838 t1     1.28  -1.16   0.0848 
-    ##  8     3 Control  0.838 t2     0.141 -1.43  -1.33   
-    ##  9     3 Control  0.838 t3    -1.28   0.734 -0.153  
-    ## 10     4 Control -1.09  t1     0.350  0.818 -0.571  
+    ##       id group      age Time       a       b       c
+    ##    <int> <fct>    <dbl> <chr>  <dbl>   <dbl>   <dbl>
+    ##  1     1 Control -0.962 t1    -2.21   0.810   1.02  
+    ##  2     1 Control -0.962 t2     1.13   1.58   -1.58  
+    ##  3     1 Control -0.962 t3    -0.149  2.91   -0.520 
+    ##  4     2 Control  1.18  t1     1.15   0.167  -0.440 
+    ##  5     2 Control  1.18  t2     1.33   0.894  -0.645 
+    ##  6     2 Control  1.18  t3     1.27  -0.395  -0.0149
+    ##  7     3 Control -0.198 t1     0.650 -1.40    1.27  
+    ##  8     3 Control -0.198 t2    -0.385 -0.0439 -1.72  
+    ##  9     3 Control -0.198 t3     0.349 -1.03    0.796 
+    ## 10     4 Control -1.09  t1     1.23   0.858  -0.652 
     ## # ℹ 38 more rows
 
 ### Pivot-Transpose
@@ -897,16 +897,16 @@ Merge2(df1, df2, df3, df4, by = "id")
 ```
 
     ##     id origin.x    N   P   C origin.y  foo1      X      Y origin.z origin.u
-    ## 1  P01        A 13.0 3.5 421        A  TRUE 146500 371400        D        C
-    ## 2  P02        D 14.0 0.9 439        E  TRUE 147300 387000        D        A
-    ## 3  P03        C 26.5 3.8 472        A  TRUE 146500 377600        E        C
-    ## 4  P04        B 18.5 2.7 476        A FALSE 147300 356100        A        D
-    ## 5  P05        D 19.5 2.4 444        A FALSE 146500 366100        E        A
-    ## 6  P06        A 12.0 0.7 439        A  TRUE 145700 375800        A        E
-    ## 7  P07        A 16.5 1.1 497        C FALSE 146100 359600        A        A
-    ## 8  P08        B  9.5 0.8 499        A FALSE 146400 392800        E        E
-    ## 9  P09        D 25.0 2.7 448        C  TRUE 146600 362200        C        A
-    ## 10 P10        D 12.0 1.3 443        C  TRUE 148100 357900        E        D
+    ## 1  P01        A 16.5 3.6 454        E FALSE 147300 398100        A        E
+    ## 2  P02        B  9.5 3.9 400        E  TRUE 148100 374700        B        C
+    ## 3  P03        A 24.0 2.8 491        E  TRUE 146400 388600        C        B
+    ## 4  P04        D 16.5 1.5 445        A  TRUE 145900 372600        B        C
+    ## 5  P05        E 12.0 0.8 491        C FALSE 148100 386900        D        C
+    ## 6  P06        C 18.5 2.3 480        E  TRUE 147100 376500        E        A
+    ## 7  P07        C 13.0 2.2 402        B  TRUE 146700 375200        C        A
+    ## 8  P08        D 26.5 3.6 462        A FALSE 147600 356800        D        A
+    ## 9  P09        C 21.0 1.6 404        E FALSE 146200 377900        B        E
+    ## 10 P10        A 13.5 2.3 404        E  TRUE 146000 385700        A        A
 
 ### cbind listenweise
 
@@ -1181,11 +1181,11 @@ auto_trans(x)
     ## [15] 2.0794415 2.0794415 2.0794415 2.0794415 2.3025851 3.0445224 3.4339872
     ## attr(,"link")
     ## function(x) { log(101 - x) }
-    ## <bytecode: 0x000001f570e26880>
+    ## <bytecode: 0x000002139902eb68>
     ## <environment: namespace:stp25tools>
     ## attr(,"inverse")
     ## function(x) { 101 - (exp(x)) }
-    ## <bytecode: 0x000001f570e31ed0>
+    ## <bytecode: 0x00000213990322a8>
     ## <environment: namespace:stp25tools>
     ## attr(,"name")
     ## [1] "negative skew (max-Log)"

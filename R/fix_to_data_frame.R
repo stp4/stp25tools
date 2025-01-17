@@ -351,7 +351,6 @@ dimension <- function(x) {
   else ldm+1
 }
 
-
-
+ 
 
 
