@@ -284,7 +284,7 @@ which_test <-
     rslt <-  sapply(measure, function(measure) {
       if (is.null(group.class)) { "notest"
       }
-      else if (group.class == "factor") {
+      else if (group.class %in% c("factor", "logical")) {
         if (measure %in% catTest) "cattest"
         else if (measure %in% conTest) "contest"
         
