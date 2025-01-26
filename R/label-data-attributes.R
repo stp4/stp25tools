@@ -9,8 +9,8 @@
 
 #' Label
 #'
-#' Setzen des attr(data, "label")
-#' @param data data.frame
+#' Setzen des attr(.data, "label")
+#' @param .data data.frame
 #' @param ... label in der Form a="Hallo, b="Welt"
 #' @export
 #' @examples
@@ -37,17 +37,17 @@
 #' DF<- delet_label(DF)
 #' get_label(DF)
 #'
-Label <- function(data, ...) {
+Label <- function(.data, ...) {
   lbl <- list(...)
   if (length(lbl) == 0) {
     message("Label: Keine label gefunden!")
-    return(data)
+    return(.data)
   } else{
     if (is.null(names(lbl))) {
-      message("Label: Keine Namen gefunden! Verwende daher names(data)")
-      names(lbl) <-  names(data)[1:length(lbl)]
+      message("Label: Keine Namen gefunden! Verwende daher names(.data)")
+      names(lbl) <-  names(.data)[1:length(lbl)]
     }
-    set_label(data, unlist(lbl))
+    set_label(.data, unlist(lbl))
   }
 }
 
@@ -56,10 +56,10 @@ Label <- function(data, ...) {
 #' @description delet_label:  Loeschen aller Attributs label
 #'
 #' @export
-delet_label <- function(data) {
-  for (n in names(data))
-    attr(data[[n]], "label") <- NULL
-  data
+delet_label <- function(.data) {
+  for (n in names(.data))
+    attr(.data[[n]], "label") <- NULL
+  .data
 }
 
 
@@ -71,14 +71,14 @@ delet_label <- function(data) {
 #' @param label label als Character-String mit Namen c(a="Hallo, b="Welt")
 #'
 #' @export
-set_label <- function(data,
+set_label <- function(.data,
                       label = NULL,
                       include.units = FALSE) {
   if (is.null(label)) {
     message("Warnung set_label: Keine label gefunden!\n")
-    return(data)
+    return(.data)
   } else {
-    return(set_label2(data, label))
+    return(set_label2(.data, label))
   }
   
 }
@@ -89,8 +89,8 @@ set_label <- function(data,
 #' @export
 #'
 trimm_label<- 
-  function(data, pattern = "\\.\\.\\. ", pos = 2) {
-    lbl <- get_label2(data)
+  function(.data, pattern = "\\.\\.\\. ", pos = 2) {
+    lbl <- get_label2(.data)
     lbl_trm <-  stringr::str_split_fixed(lbl, pattern, n = pos + 1)
     
     if (pos == 1)
@@ -100,7 +100,7 @@ trimm_label<-
     else
       stop("Nur pos 1 oder 2 sind definiert.")
     names(lbl_trm) <- names(lbl)
-    set_label2(data, lbl_trm)
+    set_label2(.data, lbl_trm)
     
   }
 
@@ -109,13 +109,13 @@ trimm_label<-
 #'
 #' @export
 #'
-gsub_label <- function(data, pattern = "\\&amp;", replacement="&") {
-  lbl <- get_label2(data)
+gsub_label <- function(.data, pattern = "\\&amp;", replacement="&") {
+  lbl <- get_label2(.data)
   
   lbl_trm <-  gsub(pattern, replacement, lbl ) 
   names(lbl_trm) <- names(lbl)
   
-  set_label2(data, lbl_trm)
+  set_label2(.data, lbl_trm)
 }
 
 
@@ -124,18 +124,18 @@ gsub_label <- function(data, pattern = "\\&amp;", replacement="&") {
 #' @export
 #'
 get_label <-
-  function(data, ...,
+  function(.data, ...,
            include.units = FALSE) {
     
-    if(!is.data.frame(data))  return( attr(data, "label") )
+    if(!is.data.frame(.data))  return( attr(.data, "label") )
     
     measure.vars <-
       sapply(lazyeval::lazy_dots(...),
              function(x) {as.character(x[1])})
     
-    if (length(measure.vars) > 0) data <- data[measure.vars]
+    if (length(measure.vars) > 0) .data <- .data[measure.vars]
     
-    lbl <- lapply(data, attr, "label") 
+    lbl <- lapply(.data, attr, "label") 
     if (length(lbl) == 0)
       return(NULL)
     
@@ -146,13 +146,13 @@ get_label <-
     #  }
     
     if (include.units) {
-      is_units <- sapply(data, function(z)
+      is_units <- sapply(.data, function(z)
         inherits(z, "units"))
       if (any(is_units)) {
         lbl_nams <- names(lbl)
         
         lbl_units <-
-          sapply(data, function(z)
+          sapply(.data, function(z)
             if (inherits(z, "units"))
               paste0(" [", as.character(attr(z, "units")), "]")
             else
@@ -203,17 +203,17 @@ get_label <-
 #' 
 #' internal use
 #' 
-#' @param data data.frame
+#' @param .data data.frame
 #' @param label attribut label
 #' @noRd
-set_label2 <- function(data, label = NULL) {
-  nms <- names(data)
+set_label2 <- function(.data, label = NULL) {
+  nms <- names(.data)
   nl <- nms %in% names(label)
   if (sum(nl) > 0) {
     for (n in nms[nl])
-      attr(data[[n]], "label") <- label[[n]]
+      attr(.data[[n]], "label") <- label[[n]]
   }
-  data
+  .data
 }
 
 
@@ -223,10 +223,10 @@ set_label2 <- function(data, label = NULL) {
 #'
 #' @noRd
 #'
-#' @param data data.frame
+#' @param .data data.frame
 #' 
-get_label2 <- function(data) {
-  lbl <- lapply(data, attr, "label")
+get_label2 <- function(.data) {
+  lbl <- lapply(.data, attr, "label")
   if (length(lbl) == 0)
     return(NULL)
   
@@ -248,20 +248,20 @@ get_label2 <- function(data) {
 #}
 
 #' @rdname Label
-#' @param data data.frame
+#' @param .data data.frame
 #'
 #' @param label label als named vector
 #'
 #' @description  Intern wenn mit get_label nur die Kopie wiederhergestellt wird.
 #'
-label_data_frame  <- function(data,
+label_data_frame  <- function(.data,
                               label) {
-  if (all(names(data) %in% names(label))) {
-    for (i in names(data)) {
-      attr(data[[i]], "label") <- label[[i]]
+  if (all(names(.data) %in% names(label))) {
+    for (i in names(.data)) {
+      attr(.data[[i]], "label") <- label[[i]]
     }
-    data
+    .data
   }
   else
-    set_label(data, label)
+    set_label(.data, label)
 }
