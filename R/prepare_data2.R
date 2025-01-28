@@ -81,7 +81,8 @@ prepare_data2.formula <-
       group.class     = fm$group.class,
       condition.class = fm$condition.class,
       digits          = fm$digits,
-      N               = nrow(dat)
+      N               = nrow(dat),
+      formula_in      = x
     )
     
     class(stp25Data) <- c("stp25data", "list")
