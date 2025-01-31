@@ -10,22 +10,22 @@
 \alias{label_data_frame}
 \title{Label}
 \usage{
-Label(data, ...)
+Label(.data, ...)
 
-delet_label(data)
+delet_label(.data)
 
-set_label(data, label = NULL, include.units = FALSE)
+set_label(.data, label = NULL, include.units = FALSE)
 
-trimm_label(data, pattern = "\\\\.\\\\.\\\\. ", pos = 2)
+trimm_label(.data, pattern = "\\\\.\\\\.\\\\. ", pos = 2)
 
-gsub_label(data, pattern = "\\\\&amp;", replacement = "&")
+gsub_label(.data, pattern = "\\\\&amp;", replacement = "&")
 
-get_label(data, ..., include.units = FALSE)
+get_label(.data, ..., include.units = FALSE)
 
-label_data_frame(data, label)
+label_data_frame(.data, label)
 }
 \arguments{
-\item{data}{data.frame}
+\item{.data}{data.frame}
 
 \item{...}{label in der Form a="Hallo, b="Welt"}
 
@@ -38,7 +38,7 @@ label_data_frame(data, label)
 \item{pos}{an stringr::str_split_fixed}
 }
 \description{
-Setzen des attr(data, "label")
+Setzen des attr(.data, "label")
 
 delet_label:  Loeschen aller Attributs label
 

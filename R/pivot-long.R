@@ -12,59 +12,41 @@
 #' @return data.frame
 #' @export
 #' @examples 
+#'  
+#' df <- data.frame(
+#'   month = rep(month.abb[1:3], 2),
+#'   student = rep(c("Amy", "Bob"), each = 3),
+#'   A = c(9, 7, 6, 8, 6, 9),
+#'   B = c(6, 7, 8, 5, 6, 7),
+#'   C = c(1, 3, 6, 3, 4, 7)
+#' )
 #' 
-#' df <- data.frame(month=rep(1:3,2),
-#' student=rep(c("Amy", "Bob"), each=3),
-#' A=c(9, 7, 6, 8, 6, 9),
-#' B=c(6, 7, 8, 5, 6, 7))
-#' 
-#' df2<-df |> Wide(student, A, B)
-#' 
-#' 
-#' 
-#' df[-4] |> tidyr::spread(student, A)
-#' df[-4] |> Wide(student, A)
-#' 
-#' df2
-#' df2  |> Long( A_Amy, A_Bob ,B_Amy, B_Bob, by=~month)
+#' df |> Long(A, B, by=~month)
 #' 
 #' 
 #' 
+#' df <- data.frame(
+#'   id = 1:16,
+#'   group = gl(2, 8, labels = c("Control", "Treat")),
+#'   age = rnorm(16),
+#'   a1 = rnorm(16), b1 = rnorm(16), c1 = rnorm(16),
+#'   a2 = rnorm(16), b2 = rnorm(16), c2 = rnorm(16),
+#'   a3 = rnorm(16), b3 = rnorm(16), c3 = rnorm(16)
+#' )
+#' 
+#' head(df)
 #' 
 #' 
 #' df |>
-#'   tidyr::gather(variable, value, -(month:student)) |>
-#'   tidyr::unite(temp, student, variable) |>
-#'   tidyr::spread(temp, value)
-#'   
-#'  # Wide 
-#'  
-#' dat <- data.frame(
-#' month = rep(1:3, 2),
-#' student = factor(rep(c("Amy", "Bob"), each = 3)),
-#' A = c(19, 27, 16, 28, 10, 29),
-#' B = c(6, 7, 8, 5, 6, 7)
-#' )
-#' #dat |> Wide(student,  A, B)
-#' # dat |> Wide( month ~ student, value="A")
-#' dat |> Wide(student)
-#' dat |> Wide(student,  B)
-#' 
-#' dat |> Wide(A ~ student)
-#' 
-#' dat |> Wide(A + B ~ student)
-#' dat |> Wide(A + B ~ student + month)
-#' 
-#' 
-#' dat |> Wide(student,  A, B)
-#' 
-#' 
-#' dat |> Wide(A ~ student)
-#' dat |> Wide(A ~ student + month)
-#' 
-#' 
-#' dat |> Wide(month ~ student, A)
-#' dat |> Wide(month ~ student, A, B)
+#'   Long(
+#'     .list = list(
+#'       t0 = c("a1", "b1", "c1"),
+#'       t1 = c("a2", "b2", "c2"),
+#'       t2 = c("a3", "b3", "c3")
+#'     ),
+#'     by =  ~ id + group + age,
+#'     names = c("a", "b", "c")
+#'   )
 #' 
 Long <- function(x, ...) {
   UseMethod("Long")
@@ -188,33 +170,6 @@ Long.data.frame <- function(x,
 #' Names and labels are discarded and only the names from the first list are kept
 #' 
 #' @export
-#' @examples
-#' 
-#' DF <- data.frame(
-#' id = 1:16,
-#' group = gl(2, 8, labels = c("Control", "Treat")),
-#' age = rnorm(16),
-#' a1 = rnorm(16),
-#' b1 = rnorm(16),
-#' c1 = rnorm(16),
-#' a2 = rnorm(16),
-#' b2 = rnorm(16),
-#' c2 = rnorm(16),
-#' a3 = rnorm(16),
-#' b3 = rnorm(16),
-#' c3 = rnorm(16)
-#' )
-#' 
-#' Long(
-#'   DF,
-#'   .list = list(
-#'     t0 = c("a1", "b1", "c1"),
-#'     t1 = c("a2", "b2", "c2"),
-#'     t2 = c("a3", "b3", "c3")
-#'   ),
-#'   by =  ~ id + group + age,
-#'   names = c("a", "b", "c")
-#' )
 Long_rbind <-
   function(data,
            .list = list(NULL),
