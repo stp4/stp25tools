@@ -41,8 +41,7 @@ Wide <- function(data,
                  ...,
                  values_fill = NULL,
                  names_sep = "_",
-                 names_vary = "fastest"
-                 ) {
+                 names_vary = "fastest") {
   if (!is.data.frame(data)) {
     stop("Hier bin ich strickt! Erster Parameter muss ein data.frame sein!")
   }
@@ -52,17 +51,23 @@ Wide <- function(data,
     }, simplify = TRUE))
   
   # verschiedene Schreibweisen
-  # formula: Wide(data, month ~ student, A , B, C)  
+  # formula: Wide(data, month ~ student, A , B, C)
   # formula ist eindeutiger!
   # names: Wide(data, student, A , B, C )
   
   keyq <- rlang::enquo(key)
   names_from <-  rlang::quo_get_expr(keyq)
   
-  
   if (rlang::is_formula(names_from)) {
     key_names <-  rlang::quo_get_expr(keyq)
+    # Bei Formula kann der Name der values weggelassen werden.
+    if (length(values_from) == 0 &
+        ncol(data) == (length(key_names) + 1)) {
+      values_from <- setdiff(names(data), all.vars(key_names))
+    }
+    
     data <- data[c(all.vars(key_names), values_from)]
+    
     if (length(all.vars(key_names[-2])) != 0) {
       names_from <- all.vars(key_names[-2])
     }
@@ -76,10 +81,9 @@ Wide <- function(data,
   
   
   if (length(values_from) == 0) {
-    cat( "\n das scheint eine nicht dokumentierte Altlast zu sein!\n")
-    stop( "Die values muessen schon uebergeben werden!")
+    stop("Die values muessen schon uebergeben werden!")
   }
- 
+  
   
   tidyr::pivot_wider(
     data,
