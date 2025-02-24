@@ -1,6 +1,11 @@
 #' prepare_data2
 #'
-#' This function is used to prepare the data. The return value is a list with all the information for the automatic calculation of the descriptive statistics. The data is returned as tibble::as_tibble() and contains information about the scale properties and the number of decimal places for formatting. The labels are also returned.
+#' This function is used to prepare the data. 
+#' The return value is a list with all the information for the 
+#' automatic calculation of the descriptive statistics. The data is 
+#' returned as tibble::as_tibble() and contains information about the scale 
+#' properties and the number of decimal places for formatting. The labels 
+#' are also returned.
 #'  
 #' @param ... Formula, data usw
 #' @param measure,group.class,measure.test,catTest,conTest,names_data helpers do not change
@@ -44,10 +49,10 @@ prepare_data2 <- function(...){
 
 #' @rdname prepare_data2
 #'
-#' @param x formel
+#' @param x formel  a + b + c ~ groups
 #' @param data  data.frame
 #' @param na.action na.pass, na.omit
-#' @param groups condition
+#' @param groups condition Funktioniert noch nicht !
 #' @param drop.unused.levels an factor
 #'
 #' @export
