@@ -141,7 +141,7 @@ cleaup_formula2 <- function(formula,
   formula_in <-
     formula <-
     clean_dots_formula(formula, names_data = names(data))
-  
+  #  a + b + c ~ 1
   if (length(formula) == 3L)
     if (formula[[3L]] == 1) formula[[3L]] <- NULL
   
