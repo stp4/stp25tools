@@ -27,9 +27,8 @@ Long_rbind(
   data,
   .list = list(NULL),
   by = NULL,
-  .id = "time",
-  names = NULL,
-  first.data = NULL,
+  key = "variable",
+  value = NULL,
   ...
 )
 
@@ -54,17 +53,9 @@ Wide(
 
 \item{use.label}{attribut label verwenden}
 
-\item{by}{Names of the columns to be kept}
-
 \item{id.vars}{Items}
 
 \item{.list}{Columns that are being unraveled list(t0 = 1:3, t1 = 4:6, t2 = 7:9)}
-
-\item{.id}{.id = "time",}
-
-\item{names}{Alternative to the names}
-
-\item{first.data}{Optional if 'by' is not used}
 
 \item{values_fill}{Fill in missing values default = NA}
 
@@ -81,7 +72,7 @@ tibble
 Erweiterung von tidyr::pivot_longer tidyr::pivot_wider
 
 Long_rbind The function combines row by row and is actually a long function.
-Names and labels are discarded and only the names from the first list are kept
+Names and labels are discarded.
 }
 \examples{
  
@@ -97,27 +88,34 @@ df |> Long(A, B, by=~month)
 
 
 
+ n <- 4
 df <- data.frame(
-  id = 1:16,
-  group = gl(2, 8, labels = c("Control", "Treat")),
-  age = rnorm(16),
-  a1 = rnorm(16), b1 = rnorm(16), c1 = rnorm(16),
-  a2 = rnorm(16), b2 = rnorm(16), c2 = rnorm(16),
-  a3 = rnorm(16), b3 = rnorm(16), c3 = rnorm(16)
+  id = 1:n,
+  group = gl(2, n / 2, labels = c("Control", "Treat")),
+  age = round(runif(n, 18, 50)),
+  arg1 = round(runif(n, 1, 3)),
+  glu1 = round(runif(n, 1, 3)) + 10,
+  cys1 = round(runif(n, 1, 3)) + 30,
+  arg2 = round(runif(n, 5, 7)),
+  glu2 = round(runif(n, 3, 4)) + 10,
+  cys2 = round(runif(n, 4, 5)) + 30,
+  arg3 = round(runif(n, 8, 9)),
+  glu3 = round(runif(n, 4, 5)) + 10,
+  cys3 = round(runif(n, 5, 6)) + 30
 )
-
-head(df)
+df
 
 
 df |>
-  Long(
+  Long_rbind2(
     .list = list(
-      t0 = c("a1", "b1", "c1"),
-      t1 = c("a2", "b2", "c2"),
-      t2 = c("a3", "b3", "c3")
+      t0 = c("arg1", "glu1", "cys1"),
+      t1 = c(NA, "glu2", "cys2"),
+      t2 = c("arg3", "glu3", "cys3")
     ),
     by =  ~ id + group + age,
-    names = c("a", "b", "c")
+    value = c("Argin", "Glutaminsr", "Cystein"),
+    key = "Time"
   )
 
 

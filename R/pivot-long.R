@@ -25,29 +25,6 @@
 #' 
 #' 
 #' 
-#' df <- data.frame(
-#'   id = 1:16,
-#'   group = gl(2, 8, labels = c("Control", "Treat")),
-#'   age = rnorm(16),
-#'   a1 = rnorm(16), b1 = rnorm(16), c1 = rnorm(16),
-#'   a2 = rnorm(16), b2 = rnorm(16), c2 = rnorm(16),
-#'   a3 = rnorm(16), b3 = rnorm(16), c3 = rnorm(16)
-#' )
-#' 
-#' head(df)
-#' 
-#' 
-#' df |>
-#'   Long(
-#'     .list = list(
-#'       t0 = c("a1", "b1", "c1"),
-#'       t1 = c("a2", "b2", "c2"),
-#'       t2 = c("a3", "b3", "c3")
-#'     ),
-#'     by =  ~ id + group + age,
-#'     names = c("a", "b", "c")
-#'   )
-#' 
 Long <- function(x, ...) {
   UseMethod("Long")
 }
@@ -61,6 +38,10 @@ Long.formula <- function(x,
                          value = "value",
                          use.label = TRUE,
                          ...) {
+  #  a + b + c ~ 1
+  if (length(x) == 3L)
+    if (x[[3L]] == 1) x[[3L]] <- NULL
+  
   x <- clean_dots_formula(x, names_data = names(data))
   rhs <- all.vars(x[-3])
   lhs <- all.vars(x[-2])
@@ -104,9 +85,11 @@ Long.data.frame <- function(x,
                             key = "variable",
                             value = "value",
                             id.vars = all.vars(by),
-                            use.label=TRUE,
-                            .list =NULL) {
-  if(!is.null(.list)) return( Long_rbind(x, .list, by=by, .id = key, ...))
+                            use.label = TRUE,
+                            .list = NULL) {
+  if(!is.null(.list)) 
+    return( Long_rbind(x, .list, by = by, 
+                       key = key, value =value) )
   
   measure.vars <-
     sapply(lazyeval::lazy_dots(...), function(y) {
@@ -159,49 +142,125 @@ Long.data.frame <- function(x,
 #' @rdname Long
 #'
 #' @param .list  Columns that are being unraveled list(t0 = 1:3, t1 = 4:6, t2 = 7:9)
-#' @param by Names of the columns to be kept 
-#' @param .id  .id = "time",
-#' @param names  Alternative to the names
-#' @param ... Alternative to the names
-#' @param first.data  Optional if 'by' is not used
 #'
 #' @description
+#' 
 #' Long_rbind The function combines row by row and is actually a long function.
-#' Names and labels are discarded and only the names from the first list are kept
+#' Names and labels are discarded.
 #' 
 #' @export
+#' @examples
+#'  n <- 4
+#' df <- data.frame(
+#'   id = 1:n,
+#'   group = gl(2, n / 2, labels = c("Control", "Treat")),
+#'   age = round(runif(n, 18, 50)),
+#'   arg1 = round(runif(n, 1, 3)),
+#'   glu1 = round(runif(n, 1, 3)) + 10,
+#'   cys1 = round(runif(n, 1, 3)) + 30,
+#'   arg2 = round(runif(n, 5, 7)),
+#'   glu2 = round(runif(n, 3, 4)) + 10,
+#'   cys2 = round(runif(n, 4, 5)) + 30,
+#'   arg3 = round(runif(n, 8, 9)),
+#'   glu3 = round(runif(n, 4, 5)) + 10,
+#'   cys3 = round(runif(n, 5, 6)) + 30
+#' )
+#' df
+#' 
+#' 
+#' df |>
+#'   Long_rbind2(
+#'     .list = list(
+#'       t0 = c("arg1", "glu1", "cys1"),
+#'       t1 = c(NA, "glu2", "cys2"),
+#'       t2 = c("arg3", "glu3", "cys3")
+#'     ),
+#'     by =  ~ id + group + age,
+#'     value = c("Argin", "Glutaminsr", "Cystein"),
+#'     key = "Time"
+#'   )
+#' 
 Long_rbind <-
   function(data,
            .list = list(NULL),
            by = NULL,
-           .id = "time",
-           names = NULL,
-           first.data = NULL,
-           ...) {
+           key = "variable",
+           value = NULL,
+           ...
+         ) {
+    
     if (length(unique(lengths(.list))) != 1)
-      stop("Die Elemente in der Liste muessen alle gleich lang sein!")
+      stop("Die Elemente in der Liste muessen alle gleich lang sein!\n  Du kannst aber NA als Platzhalter verwenden.")
+    
     new_data <- NULL
-    if (!is.null(by))
-      first.data <- data[all.vars(by)]
-    if (!is.null(first.data))
-      first.data <- tibble::as_tibble(first.data)
-    
     times <- names(.list)
-    if (is.null(names))
-      names <- names(data[.list[[1]]])
+    if (length(value) != length(times))
+      value <- paste("value", seq_along(times), sep = ".")
     
+  
     for (i in times) {
-      new_data_i <- tibble::as_tibble(cbind(.id = i, data[.list[[i]]]))
-      names(new_data_i) <- c(.id, names)
-      new_data_i <- delet_label(new_data_i)
-      if (!is.null(first.data))
-        new_data_i <- dplyr::bind_cols(first.data, new_data_i)
+      msur <- .list[[i]]
       
-      if (is.null(new_data))
-        new_data <- new_data_i
-      else
-        new_data <- rbind(new_data, new_data_i)
+      if (any(is.na(msur))) {
+        for (j in seq_along(msur)) {
+          if (is.na(msur[j])) {
+            new_var <- paste0("x_new_var", j)
+            msur[j] <- new_var
+            data[[new_var]] <- NA
+          }
+        }
+      }
+      
+      new_data_i <- dplyr::bind_cols(key = i, data[msur])
+      names(new_data_i) <- c(key, value)
+      new_data_i <- delet_label(new_data_i)
+      
+      if (!is.null(by))
+        new_data_i <- dplyr::bind_cols(
+          data[all.vars(by)],
+          new_data_i)
+      
+      new_data <- dplyr::bind_rows(new_data, new_data_i)
     }
-    new_data
+    new_data[[key]] <- factor(new_data[[key]], times)
     
+    new_data
   }
+
+
+
+# Long_rbind <-
+#   function(data,
+#            .list = list(NULL),
+#            by = NULL,
+#            .id = "time",
+#            names = NULL,
+#            first.data = NULL,
+#            ...) {
+#     if (length(unique(lengths(.list))) != 1)
+#       stop("Die Elemente in der Liste muessen alle gleich lang sein!")
+#     new_data <- NULL
+#     if (!is.null(by))
+#       first.data <- data[all.vars(by)]
+#     if (!is.null(first.data))
+#       first.data <- tibble::as_tibble(first.data)
+#     
+#     times <- names(.list)
+#     if (is.null(names))
+#       names <- names(data[.list[[1]]])
+#     
+#     for (i in times) {
+#       new_data_i <- tibble::as_tibble(cbind(.id = i, data[.list[[i]]]))
+#       names(new_data_i) <- c(.id, names)
+#       new_data_i <- delet_label(new_data_i)
+#       if (!is.null(first.data))
+#         new_data_i <- dplyr::bind_cols(first.data, new_data_i)
+#       
+#       if (is.null(new_data))
+#         new_data <- new_data_i
+#       else
+#         new_data <- rbind(new_data, new_data_i)
+#     }
+#     new_data
+#     
+#   }
